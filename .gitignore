@@ -332,9 +332,15 @@ mwhitestudy1/media/
 /report/Multisensory Hub_Jan26.docx
 
 ### Docusaurus
-.docusaurus/
-.cache-loader/
+docusaurus-site/node_modules/
+docusaurus-site/build/
+docusaurus-site/.docusaurus/
+docusaurus-site/.cache-loader/
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Generated output (can be rebuilt from pipeline)
+/mdx/
+docusaurus-site/docs/

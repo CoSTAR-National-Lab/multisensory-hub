@@ -34,8 +34,7 @@ import DataTable from '@site/src/components/interactive/DataTable';
 import InteractiveDemo from '@site/src/components/interactive/InteractiveDemo';
 import CollapsibleSection from '@site/src/components/interactive/CollapsibleSection';
 import QuoteBlock from '@site/src/components/interactive/QuoteBlock';
-import Citation from '@site/src/components/interactive/Citation';
-import { references } from '@site/src/data/references';
+import RefPopup from '@site/src/components/RefPopup';
 
 """
 
@@ -122,22 +121,28 @@ def parse_reference_line(line: str) -> dict | None:
 
     # Try to extract journal (in *italics*) - first occurrence
     journal = None
+    journal_start = None  # Track the start position in 'rest'
+    journal_end = None    # Track the end position in 'rest'
     journal_match = re.search(r'\*([^*]+)\*', rest)
     if journal_match:
         journal = journal_match.group(1)
+        journal_start = journal_match.start()
+        journal_end = journal_match.end()
         # Skip if this looks like "et al." which is author formatting
         if journal.lower() == 'et al.':
             # Look for next italic text as journal
-            second_match = re.search(r'\*([^*]+)\*', rest[journal_match.end():])
+            second_match = re.search(r'\*([^*]+)\*', rest[journal_end:])
             if second_match:
                 journal = second_match.group(1)
-                journal_match = second_match
+                # Adjust positions to be relative to 'rest'
+                journal_start = journal_end + second_match.start()
+                journal_end = journal_end + second_match.end()
 
     # Extract volume and pages after journal
     volume = None
     pages = None
-    if journal_match:
-        after_journal = rest[journal_match.end():].strip()
+    if journal_end:
+        after_journal = rest[journal_end:].strip()
         # Look for patterns like "38, 1--25" or "vol. 5" or just "1--28"
         vol_pages_match = re.match(r'(\d+)(?:,\s*|\s+)([\d\-–—]+)', after_journal)
         if vol_pages_match:
@@ -151,8 +156,8 @@ def parse_reference_line(line: str) -> dict | None:
 
     # Extract authors and title
     # Take text before the journal for author/title extraction
-    if journal_match:
-        author_title_part = rest[:journal_match.start()].strip()
+    if journal_start is not None:
+        author_title_part = rest[:journal_start].strip()
     else:
         # No journal - take everything before year or URL
         if year_match:
@@ -243,12 +248,23 @@ def extract_references_from_markdown(markdown: str) -> list[dict]:
 
     ref_content = markdown[ref_section_match.end():]
 
-    # Find numbered reference lines (1\. or just 1.)
-    ref_pattern = re.compile(r'^(\d+)\\?\.\s+.+$', re.MULTILINE)
+    # Find numbered reference starts (1\. or just 1.)
+    # Then capture everything until the next numbered reference or end
+    ref_start_pattern = re.compile(r'^(\d+)\\?\.\s+', re.MULTILINE)
 
-    for match in ref_pattern.finditer(ref_content):
-        line = match.group(0)
-        parsed = parse_reference_line(line)
+    starts = list(ref_start_pattern.finditer(ref_content))
+
+    for i, match in enumerate(starts):
+        start_pos = match.start()
+        # End at next reference or end of content
+        end_pos = starts[i + 1].start() if i + 1 < len(starts) else len(ref_content)
+
+        # Extract full reference text and clean up
+        full_ref = ref_content[start_pos:end_pos].strip()
+        # Join multi-line references into single line
+        full_ref = ' '.join(full_ref.split())
+
+        parsed = parse_reference_line(full_ref)
         if parsed:
             references.append(parsed)
 
@@ -258,7 +274,6 @@ def extract_references_from_markdown(markdown: str) -> list[dict]:
 def generate_references_typescript(references: list[dict], output_path: Path) -> None:
     """Generate a TypeScript file with references data."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
-
     ts_content = """// Auto-generated references data from Mendeley citations
 // Do not edit manually - regenerate by running the conversion pipeline
 
@@ -285,22 +300,15 @@ export const references: Reference[] = """
 
 
 def convert_citations_in_content(content: str) -> tuple[str, bool]:
-    """Convert <sup>X</sup> citation markers to <Citation num={X} /> components.
+    """Check if content has citation markers.
 
-    Returns tuple of (converted_content, has_citations).
+    Returns tuple of (content, has_citations).
+    Note: Citations are left as <sup> tags to be converted by post-processing.
     """
-    has_citations = False
+    has_citations = bool(re.search(r'<sup>\d+(?:[-–—,]\d+)*</sup>', content))
 
-    def replace_citation(match):
-        nonlocal has_citations
-        has_citations = True
-        num = match.group(1)
-        return f'<Citation num={{{num}}} references={{references}} />'
-
-    # Match <sup>NUMBER</sup> patterns (including ranges like 20-22)
-    converted = re.sub(r'<sup>(\d+(?:[-–—,]\d+)*)</sup>', replace_citation, content)
-
-    return converted, has_citations
+    # Return content unchanged - post-processing will convert to popups
+    return content, has_citations
 
 
 def split_markdown_by_headers(markdown: str) -> list[dict]:
@@ -494,21 +502,17 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
 def post_process_mdx_files(folder: Path) -> None:
     """Post-process MDX files to fix any remaining issues."""
 
-    # First, load references from the references file
+    # First, load references from the intermediate markdown file
     references_map = {}
-    references_file = folder / '37-references.mdx'
-    if references_file.exists():
-        ref_content = references_file.read_text(encoding='utf-8')
-
-        # Try new format first: <span id="ref-1">1.</span> Author text...
-        ref_matches = re.findall(r'<span id="ref-(\d+)">(\d+)\.</span> (.+?)(?=\n\n|<span id="ref-|\Z)', ref_content, re.DOTALL)
-        if ref_matches:
-            for ref_id, num, text in ref_matches:
-                clean_text = text.strip().replace('\n', ' ')[:300]
-                references_map[num] = clean_text
-        else:
-            # Fall back to old format: "1\. Author text..."
-            ref_matches = re.findall(r'(\d+)\\\. (.+?)(?=\n\n|\n\d+\\\.|\Z)', ref_content, re.DOTALL)
+    md_file = OUTPUT_FOLDER / "Multisensory Hub_Jan26.md"
+    if md_file.exists():
+        md_content = md_file.read_text(encoding='utf-8')
+        # Find the References section
+        ref_section_match = re.search(r'^#\s*References\s*$(.+)', md_content, re.MULTILINE | re.DOTALL)
+        if ref_section_match:
+            ref_section = ref_section_match.group(1)
+            # Match numbered references: "32\. Author text..."
+            ref_matches = re.findall(r'(\d+)\\\. (.+?)(?=\n\d+\\\.|\Z)', ref_section, re.DOTALL)
             for num, text in ref_matches:
                 clean_text = text.strip().replace('\n', ' ')[:300]
                 references_map[num] = clean_text
@@ -523,46 +527,48 @@ def post_process_mdx_files(folder: Path) -> None:
         # Remove any remaining Word anchors
         content = re.sub(r'\[\]\{#[^}]+\}', '', content)
 
-        # Convert existing <sup>number</sup> to reference links with tooltips
-        # Links navigate to references page, tooltip shows on hover
-        def add_ref_tooltip(match):
+        # Convert existing <sup>number</sup> to reference popups with copy and navigation buttons
+        def add_ref_popup(match):
             num = match.group(1)
             ref_text = references_map.get(num, f"Reference {num}")
-            # Escape quotes for HTML attribute
-            ref_text = ref_text.replace('"', '&quot;').replace("'", '&apos;')
-            return f'<sup><a href="/references#ref-{num}" class="ref-link" data-ref="[{num}] {ref_text}">{num}</a></sup>'
+            # Escape quotes for HTML/JSX attribute
+            ref_text_escaped = ref_text.replace('"', '&quot;').replace("'", '&apos;').replace('{', '{{').replace('}', '}}')
+
+            # Use RefPopup component
+            popup_html = f'<RefPopup refNum="{num}" refText="{ref_text_escaped}" />'
+            return popup_html
 
         content = re.sub(
             r'<sup>(\d+)</sup>',
-            add_ref_tooltip,
+            add_ref_popup,
             content
         )
 
         # Handle ranges like <sup>20-22</sup>
-        def add_range_tooltip(match):
+        def add_range_popup(match):
             nums = match.group(1)
             first_num = nums.split('-')[0].split('–')[0].split('—')[0]
-            ref_text = references_map.get(first_num, f"Reference {nums}")
-            ref_text = ref_text.replace('"', '&quot;').replace("'", '&apos;')
-            return f'<sup><a href="/references#ref-{first_num}" class="ref-link" data-ref="[{nums}] {ref_text}">{nums}</a></sup>'
+            ref_text = references_map.get(first_num, f"References {nums}")
+            ref_text_escaped = ref_text.replace('"', '&quot;').replace("'", '&apos;').replace('{', '{{').replace('}', '}}')
+            return f'<RefPopup refNum="{nums}" refText="{ref_text_escaped}" />'
 
         content = re.sub(
             r'<sup>(\d+[-–\—]\d+)</sup>',
-            add_range_tooltip,
+            add_range_popup,
             content
         )
 
         # Handle comma-separated like <sup>25,26</sup>
-        def add_multi_tooltip(match):
+        def add_multi_popup(match):
             nums = match.group(1)
             first_num = nums.split(',')[0]
-            ref_text = references_map.get(first_num, f"Reference {nums}")
-            ref_text = ref_text.replace('"', '&quot;').replace("'", '&apos;')
-            return f'<sup><a href="/references#ref-{first_num}" class="ref-link" data-ref="[{nums}] {ref_text}">{nums}</a></sup>'
+            ref_text = references_map.get(first_num, f"References {nums}")
+            ref_text_escaped = ref_text.replace('"', '&quot;').replace("'", '&apos;').replace('{', '{{').replace('}', '}}')
+            return f'<RefPopup refNum="{nums}" refText="{ref_text_escaped}" />'
 
         content = re.sub(
             r'<sup>(\d+,\d+)</sup>',
-            add_multi_tooltip,
+            add_multi_popup,
             content
         )
 
