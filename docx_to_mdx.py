@@ -428,11 +428,17 @@ def create_mdx_content(page: dict, position: int, is_references_page: bool = Fal
     # Use the slug as the explicit ID to prevent collisions from numeric filename prefixes
     doc_id = page['slug']
 
+    # Compute reading time (approx 200 words per minute)
+    words = len(re.findall(r'\w+', page['content']))
+    reading_time = max(1, round(words / 200))
+
     # Frontmatter MUST come first in Docusaurus
     frontmatter = f"""---
 title: "{safe_title}"
 id: "{doc_id}"
 sidebar_position: {position}
+custom_edit_url: null
+readingTimeMinutes: {reading_time}
 ---
 
 """
