@@ -871,6 +871,7 @@ def main():
     # Start Docusaurus server
     print("\n" + "-" * 60)
     print("Starting Docusaurus development server...")
+
     server_process = start_docusaurus_server(DOCUSAURUS_DIR)
 
     # Wait for server (Docusaurus will auto-open browser)
