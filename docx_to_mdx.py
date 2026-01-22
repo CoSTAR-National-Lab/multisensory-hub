@@ -508,28 +508,32 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
             current_h1_folder = output_folder / folder_name
             current_h1_folder.mkdir(parents=True, exist_ok=True)
 
-            # Create _category_.json for collapsible sidebar (no link, just a grouping)
+            # Create _category_.json for collapsible sidebar
             category_meta = {
                 "label": page['title'],
                 "position": current_h1_position,
                 "collapsible": True,
-                "collapsed": False
+                "collapsed": False,
+                "link": {
+                    "type": "doc",
+                    "id": f"{current_h1_slug}-overview"
+                }
             }
             category_file = current_h1_folder / "_category_.json"
             category_file.write_text(json.dumps(category_meta, indent=2), encoding="utf-8")
 
-            # Save H1 content as first item in the folder (labeled as "Overview")
-            h2_position += 1
+            # Save H1 content as index.mdx in the folder (linked via _category_.json)
             # Create a modified page dict for the overview
             overview_page = page.copy()
             overview_page['title'] = page['title']  # Keep original title for the page
             # Use a globally unique ID by combining current H1 slug and overview
             overview_page['slug'] = f"{current_h1_slug}-overview"
-            content = create_mdx_content(overview_page, h2_position, is_references_page=is_references_page)
-            filepath = current_h1_folder / f"{h2_position:02d}-overview.mdx"
+            # Sidebar position 1 for the index page (though it will be hidden by Docusaurus if it's the category link)
+            content = create_mdx_content(overview_page, 1, is_references_page=is_references_page)
+            filepath = current_h1_folder / "index.mdx"
             filepath.write_text(content, encoding="utf-8")
             created_files.append(filepath)
-            print(f"  Created: {folder_name}/{h2_position:02d}-overview.mdx")
+            print(f"  Created: {folder_name}/index.mdx")
 
         else:
             # H2: Save inside current H1 folder
@@ -657,6 +661,8 @@ def copy_to_docusaurus(source_folder: Path, docs_folder: Path) -> None:
     """Copy MDX files, folders, and media to Docusaurus docs folder."""
     # Clear existing docs
     if docs_folder.exists():
+        # Only clear subdirectories and .md/.mdx/.json files to avoid deleting important docusaurus files if any
+        # though we are in a dedicated docs folder
         shutil.rmtree(docs_folder)
     docs_folder.mkdir(parents=True, exist_ok=True)
 
@@ -683,6 +689,30 @@ def copy_to_docusaurus(source_folder: Path, docs_folder: Path) -> None:
         print(f"  Copied media folder to {static_folder}")
 
     print(f"  Copied content to {docs_folder}")
+
+    # Remove any leftover 01-overview.mdx files if they exist (from previous versions of the script)
+    for overview_file in docs_folder.glob("**/01-overview.mdx"):
+        overview_file.unlink()
+
+    # Remove duplicates from docs folder
+    for folder in docs_folder.iterdir():
+        if folder.is_dir():
+            seen_slugs = {}
+            # Get all mdx files in the folder, sorted by name
+            mdx_files = sorted(list(folder.glob("*.mdx")))
+            for mdx_file in mdx_files:
+                if mdx_file.name == "index.mdx":
+                    continue
+                # The filename format is XX-slug.mdx
+                parts = mdx_file.stem.split('-', 1)
+                if len(parts) > 1:
+                    slug = parts[1]
+                    if slug in seen_slugs:
+                        # Duplicate found, delete the one with higher prefix number (later in sorted list)
+                        print(f"    Removing duplicate: {mdx_file.relative_to(docs_folder)}")
+                        mdx_file.unlink()
+                    else:
+                        seen_slugs[slug] = mdx_file
 
     # Post-process all MDX files in the docs folder
     print("  Post-processing MDX files...")
