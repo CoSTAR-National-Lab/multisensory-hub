@@ -263,6 +263,8 @@ def extract_references_from_markdown(markdown: str) -> list[dict]:
         full_ref = ref_content[start_pos:end_pos].strip()
         # Join multi-line references into single line
         full_ref = ' '.join(full_ref.split())
+        # Convert Pandoc's --- back to em dash
+        full_ref = full_ref.replace('---', '—')
 
         parsed = parse_reference_line(full_ref)
         if parsed:
@@ -359,12 +361,14 @@ def ensure_unique_slugs(pages: list[dict]) -> list[dict]:
     """Ensure all slugs are unique by appending numbers if needed."""
     seen = {}
     for page in pages:
-        slug = page["slug"]
-        if slug in seen:
-            seen[slug] += 1
-            page["slug"] = f"{slug}-{seen[slug]}"
-        else:
-            seen[slug] = 0
+        original_slug = page["slug"]
+        slug = original_slug
+        counter = 1
+        while slug in seen:
+            slug = f"{original_slug}-{counter}"
+            counter += 1
+        page["slug"] = slug
+        seen[slug] = True
     return pages
 
 
@@ -400,8 +404,9 @@ def fix_mdx_syntax(content: str) -> str:
     # Fix image attributes with curly braces - remove them entirely as they're not valid in MDX
     content = re.sub(r'\]\([^)]+\)\{[^}]+\}', lambda m: m.group(0).split('{')[0], content)
 
-    # Fix image paths - remove the output folder prefix (e.g., mdx/media/ -> media/)
-    content = re.sub(r'\!\[([^\]]*)\]\(mdx/media/', r'![\1](media/', content)
+    # Fix image paths - use absolute path from site root for nested folders
+    content = re.sub(r'\!\[([^\]]*)\]\(mdx/media/', r'![\1](/media/', content)
+    content = re.sub(r'\!\[([^\]]*)\]\(media/', r'![\1](/media/', content)
 
     # Fix URLs in angle brackets - convert <https://...> to just the URL without brackets
     content = re.sub(r'<(https?://[^>]+)>', r'\1', content)
@@ -420,12 +425,14 @@ def create_mdx_content(page: dict, position: int, is_references_page: bool = Fal
     # Escape quotes in title for frontmatter
     safe_title = page['title'].replace('"', '\\"')
 
+    # Use the slug as the explicit ID to prevent collisions from numeric filename prefixes
+    doc_id = page['slug']
+
     # Frontmatter MUST come first in Docusaurus
-    # Add slug to match the page slug (without the numeric prefix)
     frontmatter = f"""---
 title: "{safe_title}"
+id: "{doc_id}"
 sidebar_position: {position}
-slug: /{page['slug']}
 ---
 
 """
@@ -470,31 +477,77 @@ Explore the science and practice of multisensory experiences. Use the sidebar to
 
 ## Contents
 
+Use the sidebar to navigate through the report sections.
 """
-    for i, page in enumerate(pages):
-        indent = "  " if page["level"] == 2 else ""
-        # Use the slug directly (not the filename) since we set slug in frontmatter
-        content += f"{indent}- [{page['title']}](/{page['slug']})\n"
-
     return content
 
 
 def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
-    """Save pages as .mdx files."""
+    """Save pages as .mdx files with hierarchical folder structure.
+
+    H1 sections become folders with collapsible categories.
+    H2 sections become pages within those folders.
+    """
     output_folder.mkdir(parents=True, exist_ok=True)
 
     created_files = []
-    for i, page in enumerate(pages):
-        filename = f"{i + 1:02d}-{page['slug']}.mdx"
-        filepath = output_folder / filename
+    current_h1_folder = None
+    current_h1_slug = None
+    current_h1_position = 0
+    h2_position = 0
 
-        # Check if this is the references page
+    for i, page in enumerate(pages):
         is_references_page = page['slug'] == 'references' or page['title'].lower() == 'references'
 
-        content = create_mdx_content(page, i + 1, is_references_page=is_references_page)
-        filepath.write_text(content, encoding="utf-8")
-        created_files.append(filepath)
-        print(f"  Created: {filepath.name}")
+        if page['level'] == 1:
+            # H1: Create a new folder (category)
+            current_h1_position += 1
+            h2_position = 0
+            current_h1_slug = page['slug']
+            folder_name = f"{current_h1_position:02d}-{current_h1_slug}"
+            current_h1_folder = output_folder / folder_name
+            current_h1_folder.mkdir(parents=True, exist_ok=True)
+
+            # Create _category_.json for collapsible sidebar (no link, just a grouping)
+            category_meta = {
+                "label": page['title'],
+                "position": current_h1_position,
+                "collapsible": True,
+                "collapsed": False
+            }
+            category_file = current_h1_folder / "_category_.json"
+            category_file.write_text(json.dumps(category_meta, indent=2), encoding="utf-8")
+
+            # Save H1 content as first item in the folder (labeled as "Overview")
+            h2_position += 1
+            # Create a modified page dict for the overview
+            overview_page = page.copy()
+            overview_page['title'] = page['title']  # Keep original title for the page
+            # Use a globally unique ID by combining current H1 slug and overview
+            overview_page['slug'] = f"{current_h1_slug}-overview"
+            content = create_mdx_content(overview_page, h2_position, is_references_page=is_references_page)
+            filepath = current_h1_folder / f"{h2_position:02d}-overview.mdx"
+            filepath.write_text(content, encoding="utf-8")
+            created_files.append(filepath)
+            print(f"  Created: {folder_name}/{h2_position:02d}-overview.mdx")
+
+        else:
+            # H2: Save inside current H1 folder
+            h2_position += 1
+            if current_h1_folder is None:
+                # No H1 yet, save at root level
+                filename = f"{i + 1:02d}-{page['slug']}.mdx"
+                filepath = output_folder / filename
+            else:
+                filename = f"{h2_position:02d}-{page['slug']}.mdx"
+                filepath = current_h1_folder / filename
+                # Make the ID globally unique by prefixing with parent H1 slug (without slash)
+                page['slug'] = f"{current_h1_slug}-{page['slug']}"
+
+            content = create_mdx_content(page, h2_position, is_references_page=is_references_page)
+            filepath.write_text(content, encoding="utf-8")
+            created_files.append(filepath)
+            print(f"  Created: {filepath.relative_to(output_folder)}")
 
     return created_files
 
@@ -517,12 +570,13 @@ def post_process_mdx_files(folder: Path) -> None:
                 clean_text = text.strip().replace('\n', ' ')[:300]
                 references_map[num] = clean_text
 
-    for mdx_file in folder.glob("*.mdx"):
+    for mdx_file in folder.glob("**/*.mdx"):
         content = mdx_file.read_text(encoding="utf-8")
         original = content
 
-        # Fix any remaining mdx/media/ paths
-        content = content.replace("mdx/media/", "media/")
+        # Fix any remaining media paths to use absolute paths
+        content = content.replace("mdx/media/", "/media/")
+        content = re.sub(r'\]\(media/', r'](/media/', content)
 
         # Remove any remaining Word anchors
         content = re.sub(r'\[\]\{#[^}]+\}', '', content)
@@ -600,25 +654,35 @@ def post_process_mdx_files(folder: Path) -> None:
 
 
 def copy_to_docusaurus(source_folder: Path, docs_folder: Path) -> None:
-    """Copy MDX files and media to Docusaurus docs folder."""
+    """Copy MDX files, folders, and media to Docusaurus docs folder."""
     # Clear existing docs
     if docs_folder.exists():
         shutil.rmtree(docs_folder)
     docs_folder.mkdir(parents=True, exist_ok=True)
 
-    # Copy all MDX files
-    for mdx_file in source_folder.glob("*.mdx"):
-        dest = docs_folder / mdx_file.name
-        shutil.copy2(mdx_file, dest)
+    # Copy all content (folders, MDX files, JSON files) except media and intermediate .md files
+    for item in source_folder.iterdir():
+        if item.name == "media":
+            continue
+        if item.suffix == ".md":
+            # Skip intermediate markdown files
+            continue
+        dest = docs_folder / item.name
+        if item.is_dir():
+            shutil.copytree(item, dest)
+        else:
+            shutil.copy2(item, dest)
 
-    # Copy media folder if it exists
+    # Copy media folder to static folder for absolute paths
     media_source = source_folder / "media"
     if media_source.exists():
-        media_dest = docs_folder / "media"
-        shutil.copytree(media_source, media_dest)
-        print(f"  Copied media folder to {media_dest}")
+        static_folder = docs_folder.parent / "static" / "media"
+        if static_folder.exists():
+            shutil.rmtree(static_folder)
+        shutil.copytree(media_source, static_folder)
+        print(f"  Copied media folder to {static_folder}")
 
-    print(f"  Copied MDX files to {docs_folder}")
+    print(f"  Copied content to {docs_folder}")
 
     # Post-process all MDX files in the docs folder
     print("  Post-processing MDX files...")
