@@ -11,6 +11,7 @@ Pipeline to convert Word documents to MDX pages and serve with Docusaurus.
 """
 
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -731,6 +732,10 @@ def start_docusaurus_server(docusaurus_dir: Path) -> subprocess.Popen:
 
     # Use npm start for development
     # On Windows, we need shell=True and different handling
+    # Increase memory limit for Node.js to avoid OOM
+    env = os.environ.copy()
+    env["NODE_OPTIONS"] = "--max-old-space-size=4096"
+    
     if sys.platform == "win32":
         process = subprocess.Popen(
             "npm start",
@@ -739,6 +744,7 @@ def start_docusaurus_server(docusaurus_dir: Path) -> subprocess.Popen:
             stderr=subprocess.STDOUT,
             text=True,
             shell=True,
+            env=env,
         )
     else:
         process = subprocess.Popen(
@@ -747,6 +753,7 @@ def start_docusaurus_server(docusaurus_dir: Path) -> subprocess.Popen:
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
+            env=env,
         )
 
     return process
@@ -884,7 +891,7 @@ def main():
     print("  Waiting for server to be ready...")
     url = "http://localhost:3000"
 
-    if wait_for_server(url, timeout=90):
+    if wait_for_server(url, timeout=180):
         print(f"\n  Server ready at {url}")
         # Don't open browser manually - Docusaurus will auto-open
         print("\n" + "=" * 60)
