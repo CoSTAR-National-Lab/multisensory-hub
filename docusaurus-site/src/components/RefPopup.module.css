@@ -1,0 +1,166 @@
+.refContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.refLink {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.refLink:hover {
+  text-decoration: underline;
+}
+
+.popup {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  z-index: 1000;
+  min-width: 280px;
+  max-width: 400px;
+}
+
+.popupContent {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 0.875rem;
+}
+
+.refNumber {
+  font-weight: bold;
+  color: var(--ifm-color-primary);
+  margin-bottom: 6px;
+}
+
+.refText {
+  line-height: 1.5;
+  margin-bottom: 12px;
+  color: var(--ifm-font-color-base);
+}
+
+.refDetails {
+  margin-bottom: 12px;
+}
+
+.refAuthors {
+  font-weight: 500;
+  color: var(--ifm-font-color-base);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.refTitle {
+  color: var(--ifm-font-color-base);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.refMeta {
+  font-size: 0.813rem;
+  color: var(--ifm-font-color-secondary);
+  line-height: 1.4;
+}
+
+.refJournal {
+  font-style: italic;
+}
+
+.refLinks {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--ifm-color-emphasis-200);
+}
+
+.doiLink,
+.urlLink {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: var(--ifm-color-primary-dark);
+  text-decoration: none;
+  word-break: break-all;
+  padding: 4px 8px;
+  background: var(--ifm-color-primary-lightest);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.doiLink:hover,
+.urlLink:hover {
+  background: var(--ifm-color-primary-lighter);
+  color: var(--ifm-color-primary-darkest);
+  text-decoration: none;
+}
+
+/* Dark mode overrides for popup links */
+:global([data-theme='dark']) .doiLink,
+:global([data-theme='dark']) .urlLink {
+  background: rgba(96, 165, 250, 0.15);
+  color: var(--ifm-color-primary-light);
+}
+
+:global([data-theme='dark']) .doiLink:hover,
+:global([data-theme='dark']) .urlLink:hover {
+  background: rgba(96, 165, 250, 0.25);
+  color: var(--ifm-color-primary-lightest);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  padding-top: 10px;
+}
+
+.actionButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.813rem;
+  color: var(--ifm-font-color-base);
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  background: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-primary);
+}
+
+.actionButton svg {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.actionButton:active svg {
+  transform: scale(0.9);
+}
+
+/* Checkmark animation */
+@keyframes checkPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.actionButton svg.copied {
+  animation: checkPulse 0.3s ease;
+}

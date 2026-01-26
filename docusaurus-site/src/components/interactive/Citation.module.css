@@ -1,0 +1,94 @@
+.citationWrapper {
+  position: relative;
+  display: inline;
+}
+
+.citation {
+  color: var(--ifm-color-primary);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0 2px;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.citation:hover {
+  background-color: var(--ifm-color-primary-lightest);
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  z-index: 1000;
+  min-width: 320px;
+  max-width: 450px;
+}
+
+.tooltipContent {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.refNumber {
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+  font-size: 0.8rem;
+}
+
+.authors {
+  font-weight: 500;
+  color: var(--ifm-font-color-base);
+}
+
+.title {
+  font-style: italic;
+  color: var(--ifm-font-color-base);
+}
+
+.journal {
+  color: var(--ifm-font-color-secondary);
+  font-size: 0.8rem;
+}
+
+.doi, .url {
+  color: var(--ifm-color-primary);
+  font-size: 0.8rem;
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.doi:hover, .url:hover {
+  text-decoration: underline;
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .tooltipContent {
+  background: var(--ifm-background-color);
+  border-color: var(--ifm-color-emphasis-400);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive: on smaller screens, position tooltip differently */
+@media (max-width: 768px) {
+  .tooltip {
+    position: fixed;
+    bottom: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-bottom: 0;
+    min-width: 280px;
+    max-width: calc(100vw - 40px);
+  }
+}

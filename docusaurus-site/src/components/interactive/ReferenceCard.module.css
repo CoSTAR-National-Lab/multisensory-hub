@@ -1,0 +1,132 @@
+.card {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--ifm-color-primary-light);
+}
+
+.card:target {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px var(--ifm-color-primary-lightest);
+}
+
+.number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ifm-color-primary);
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 50%;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.actionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  color: var(--ifm-color-emphasis-600);
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.actionIcon:hover {
+  color: var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.authors {
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+  margin-bottom: 4px;
+  line-height: 1.4;
+  padding-right: 60px;
+}
+
+.title {
+  font-style: italic;
+  color: var(--ifm-font-color-base);
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.publication {
+  font-size: 0.875rem;
+  color: var(--ifm-font-color-secondary);
+}
+
+.journal {
+  font-weight: 500;
+}
+
+.volume {
+  font-weight: 500;
+}
+
+.pages {
+  color: var(--ifm-font-color-secondary);
+}
+
+.year {
+  color: var(--ifm-font-color-secondary);
+}
+
+.inlineLink {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.inlineLink:hover {
+  text-decoration: underline;
+}
+
+/* Dark mode */
+[data-theme='dark'] .card {
+  background: var(--ifm-background-color);
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .card:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .actionIcon {
+  color: var(--ifm-color-emphasis-500);
+}
+
+[data-theme='dark'] .actionIcon:hover {
+  color: var(--ifm-color-primary-light);
+  background: var(--ifm-color-emphasis-200);
+}

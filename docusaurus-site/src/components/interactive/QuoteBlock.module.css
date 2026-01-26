@@ -1,0 +1,53 @@
+.quote {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--ifm-color-emphasis-100) 0%, var(--ifm-color-emphasis-200) 100%);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.quote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+}
+
+.quoteIcon {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 6rem;
+  font-family: Georgia, serif;
+  color: var(--ifm-color-primary);
+  opacity: 0.15;
+  line-height: 1;
+}
+
+.content {
+  margin: 0;
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--ifm-color-content);
+  position: relative;
+  z-index: 1;
+}
+
+.attribution {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.author {
+  font-weight: 600;
+}
+
+.source {
+  font-style: normal;
+}

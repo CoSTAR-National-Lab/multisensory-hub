@@ -1,0 +1,70 @@
+.refContainer {
+  position: relative;
+  display: inline;
+}
+
+.refLink {
+  color: var(--ifm-link-color);
+  text-decoration: none;
+  cursor: help;
+  border-bottom: 1px dotted var(--ifm-link-color);
+}
+
+.refLink:hover {
+  color: var(--ifm-link-hover-color);
+  border-bottom-style: solid;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  z-index: 1000;
+  pointer-events: none;
+  max-width: 400px;
+  width: max-content;
+}
+
+.tooltipContent {
+  display: block;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--ifm-font-color-base);
+}
+
+.tooltipContent strong {
+  color: var(--ifm-color-primary);
+  margin-right: 6px;
+}
+
+/* Arrow */
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--ifm-background-surface-color);
+}
+
+/* Adjust tooltip position if too close to viewport edge */
+@media (max-width: 768px) {
+  .tooltip {
+    max-width: 280px;
+    left: 10px;
+    transform: none;
+  }
+
+  .tooltip::after {
+    left: 30px;
+  }
+}

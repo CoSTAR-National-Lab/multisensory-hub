@@ -1,0 +1,87 @@
+.tableContainer {
+  margin: 1.5rem 0;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.searchBar {
+  padding: 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-content);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px var(--ifm-color-primary-lighter);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  padding: 1rem;
+  text-align: left;
+  background: var(--ifm-color-emphasis-100);
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--ifm-color-emphasis-300);
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.sortable:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.sortIndicator {
+  color: var(--ifm-color-primary);
+}
+
+.table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.row {
+  transition: background 0.2s;
+}
+
+.row:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.row:last-child td {
+  border-bottom: none;
+}
+
+.footer {
+  padding: 0.75rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}

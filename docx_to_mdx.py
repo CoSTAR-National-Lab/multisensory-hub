@@ -418,6 +418,34 @@ def fix_mdx_syntax(content: str) -> str:
     # Replace --> with */}
     content = re.sub(r'-->', r'*/}', content)
 
+    # Fix 4: Clean up only obvious bold marker artifacts
+    # Preserve legitimate **text** bold formatting for rendering in the website
+
+    def clean_bolding(text):
+        # Only fix very specific artifacts that are clearly broken:
+
+        # Fix " --**" at end of lines (artifact from pandoc)
+        text = re.sub(r' --\*\*(\s|$)', r' --\1', text)
+
+        # Fix ":**" at end of lines (artifact)
+        text = re.sub(r':\*\*(\s|$)', r':\1', text)
+
+        # Fix m**u**ltisensory (single character bolding inside word - clearly an artifact)
+        text = re.sub(r'(\w)\*\*(\w)\*\*(\w)', r'\1\2\3', text)
+
+        # Fix lines that are ONLY "**" (empty bold)
+        lines = text.split('\n')
+        fixed_lines = []
+        for line in lines:
+            if line.strip() == '**':
+                fixed_lines.append('')
+            else:
+                fixed_lines.append(line)
+
+        return '\n'.join(fixed_lines)
+
+    content = clean_bolding(content)
+
     return content
 
 

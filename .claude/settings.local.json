@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python docx_to_mdx.py:*)",
+      "Bash(npx create-docusaurus@latest docusaurus-site classic --typescript)",
+      "Bash(npm start)",
+      "Bash(curl:*)",
+      "Bash(start http://localhost:3000)",
+      "Bash(npm run build:*)",
+      "Bash(python:*)"
+    ]
+  }
+}
