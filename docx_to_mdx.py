@@ -412,6 +412,9 @@ def fix_mdx_syntax(content: str) -> str:
     # Fix URLs in angle brackets - convert <https://...> to just the URL without brackets
     content = re.sub(r'<(https?://[^>]+)>', r'\1', content)
 
+    # Fix backslashes escaping brackets in content (common in Pandoc output)
+    content = content.replace('\\[', '[').replace('\\]', ']')
+
     # Fix 3: HTML comments need to be on their own line or use {/* */}
     # Replace <!-- with {/*
     content = re.sub(r'<!--', r'{/*', content)
@@ -451,8 +454,12 @@ def fix_mdx_syntax(content: str) -> str:
 
 def create_mdx_content(page: dict, position: int, is_references_page: bool = False) -> str:
     """Create MDX file content with Docusaurus frontmatter and imports."""
+    # Clean up the title - remove backslashes that might be escaping brackets (from Pandoc)
+    # This prevents invalid YAML escape sequences like \[ in frontmatter
+    title = page['title'].replace('\\', '')
+    
     # Escape quotes in title for frontmatter
-    safe_title = page['title'].replace('"', '\\"')
+    safe_title = title.replace('"', '\\"')
 
     # Use the slug as the explicit ID to prevent collisions from numeric filename prefixes
     doc_id = page['slug']
@@ -472,7 +479,9 @@ readingTimeMinutes: {reading_time}
 
 """
     header_prefix = "#" * page["level"]
-    header_line = f"{header_prefix} {page['title']}\n\n"
+    # Clean up title for the main header as well
+    clean_header_title = page['title'].replace('\\', '')
+    header_line = f"{header_prefix} {clean_header_title}\n\n"
 
     # Fix MDX syntax issues in the content
     fixed_content = fix_mdx_syntax(page["content"])
@@ -545,13 +554,13 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
 
             # Create _category_.json for collapsible sidebar
             category_meta = {
-                "label": page['title'],
+                "label": page['title'].replace('\\', ''),
                 "position": current_h1_position,
                 "collapsible": True,
                 "collapsed": False,
                 "link": {
                     "type": "doc",
-                    "id": f"{current_h1_slug}-overview"
+                    "id": f"h1-{current_h1_position:02d}-{current_h1_slug}-overview"
                 }
             }
             category_file = current_h1_folder / "_category_.json"
@@ -561,8 +570,8 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
             # Create a modified page dict for the overview
             overview_page = page.copy()
             overview_page['title'] = page['title']  # Keep original title for the page
-            # Use a globally unique ID by combining current H1 slug and overview
-            overview_page['slug'] = f"{current_h1_slug}-overview"
+            # Use a globally unique ID by combining current H1 position and slug
+            overview_page['slug'] = f"h1-{current_h1_position:02d}-{current_h1_slug}-overview"
             # Sidebar position 1 for the index page (though it will be hidden by Docusaurus if it's the category link)
             content = create_mdx_content(overview_page, 1, is_references_page=is_references_page)
             filepath = current_h1_folder / "index.mdx"
@@ -874,6 +883,12 @@ def main():
         sys.exit(0)
 
     print(f"\nFound {len(docx_files)} Word document(s) in {INPUT_FOLDER}/")
+
+    # Clear output folder before processing to avoid mixing old and new content
+    if OUTPUT_FOLDER.exists():
+        print(f"\nClearing previous output in {OUTPUT_FOLDER}/...")
+        shutil.rmtree(OUTPUT_FOLDER)
+    OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
     # Process each document
     for docx_path in docx_files:
