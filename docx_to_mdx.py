@@ -57,8 +57,8 @@ import { references } from '@site/src/data/references';
 
 
 def find_docx_files(folder: Path) -> list[Path]:
-    """Scan folder for Word documents."""
-    return list(folder.glob("*.docx"))
+    """Scan folder for Word documents, excluding temporary owner files."""
+    return [f for f in folder.glob("*.docx") if not f.name.startswith("~$")]
 
 
 def convert_docx_to_md(docx_path: Path, extract_media_to: Path = None) -> str:
@@ -503,27 +503,40 @@ readingTimeMinutes: {reading_time}
     return frontmatter + imports + header_line + fixed_content
 
 
-def create_index_content(pages: list[dict]) -> str:
-    """Create index.mdx file with links to all pages."""
-    content = """---
-title: "Multisensory Hub Report"
+def create_homepage_content(page: dict, is_references_page: bool = False) -> str:
+    """Create the homepage index.mdx from the pre-H1 content."""
+    title = page['title'].replace('\\', '')
+    safe_title = title.replace('"', '\\"')
+
+    # Compute reading time
+    words = len(re.findall(r'\w+', page['content']))
+    reading_time = max(1, round(words / 200))
+
+    # Homepage frontmatter with slug: / to make it the root
+    frontmatter = f"""---
+title: "{safe_title}"
+id: "index"
 sidebar_position: 0
 slug: /
+custom_edit_url: null
+readingTimeMinutes: {reading_time}
 ---
 
-import Callout from '@site/src/components/interactive/Callout';
-
-# Multisensory Hub Report
-
-<Callout type="info" title="Welcome">
-Explore the science and practice of multisensory experiences. Use the sidebar to navigate through different sections.
-</Callout>
-
-## Contents
-
-Use the sidebar to navigate through the report sections.
 """
-    return content
+    # Fix MDX syntax issues in the content
+    fixed_content = fix_mdx_syntax(page["content"])
+
+    if is_references_page:
+        return frontmatter + MDX_IMPORTS_REFERENCES + f"# {title}\n\n" + """
+<ReferenceList references={references} />
+"""
+
+    # Convert citations
+    fixed_content, has_citations = convert_citations_in_content(fixed_content)
+    imports = MDX_IMPORTS if has_citations else MDX_IMPORTS_SIMPLE
+    header_line = f"# {title}\n\n"
+
+    return frontmatter + imports + header_line + fixed_content
 
 
 def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
@@ -531,6 +544,9 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
 
     H1 sections become folders with collapsible categories.
     H2 sections become pages within those folders.
+
+    Special case: Content before the first H1 (including any H2s) becomes
+    the homepage (root index.mdx) with all content merged together.
     """
     output_folder.mkdir(parents=True, exist_ok=True)
 
@@ -539,12 +555,36 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
     current_h1_slug = None
     current_h1_position = 0
     h2_position = 0
+    found_first_h1 = False  # Track if we've encountered the first H1
+    homepage_content = ""  # Accumulate content for the homepage
+    homepage_title = "Home"  # Default title for homepage
 
     for i, page in enumerate(pages):
         is_references_page = page['slug'] == 'references' or page['title'].lower() == 'references'
 
         if page['level'] == 1:
-            # H1: Create a new folder (category)
+            # Check if this is the very first H1 in the document
+            is_first_h1 = not found_first_h1
+            found_first_h1 = True
+
+            if is_first_h1:
+                # Use the first H1 as the homepage
+                homepage_page = {
+                    'title': page['title'],
+                    'level': 1,
+                    'slug': 'index',
+                    'content': page['content']
+                }
+                content = create_homepage_content(homepage_page, is_references_page=is_references_page)
+                filepath = output_folder / "index.mdx"
+                filepath.write_text(content, encoding="utf-8")
+                created_files.append(filepath)
+                print(f"  Created: index.mdx (homepage from first H1: {page['title']})")
+                
+                # We skip creating a folder for the first H1 as it's now the homepage
+                continue
+
+            # Subsequent H1s: Create a new folder (category)
             current_h1_position += 1
             h2_position = 0
             current_h1_slug = page['slug']
@@ -567,12 +607,9 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
             category_file.write_text(json.dumps(category_meta, indent=2), encoding="utf-8")
 
             # Save H1 content as index.mdx in the folder (linked via _category_.json)
-            # Create a modified page dict for the overview
             overview_page = page.copy()
-            overview_page['title'] = page['title']  # Keep original title for the page
-            # Use a globally unique ID by combining current H1 position and slug
+            overview_page['title'] = page['title']
             overview_page['slug'] = f"h1-{current_h1_position:02d}-{current_h1_slug}-overview"
-            # Sidebar position 1 for the index page (though it will be hidden by Docusaurus if it's the category link)
             content = create_mdx_content(overview_page, 1, is_references_page=is_references_page)
             filepath = current_h1_folder / "index.mdx"
             filepath.write_text(content, encoding="utf-8")
@@ -580,22 +617,66 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
             print(f"  Created: {folder_name}/index.mdx")
 
         else:
-            # H2: Save inside current H1 folder
-            h2_position += 1
-            if current_h1_folder is None:
-                # No H1 yet, save at root level
-                filename = f"{i + 1:02d}-{page['slug']}.mdx"
-                filepath = output_folder / filename
+            # H2: Handle based on whether we've hit the first H1 yet
+            if not found_first_h1:
+                # Before any H1 - merge into homepage content
+                if not homepage_content:
+                    # Use the first H2 title as the homepage title
+                    homepage_title = page['title']
+                    homepage_content = page['content']
+                    print(f"  Starting homepage with: {page['title']}")
+                else:
+                    # Add subsequent H2s as sections in the homepage
+                    h2_header = f"\n\n## {page['title']}\n\n"
+                    homepage_content += h2_header + page['content']
+                    print(f"    Merged H2 into homepage: {page['title']}")
             else:
-                filename = f"{h2_position:02d}-{page['slug']}.mdx"
-                filepath = current_h1_folder / filename
-                # Make the ID globally unique by prefixing with parent H1 slug (without slash)
-                page['slug'] = f"{current_h1_slug}-{page['slug']}"
+                # After first H1: Normal H2 handling - save inside current H1 folder
+                h2_position += 1
+                if current_h1_folder is None:
+                    # This happens if there are H2s before any H1, or after the first H1 which we skipped folder creation for
+                    filename = f"{h2_position:02d}-{page['slug']}.mdx"
+                    filepath = output_folder / filename
+                else:
+                    filename = f"{h2_position:02d}-{page['slug']}.mdx"
+                    filepath = current_h1_folder / filename
+                    page['slug'] = f"{current_h1_slug}-{page['slug']}"
 
-            content = create_mdx_content(page, h2_position, is_references_page=is_references_page)
-            filepath.write_text(content, encoding="utf-8")
-            created_files.append(filepath)
-            print(f"  Created: {filepath.relative_to(output_folder)}")
+                content = create_mdx_content(page, h2_position, is_references_page=is_references_page)
+                filepath.write_text(content, encoding="utf-8")
+                created_files.append(filepath)
+                print(f"  Created: {filepath.relative_to(output_folder)}")
+
+    # Handle case where the document has no H1s at all, OR has content before the first H1
+    if not found_first_h1 and homepage_content:
+        # Case 1: No H1s at all - existing logic
+        homepage_page = {
+            'title': homepage_title,
+            'level': 1,
+            'slug': 'index',
+            'content': homepage_content
+        }
+        content = create_homepage_content(homepage_page, is_references_page=False)
+        filepath = output_folder / "index.mdx"
+        filepath.write_text(content, encoding="utf-8")
+        created_files.append(filepath)
+        print(f"  Created: index.mdx (homepage with merged content from start of doc)")
+    elif homepage_content:
+        # Case 2: Content before first H1 - create as a separate introduction/overview page
+        # Since first H1 is the homepage, we need to decide where this goes.
+        # Let's put it in a "00-introduction" folder or similar if we want it to be first,
+        # but the prompt says "Please use Header 1 and header1 contents as this homepage".
+        # If there's content BEFORE header 1, it might be an abstract or title page.
+        # For now, let's prepend it to the homepage content if it exists.
+        homepage_path = output_folder / "index.mdx"
+        if homepage_path.exists():
+            current_home_content = homepage_path.read_text(encoding="utf-8")
+            # We need to insert it AFTER the frontmatter of the homepage
+            parts = current_home_content.split("---\n\n", 1)
+            if len(parts) == 2:
+                new_content = parts[0] + "---\n\n" + fix_mdx_syntax(homepage_content) + "\n\n" + parts[1]
+                homepage_path.write_text(new_content, encoding="utf-8")
+                print(f"  Prepended pre-H1 content to index.mdx")
 
     return created_files
 
@@ -813,12 +894,83 @@ def wait_for_server(url: str = "http://localhost:3000", timeout: int = 60) -> bo
     return False
 
 
+def remove_word_toc(markdown: str) -> str:
+    """Remove Microsoft Word generated Table of Contents from markdown."""
+    # Look for TOC-like patterns: multiple links followed by page numbers in brackets
+    # Example: [Section Name [9](#section-name)](#section-name)
+    # Often preceded by "What are you looking for?" or "Table of Contents"
+    
+    lines = markdown.splitlines()
+    new_lines = []
+    skip_mode = False
+    
+    # Simple heuristic: if we see multiple consecutive lines that look like TOC entries,
+    # we start skipping until we hit a header or a line that doesn't look like a TOC entry.
+    
+    toc_link_pattern = re.compile(r'^\[.+? \[\d+\]\(#_?Toc\d+\)\]\(#_?Toc\d+\)$')
+    toc_link_pattern_alt = re.compile(r'^\[.+? \[\d+\]\(#.+?\)\]\(#.+?\)$')
+    # Even simpler pattern for some Pandoc versions
+    toc_link_pattern_simple = re.compile(r'^\[.+? \[\d+\]\(#.+?\)\]\(#.+?\)')
+    
+    consecutive_toc_lines = 0
+    
+    for i, line in enumerate(lines):
+        clean_line = line.strip()
+        
+        # Check if line looks like a TOC entry
+        is_toc = bool(toc_link_pattern.match(clean_line) or 
+                      toc_link_pattern_alt.match(clean_line) or
+                      toc_link_pattern_simple.match(clean_line))
+        
+        if is_toc:
+            consecutive_toc_lines += 1
+            if consecutive_toc_lines >= 3:
+                skip_mode = True
+        else:
+            if skip_mode:
+                # If we're skipping and hit a header, stop skipping
+                if clean_line.startswith('#'):
+                    skip_mode = False
+                    consecutive_toc_lines = 0
+                # If we hit an empty line, keep skipping but reset counter
+                elif not clean_line:
+                    pass
+                # If we hit something else, stop skipping if we've seen a few non-TOC lines
+                else:
+                    # Check next few lines to see if TOC continues
+                    is_future_toc = False
+                    for j in range(i + 1, min(i + 5, len(lines))):
+                        if toc_link_pattern.match(lines[j].strip()) or toc_link_pattern_alt.match(lines[j].strip()):
+                            is_future_toc = True
+                            break
+                    if not is_future_toc:
+                        skip_mode = False
+                        consecutive_toc_lines = 0
+            else:
+                consecutive_toc_lines = 0
+        
+        if not skip_mode:
+            # Also remove the "What are you looking for?" intro if it's right before TOC
+            if "What are you looking for?" in line and i + 1 < len(lines) and \
+               (toc_link_pattern.match(lines[i+1].strip()) or 
+                toc_link_pattern_alt.match(lines[i+1].strip()) or
+                toc_link_pattern_simple.match(lines[i+1].strip())):
+                continue
+            new_lines.append(line)
+            
+    return "\n".join(new_lines)
+
+
 def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     """Process a single Word document through the pipeline."""
     print(f"\nProcessing: {docx_path}")
 
     print("  Converting to markdown with pandoc (extracting media)...")
     markdown = convert_docx_to_md(docx_path, extract_media_to=output_folder)
+
+    # Remove Word-generated TOC
+    print("  Removing Word-generated Table of Contents...")
+    markdown = remove_word_toc(markdown)
 
     md_path = output_folder / f"{docx_path.stem}.md"
     output_folder.mkdir(parents=True, exist_ok=True)
@@ -844,11 +996,7 @@ def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     print("  Saving MDX files...")
     save_mdx_files(pages, output_folder)
 
-    # Create index
-    index_content = create_index_content(pages)
-    index_path = output_folder / "index.mdx"
-    index_path.write_text(index_content, encoding="utf-8")
-    print(f"  Created: index.mdx")
+    # Note: index.mdx (homepage) is created by save_mdx_files from pre-H1 content
 
     return pages
 
