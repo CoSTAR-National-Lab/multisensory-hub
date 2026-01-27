@@ -48,6 +48,9 @@
 /* Import Google Font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* Import OpenDyslexic font for accessibility */
+@import url('https://fonts.cdnfonts.com/css/opendyslexic');
+
 /* ================================
    Global Styles
    ================================ */
@@ -518,4 +521,52 @@ span[id^="ref-"]:target {
   .markdown h2 {
     font-size: 1.5rem;
   }
+}
+
+/* ================================
+   Dyslexia-Friendly Font Mode
+   ================================ */
+
+[data-dyslexia-font='true'] {
+  --ifm-font-family-base: 'OpenDyslexic', sans-serif;
+  --ifm-heading-font-family: 'OpenDyslexic', sans-serif;
+  --ifm-font-family-monospace: 'OpenDyslexic Mono', monospace;
+}
+
+[data-dyslexia-font='true'] body {
+  font-family: 'OpenDyslexic', sans-serif;
+  letter-spacing: 0.05em;
+  word-spacing: 0.1em;
+  line-height: 1.9;
+}
+
+[data-dyslexia-font='true'] .markdown p,
+[data-dyslexia-font='true'] .markdown li,
+[data-dyslexia-font='true'] .markdown td,
+[data-dyslexia-font='true'] .markdown th {
+  line-height: 2;
+  letter-spacing: 0.05em;
+}
+
+[data-dyslexia-font='true'] .markdown h1,
+[data-dyslexia-font='true'] .markdown h2,
+[data-dyslexia-font='true'] .markdown h3,
+[data-dyslexia-font='true'] .markdown h4,
+[data-dyslexia-font='true'] .markdown h5,
+[data-dyslexia-font='true'] .markdown h6 {
+  font-family: 'OpenDyslexic', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+[data-dyslexia-font='true'] .menu__link,
+[data-dyslexia-font='true'] .navbar__link,
+[data-dyslexia-font='true'] .navbar__title,
+[data-dyslexia-font='true'] .table-of-contents__link {
+  font-family: 'OpenDyslexic', sans-serif;
+  letter-spacing: 0.03em;
+}
+
+[data-dyslexia-font='true'] code,
+[data-dyslexia-font='true'] pre {
+  font-family: 'OpenDyslexic Mono', 'Courier New', monospace;
 }
