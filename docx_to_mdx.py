@@ -398,9 +398,10 @@ def fix_mdx_syntax(content: str) -> str:
     # Remove Word document anchors like []{#_Ref123456 .anchor}
     content = re.sub(r'\[\]\{#[^}]+\}', '', content)
 
-    # Escape {.mark}, {.underline} and similar patterns which are causing issues
-    content = re.sub(r'\{\.mark\}', r'\\{.mark\\}', content)
-    content = re.sub(r'\{\.underline\}', r'\\{.underline\\}', content)
+    # Remove Pandoc attributes entirely (instead of escaping them)
+    # These are Word formatting artifacts that leave visible remnants
+    content = re.sub(r'\{\.mark\}', '', content)
+    content = re.sub(r'\{\.underline\}', '', content)
 
     # Fix image attributes with curly braces - remove them entirely as they're not valid in MDX
     content = re.sub(r'\]\([^)]+\)\{[^}]+\}', lambda m: m.group(0).split('{')[0], content)
@@ -415,30 +416,55 @@ def fix_mdx_syntax(content: str) -> str:
     # Fix backslashes escaping brackets in content (common in Pandoc output)
     content = content.replace('\\[', '[').replace('\\]', ']')
 
-    # Convert double hyphens to en-dash (but not triple hyphens used for em-dash or frontmatter)
-    # Match -- that is not part of --- and not in code blocks
+    # Fix 3: HTML comments FIRST (before dash normalization to avoid corrupting <!--)
+    # Replace <!-- --> with {/* */}
+    content = re.sub(r'<!--', r'{/*', content)
+    content = re.sub(r'-->', r'*/}', content)
+
+    # STEP: Normalize dashes AFTER HTML comment conversion
+    # Em-dash: --- to — (but not at line start which could be frontmatter delimiter)
+    # Only convert --- that's surrounded by word characters or spaces (not line-initial)
+    content = re.sub(r'(?<=\w)---(?=\w)', '—', content)
+    content = re.sub(r'(?<=\w)---(?=\s)', '—', content)
+    content = re.sub(r'(?<=\s)---(?=\w)', '—', content)
+
+    # For compound words (letter--letter), use regular hyphen (e.g., high--speed -> high-speed)
+    content = re.sub(r'([a-zA-Z])--([a-zA-Z])', r'\1-\2', content)
+
+    # For number ranges (digit--digit), use en-dash (e.g., 20--22 -> 20–22)
+    content = re.sub(r'(\d)--(\d)', r'\1–\2', content)
+
+    # Any remaining -- becomes en-dash (but not part of --- or inside JSX comments {/* */})
     content = re.sub(r'(?<!-)--(?!-)', '–', content)
 
-    # Fix 3: HTML comments need to be on their own line or use {/* */}
-    # Replace <!-- with {/*
-    content = re.sub(r'<!--', r'{/*', content)
-    # Replace */ with */} (note: en-dash conversion above means --> is now –>)
-    content = re.sub(r'–>', r'*/}', content)
+    # Fix 4: Clean up bold and italic marker artifacts
+    # Preserve legitimate **text** and *text* formatting for rendering
 
-    # Fix 4: Clean up only obvious bold marker artifacts
-    # Preserve legitimate **text** bold formatting for rendering in the website
-
-    def clean_bolding(text):
-        # Only fix very specific artifacts that are clearly broken:
-
+    def clean_formatting(text):
         # Fix " --**" at end of lines (artifact from pandoc)
         text = re.sub(r' --\*\*(\s|$)', r' --\1', text)
 
         # Fix ":**" at end of lines (artifact)
         text = re.sub(r':\*\*(\s|$)', r':\1', text)
 
+        # Fix trailing space before closing bold: "text: **" -> "text:**"
+        text = re.sub(r'(\S)\s+\*\*(?=\s|$|[.,;:!?)])', r'\1**', text)
+
         # Fix m**u**ltisensory (single character bolding inside word - clearly an artifact)
-        text = re.sub(r'(\w)\*\*(\w)\*\*(\w)', r'\1\2\3', text)
+        # Apply multiple times to catch adjacent occurrences
+        for _ in range(3):
+            text = re.sub(r'(\w)\*\*(\w)\*\*(\w)', r'\1\2\3', text)
+
+        # Fix single character italic inside word: m*u*ltisensory -> multisensory
+        for _ in range(3):
+            text = re.sub(r'(\w)\*(\w)\*(\w)', r'\1\2\3', text)
+
+        # Merge adjacent bold markers: **word** **word** -> **word word**
+        text = re.sub(r'\*\*([^*]+)\*\*\s+\*\*([^*]+)\*\*', r'**\1 \2**', text)
+
+        # Merge adjacent italic markers: *word* *word* -> *word word*
+        # Be careful not to match ** (bold)
+        text = re.sub(r'(?<!\*)\*([^*]+)\*\s+\*([^*]+)\*(?!\*)', r'*\1 \2*', text)
 
         # Fix lines that are ONLY "**" (empty bold)
         lines = text.split('\n')
@@ -446,12 +472,14 @@ def fix_mdx_syntax(content: str) -> str:
         for line in lines:
             if line.strip() == '**':
                 fixed_lines.append('')
+            elif line.strip() == '*':
+                fixed_lines.append('')
             else:
                 fixed_lines.append(line)
 
         return '\n'.join(fixed_lines)
 
-    content = clean_bolding(content)
+    content = clean_formatting(content)
 
     return content
 
