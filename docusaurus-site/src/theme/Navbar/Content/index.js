@@ -9,7 +9,7 @@ import NavbarColorModeToggle from '@theme/Navbar/ColorModeToggle';
 import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import styles from './styles.module.css';
-import DyslexiaToggle from '@site/src/components/DyslexiaToggle';
+import ReadingSettings from '@site/src/components/ReadingSettings';
 
 function useNavbarItems() {
   return useThemeConfig().navbar.items;
@@ -63,7 +63,7 @@ export default function NavbarContent() {
         <>
           <NavbarItems items={rightItems} />
           <div className={styles.accessibilityControls}>
-            <DyslexiaToggle />
+            <ReadingSettings />
           </div>
           <NavbarColorModeToggle className={styles.colorModeToggle} />
         </>

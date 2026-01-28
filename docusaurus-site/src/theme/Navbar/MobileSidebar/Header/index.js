@@ -4,7 +4,6 @@ import {translate} from '@docusaurus/Translate';
 import NavbarColorModeToggle from '@theme/Navbar/ColorModeToggle';
 import IconClose from '@theme/Icon/Close';
 import NavbarLogo from '@theme/Navbar/Logo';
-import DyslexiaToggle from '@site/src/components/DyslexiaToggle';
 import styles from './styles.module.css';
 
 function CloseButton() {
@@ -29,8 +28,7 @@ export default function NavbarMobileSidebarHeader() {
     <div className="navbar-sidebar__brand">
       <NavbarLogo />
       <div className={styles.controls}>
-        <DyslexiaToggle />
-        <NavbarColorModeToggle className="margin-left--sm" />
+        <NavbarColorModeToggle />
       </div>
       <CloseButton />
     </div>
