@@ -467,6 +467,36 @@ span[id^="ref-"]:target {
    Search Styles
    ================================ */
 
+/* Hide the magnifying glass icon */
+.aa-DetachedSearchButtonIcon {
+  display: none !important;
+}
+
+/* Style the search button */
+.aa-DetachedSearchButton {
+  border-radius: 20px !important;
+  background-color: var(--ifm-color-emphasis-100) !important;
+  border: 1px solid var(--ifm-color-emphasis-300) !important;
+  padding: 0.4rem 1rem !important;
+  transition: all 0.2s ease !important;
+  font-size: 0.85rem !important;
+}
+
+.aa-DetachedSearchButton:hover {
+  border-color: var(--ifm-color-primary) !important;
+  background-color: var(--ifm-color-emphasis-200) !important;
+}
+
+/* Replace "Search..." with "Search" */
+.aa-DetachedSearchButtonPlaceholder {
+  font-size: 0 !important;
+}
+
+.aa-DetachedSearchButtonPlaceholder::before {
+  content: 'Search';
+  font-size: 0.85rem;
+}
+
 .searchBar_8S_h {
   /* This is the class for the search bar container */
   margin-right: 1rem;
