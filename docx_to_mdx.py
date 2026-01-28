@@ -415,11 +415,15 @@ def fix_mdx_syntax(content: str) -> str:
     # Fix backslashes escaping brackets in content (common in Pandoc output)
     content = content.replace('\\[', '[').replace('\\]', ']')
 
+    # Convert double hyphens to en-dash (but not triple hyphens used for em-dash or frontmatter)
+    # Match -- that is not part of --- and not in code blocks
+    content = re.sub(r'(?<!-)--(?!-)', '–', content)
+
     # Fix 3: HTML comments need to be on their own line or use {/* */}
     # Replace <!-- with {/*
     content = re.sub(r'<!--', r'{/*', content)
-    # Replace --> with */}
-    content = re.sub(r'-->', r'*/}', content)
+    # Replace */ with */} (note: en-dash conversion above means --> is now –>)
+    content = re.sub(r'–>', r'*/}', content)
 
     # Fix 4: Clean up only obvious bold marker artifacts
     # Preserve legitimate **text** bold formatting for rendering in the website
