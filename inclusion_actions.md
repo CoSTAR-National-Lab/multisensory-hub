@@ -4,7 +4,7 @@ Sequential tasks to improve accessibility across the Multisensory Hub site. Each
 
 ---
 
-## Action 1: Add skip-to-content link
+## Action 1: Add skip-to-content link [COMPLETED]
 
 **File:** `docusaurus-site/src/css/custom.css` and `docusaurus-site/src/theme/Root.js` (create if missing, or use the Docusaurus swizzle pattern for `Root`).
 
@@ -33,7 +33,7 @@ Also add a reusable `.sr-only` utility class to `custom.css` for use in later ac
 
 ---
 
-## Action 2: Add prefers-reduced-motion support
+## Action 2: Add prefers-reduced-motion support [COMPLETED]
 
 **File:** `docusaurus-site/src/css/custom.css`
 
