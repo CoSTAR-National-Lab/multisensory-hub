@@ -781,7 +781,12 @@ readingTimeMinutes: {reading_time}
     # Inject inline reading time annotation if available
     reading_time_display = page.get('reading_time_display')
     if reading_time_display:
-        header_line = f'{header_prefix} {clean_header_title} <span className="reading-time">{reading_time_display} min</span>\n\n'
+        aria_label = f"{reading_time_display} minute read"
+        header_line = (
+            f'{header_prefix} {clean_header_title} '
+            f'<span className="reading-time" role="note" aria-label="{aria_label}">'
+            f'<span aria-hidden="true">{reading_time_display} min</span></span>\n\n'
+        )
         # Update frontmatter to reflect the displayed time (aggregate for H1s)
         frontmatter = frontmatter.replace(
             f'readingTimeMinutes: {reading_time}',
@@ -792,6 +797,10 @@ readingTimeMinutes: {reading_time}
 
     # Fix MDX syntax issues in the content
     fixed_content = fix_mdx_syntax(page["content"])
+
+    # Inject reading times into H3 sub-headings (skip references)
+    if not is_references_page:
+        fixed_content = inject_subheading_reading_times(fixed_content)
 
     # Handle references page specially
     if is_references_page:
@@ -833,6 +842,10 @@ readingTimeMinutes: {reading_time}
     # Fix MDX syntax issues in the content
     fixed_content = fix_mdx_syntax(page["content"])
 
+    # Inject reading times into H3 sub-headings (skip references)
+    if not is_references_page:
+        fixed_content = inject_subheading_reading_times(fixed_content)
+
     if is_references_page:
         return frontmatter + MDX_IMPORTS_REFERENCES + f"# {title}\n\n" + """
 <ReferenceList references={references} />
@@ -845,7 +858,12 @@ readingTimeMinutes: {reading_time}
     # Inject inline reading time annotation if available
     reading_time_display = page.get('reading_time_display')
     if reading_time_display:
-        header_line = f'# {title} <span className="reading-time">{reading_time_display} min</span>\n\n'
+        aria_label = f"{reading_time_display} minute read"
+        header_line = (
+            f'# {title} '
+            f'<span className="reading-time" role="note" aria-label="{aria_label}">'
+            f'<span aria-hidden="true">{reading_time_display} min</span></span>\n\n'
+        )
         # Update frontmatter reading time to match displayed aggregate
         frontmatter = frontmatter.replace(
             f'readingTimeMinutes: {reading_time}',
@@ -855,6 +873,58 @@ readingTimeMinutes: {reading_time}
         header_line = f"# {title}\n\n"
 
     return frontmatter + imports + header_line + fixed_content
+
+
+def inject_subheading_reading_times(content: str) -> str:
+    """Inject inline reading-time spans into H3 and H4 headings within page content.
+
+    For each heading, counts words from that heading to the next heading of the
+    same or higher level (or end of content) and appends a reading-time annotation.
+    """
+    # Process H3 and H4 headings
+    target_pattern = re.compile(r'^(#{3,4})\s+(.+)$', re.MULTILINE)
+    # All headings H1-H4 serve as section boundaries
+    boundary_pattern = re.compile(r'^#{1,4}\s+', re.MULTILINE)
+
+    matches = list(target_pattern.finditer(content))
+    if not matches:
+        return content
+
+    all_heading_starts = [m.start() for m in boundary_pattern.finditer(content)]
+
+    # Process in reverse so replacements don't shift positions
+    for match in reversed(matches):
+        prefix = match.group(1)  # '###' or '####'
+        level = len(prefix)
+        section_start = match.end()
+
+        # Find the next heading of same or higher level (fewer or equal #)
+        section_end = len(content)
+        for pos in all_heading_starts:
+            if pos <= match.start():
+                continue
+            # Check the actual level of the heading at this position
+            heading_at_pos = boundary_pattern.match(content, pos)
+            if heading_at_pos:
+                boundary_level = len(heading_at_pos.group().rstrip().rstrip(' '))
+                if boundary_level <= level:
+                    section_end = pos
+                    break
+
+        section_text = content[section_start:section_end]
+        words = len(re.findall(r'\w+', section_text))
+        minutes = max(1, round(words / 200))
+
+        heading_text = match.group(2)
+        aria_label = f"{minutes} minute read"
+        replacement = (
+            f'{prefix} {heading_text} '
+            f'<span className="reading-time" role="note" aria-label="{aria_label}">'
+            f'<span aria-hidden="true">{minutes} min</span></span>'
+        )
+        content = content[:match.start()] + replacement + content[match.end():]
+
+    return content
 
 
 def compute_reading_times(pages: list[dict]) -> dict:

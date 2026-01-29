@@ -62,7 +62,7 @@
   top: calc(100% + 8px);
   right: 0;
   min-width: 260px;
-  background: var(--ifm-background-color);
+  background: #ffffff;
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
@@ -83,6 +83,7 @@
 }
 
 [data-theme='dark'] .dropdown {
+  background: #1e1e23;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 

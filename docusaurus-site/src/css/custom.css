@@ -116,6 +116,21 @@
     border-color: currentColor !important;
     text-shadow: none !important;
   }
+  .markdown h1 .reading-time,
+  .markdown h2 .reading-time,
+  .markdown h3 .reading-time,
+  .markdown h4 .reading-time {
+    color: var(--ifm-color-emphasis-900) !important;
+    -webkit-text-fill-color: var(--ifm-color-emphasis-900) !important;
+    font-weight: 500;
+  }
+  [data-theme='dark'] .markdown h1 .reading-time,
+  [data-theme='dark'] .markdown h2 .reading-time,
+  [data-theme='dark'] .markdown h3 .reading-time,
+  [data-theme='dark'] .markdown h4 .reading-time {
+    color: var(--ifm-color-emphasis-900) !important;
+    -webkit-text-fill-color: var(--ifm-color-emphasis-900) !important;
+  }
 }
 
 /* ================================
@@ -647,10 +662,12 @@ span[id^="ref-"]:target {
    ================================ */
 
 .markdown h1 .reading-time,
-.markdown h2 .reading-time {
+.markdown h2 .reading-time,
+.markdown h3 .reading-time,
+.markdown h4 .reading-time {
   font-size: 0.45em;
   font-weight: 400;
-  color: var(--ifm-color-emphasis-500);
+  color: var(--ifm-color-emphasis-700);
   vertical-align: middle;
   margin-left: 0.5em;
   white-space: nowrap;
@@ -658,25 +675,29 @@ span[id^="ref-"]:target {
 
 /* Override H1 gradient text fill so annotation shows as plain text */
 .markdown h1 .reading-time {
-  -webkit-text-fill-color: var(--ifm-color-emphasis-500);
+  -webkit-text-fill-color: var(--ifm-color-emphasis-700);
   background: none;
   -webkit-background-clip: unset;
   background-clip: unset;
 }
 
-/* Separator dot via CSS pseudo-element */
+/* Separator dot — decorative, hidden from screen readers via parent aria-label */
 .markdown h1 .reading-time::before,
-.markdown h2 .reading-time::before {
+.markdown h2 .reading-time::before,
+.markdown h3 .reading-time::before,
+.markdown h4 .reading-time::before {
   content: '\00B7\00A0';
 }
 
-/* Dark mode */
+/* Dark mode — emphasis-600 gives good contrast on dark backgrounds */
 [data-theme='dark'] .markdown h1 .reading-time,
-[data-theme='dark'] .markdown h2 .reading-time {
-  color: var(--ifm-color-emphasis-400);
+[data-theme='dark'] .markdown h2 .reading-time,
+[data-theme='dark'] .markdown h3 .reading-time,
+[data-theme='dark'] .markdown h4 .reading-time {
+  color: var(--ifm-color-emphasis-600);
 }
 [data-theme='dark'] .markdown h1 .reading-time {
-  -webkit-text-fill-color: var(--ifm-color-emphasis-400);
+  -webkit-text-fill-color: var(--ifm-color-emphasis-600);
 }
 
 /* Hide reading time in table of contents sidebar */
