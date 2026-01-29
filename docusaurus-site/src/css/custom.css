@@ -94,6 +94,15 @@
   }
 }
 
+:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* ================================
    Global Styles
    ================================ */

@@ -140,7 +140,7 @@ For every `<button>` or `<a>` that contains only an SVG icon or symbol with no v
 
 ---
 
-## Action 10: Add focus-visible styles
+## Action 10: Add focus-visible styles [COMPLETED]
 
 **File:** `docusaurus-site/src/css/custom.css`
 

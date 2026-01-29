@@ -23,10 +23,9 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.searchInput:focus {
-  outline: none;
-  border-color: var(--ifm-color-primary);
-  box-shadow: 0 0 0 3px var(--ifm-color-primary-lighter);
+.searchInput:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
 }
 
 .tableWrapper {
