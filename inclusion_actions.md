@@ -184,7 +184,7 @@ This does not fix the alt text — it alerts a human to address it in the Word s
 
 ---
 
-## Action 13: Add prefers-contrast support
+## Action 13: Add prefers-contrast support [COMPLETED]
 
 **File:** `docusaurus-site/src/css/custom.css`
 

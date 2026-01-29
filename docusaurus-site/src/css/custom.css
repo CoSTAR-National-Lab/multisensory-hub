@@ -103,6 +103,21 @@
   outline: none;
 }
 
+@media (prefers-contrast: more) {
+  :root {
+    --ifm-color-primary: #4338ca;
+    --custom-shadow: none;
+    --custom-border-radius: 4px;
+  }
+  [data-theme='dark'] {
+    --ifm-color-primary: #a5b4fc;
+  }
+  * {
+    border-color: currentColor !important;
+    text-shadow: none !important;
+  }
+}
+
 /* ================================
    Global Styles
    ================================ */
