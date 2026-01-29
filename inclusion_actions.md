@@ -70,7 +70,7 @@ Currently the popup only appears on `onMouseEnter`/`onMouseLeave`. Change it so 
 
 ---
 
-## Action 4: Make RefTooltip keyboard-accessible
+## Action 4: Make RefTooltip keyboard-accessible [COMPLETED]
 
 **File:** `docusaurus-site/src/components/RefTooltip.tsx`
 
