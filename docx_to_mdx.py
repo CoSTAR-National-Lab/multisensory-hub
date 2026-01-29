@@ -56,6 +56,10 @@ import { references } from '@site/src/data/references';
 """
 
 
+# Global list to collect accessibility warnings
+ACCESSIBILITY_WARNINGS = []
+
+
 def find_docx_files(folder: Path) -> list[Path]:
     """Scan folder for Word documents, excluding temporary owner files."""
     return [f for f in folder.glob("*.docx") if not f.name.startswith("~$")]
@@ -611,6 +615,43 @@ def fix_mdx_syntax(content: str) -> str:
     # Fix image paths - use absolute path from site root for nested folders
     content = re.sub(r'\!\[([^\]]*)\]\(mdx/media/', r'![\1](/media/', content)
     content = re.sub(r'\!\[([^\]]*)\]\(media/', r'![\1](/media/', content)
+
+    # Action 12: Flag missing or generic alt text
+    def check_alt_text(match):
+        alt_text = match.group(1).strip()
+        img_path = match.group(2)
+        
+        is_generic = False
+        reason = ""
+        
+        generic_patterns = [
+            "A picture", "A screenshot", "A close up", "A group of", 
+            "image", "Image", "graphic", "Graphic", "figure", "Figure"
+        ]
+        
+        if not alt_text:
+            is_generic = True
+            reason = "missing (empty)"
+        elif len(alt_text) < 5:
+            is_generic = True
+            reason = f"too short (\"{alt_text}\")"
+        else:
+            for pattern in generic_patterns:
+                if alt_text.lower().startswith(pattern.lower()):
+                    is_generic = True
+                    reason = f"generic (starts with \"{pattern}\")"
+                    break
+        
+        if is_generic:
+            msg = f"WARNING: Image {img_path} has {reason} alt text. Consider adding a descriptive alt in Word."
+            if msg not in ACCESSIBILITY_WARNINGS:
+                ACCESSIBILITY_WARNINGS.append(msg)
+                print(f"  [A11y] {msg}")
+        
+        return match.group(0)
+
+    # Re-run a scan specifically for warnings (without changing content yet)
+    re.sub(r'\!\[([^\]]*)\]\(([^)]+)\)', check_alt_text, content)
 
     # Fix URLs in angle brackets - convert <https://...> to just the URL without brackets
     content = re.sub(r'<(https?://[^>]+)>', r'\1', content)
@@ -1321,6 +1362,19 @@ def main():
     # Process each document
     for docx_path in docx_files:
         process_document(docx_path, OUTPUT_FOLDER)
+
+    # Print accessibility summary
+    if ACCESSIBILITY_WARNINGS:
+        print("\n" + "!" * 60)
+        print(f"ACCESSIBILITY WARNING: {len(ACCESSIBILITY_WARNINGS)} issues found")
+        print("!" * 60)
+        for warning in ACCESSIBILITY_WARNINGS:
+            print(f"  - {warning}")
+        print("!" * 60)
+        print("Please address these in the source Word document for better accessibility.")
+        print("!" * 60)
+    else:
+        print("\n[OK] No accessibility issues detected in image alt-texts.")
 
     # Copy to Docusaurus
     print("\n" + "-" * 60)

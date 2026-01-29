@@ -97,19 +97,15 @@ The component already uses a `<button>` with `aria-expanded`. Add:
 
 ---
 
-## Action 6: Make Chart component accessible
+## Action 6: Make Chart component accessible [CANCELLED - REPLACED BY ACTION 12 WARNING]
 
 **File:** `docusaurus-site/src/components/interactive/Chart.tsx`
 
-The chart is purely visual with no text alternative. Add:
-
-- `role="img"` and a descriptive `aria-label` on the chart's outer container. The label should summarise the chart type and what it shows, constructed from the component's props (e.g. `aria-label={`${type} chart: ${title || 'data visualisation'}`}`).
-- Below the visual chart, render a visually hidden (`className` using the `.sr-only` class from Action 1) `<table>` containing the chart's data in rows and columns. This gives screen readers a full data fallback. Only render this table if `data` is provided.
-- Add `aria-hidden="true"` to purely decorative SVG/CSS elements within the chart that don't convey data.
+This action has been cancelled as per user feedback. Instead of just making the component accessible with fallback tables, the pipeline now flags all images (including charts) that have missing or generic alt-text in the source Word document (Action 12).
 
 ---
 
-## Action 7: Make DataTable sort headers accessible
+## Action 7: Make DataTable sort headers accessible [COMPLETED]
 
 **File:** `docusaurus-site/src/components/interactive/DataTable.tsx`
 
@@ -120,7 +116,7 @@ The chart is purely visual with no text alternative. Add:
 
 ---
 
-## Action 8: Make Callout icons accessible
+## Action 8: Make Callout icons accessible [COMPLETED]
 
 **File:** `docusaurus-site/src/components/interactive/Callout.tsx`
 
@@ -132,7 +128,7 @@ The component uses emoji as icons. For each callout type:
 
 ---
 
-## Action 9: Label icon-only buttons
+## Action 9: Label icon-only buttons [COMPLETED]
 
 **Files:** `docusaurus-site/src/components/RefPopup.tsx`, `docusaurus-site/src/components/interactive/ReferenceCard.tsx`, and any other component with icon-only buttons (copy, navigate, external link).
 
@@ -181,18 +177,18 @@ If the search component is already accessible (check `@cmfcmf/docusaurus-search-
 
 ---
 
-## Action 12: Flag missing or generic alt text during conversion
+## Action 12: Flag missing or generic alt text during conversion [COMPLETED]
 
 **File:** `docx_to_mdx.py`
 
-In the `fix_mdx_syntax()` function or as a new post-processing step, add a check that scans for images with empty or likely auto-generated alt text. Print a warning during pipeline execution but do not block the build:
+In the `fix_mdx_syntax()` function or as a new post-processing step, add a check that scans for images with empty or likely auto-generated alt text. Print a warning if issues are found:
 
 - Flag images where alt text is empty: `![](path)`
-- Flag images where alt text matches common auto-generated patterns: starts with "A picture", "A screenshot", "A close up", "A group of", "image", "Image", or is shorter than 5 characters.
+- Flag images where alt text matches common auto-generated patterns: starts with "A picture", "A screenshot", "A close up", "A group of", "image", "Image", "graphic", "Graphic", "figure", "Figure", or is shorter than 5 characters.
 - Print warnings like: `WARNING: Image /media/image5.svg has generic alt text: "A picture containing text". Consider adding a descriptive alt.`
 - Collect these warnings and print a summary at the end of the pipeline run with the count.
 
-This does not fix the alt text — it surfaces the problem so a human can address it in the Word source document.
+This does not fix the alt text — it alerts a human to address it in the Word source document.
 
 ---
 

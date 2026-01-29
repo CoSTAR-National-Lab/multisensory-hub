@@ -53,6 +53,11 @@ export default function DataTable({
     }
   };
 
+  const getAriaSort = (header: string) => {
+    if (!sortable || sortColumn !== header) return 'none';
+    return sortDirection === 'asc' ? 'ascending' : 'descending';
+  };
+
   return (
     <div className={styles.tableContainer}>
       {searchable && (
@@ -63,6 +68,7 @@ export default function DataTable({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={styles.searchInput}
+            aria-label="Filter table rows"
           />
         </div>
       )}
@@ -73,14 +79,24 @@ export default function DataTable({
               {headers.map(header => (
                 <th
                   key={header}
-                  onClick={() => handleSort(header)}
                   className={sortable ? styles.sortable : ''}
+                  aria-sort={getAriaSort(header)}
                 >
-                  <span>{header}</span>
-                  {sortColumn === header && (
-                    <span className={styles.sortIndicator}>
-                      {sortDirection === 'asc' ? ' ↑' : ' ↓'}
-                    </span>
+                  {sortable ? (
+                    <button
+                      className={styles.sortButton}
+                      onClick={() => handleSort(header)}
+                      aria-label={`Sort by ${header}`}
+                    >
+                      <span>{header}</span>
+                      <span className={styles.sortIndicator} aria-hidden="true">
+                        {sortColumn === header 
+                          ? (sortDirection === 'asc' ? ' ↑' : ' ↓')
+                          : ' ↕'}
+                      </span>
+                    </button>
+                  ) : (
+                    <span>{header}</span>
                   )}
                 </th>
               ))}
@@ -97,7 +113,7 @@ export default function DataTable({
           </tbody>
         </table>
       </div>
-      <div className={styles.footer}>
+      <div className={styles.footer} aria-live="polite" role="status">
         Showing {filteredAndSortedData.length} of {data.length} rows
       </div>
     </div>
