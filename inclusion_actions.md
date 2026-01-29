@@ -54,7 +54,7 @@ This covers `fadeInUp`, `bounce`, `spin`, `float`, and any future animations wit
 
 ---
 
-## Action 3: Make RefPopup keyboard-accessible
+## Action 3: Make RefPopup keyboard-accessible [COMPLETED]
 
 **File:** `docusaurus-site/src/components/RefPopup.tsx`
 
