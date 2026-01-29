@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import styles from './CollapsibleSection.module.css';
 
 interface CollapsibleSectionProps {
@@ -13,6 +13,7 @@ export default function CollapsibleSection({
   defaultOpen = false
 }: CollapsibleSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const panelId = useId();
 
   return (
     <div className={`${styles.collapsible} ${isOpen ? styles.open : ''}`}>
@@ -20,9 +21,10 @@ export default function CollapsibleSection({
         className={styles.header}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
+        aria-controls={panelId}
       >
         <span className={styles.title}>{title}</span>
-        <span className={styles.chevron}>
+        <span className={styles.chevron} aria-hidden="true">
           <svg
             width="20"
             height="20"
@@ -33,7 +35,12 @@ export default function CollapsibleSection({
           </svg>
         </span>
       </button>
-      <div className={styles.contentWrapper}>
+      <div 
+        id={panelId}
+        role="region"
+        aria-labelledby={undefined} // title is already inside the button
+        className={styles.contentWrapper}
+      >
         <div className={styles.content}>
           {children}
         </div>

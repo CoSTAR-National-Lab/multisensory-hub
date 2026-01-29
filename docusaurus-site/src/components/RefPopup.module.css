@@ -82,32 +82,27 @@
 .urlLink {
   display: inline-block;
   font-size: 0.75rem;
-  color: var(--ifm-color-primary-dark);
-  text-decoration: none;
+  color: var(--ifm-color-primary);
+  text-decoration: underline;
   word-break: break-all;
-  padding: 4px 8px;
-  background: var(--ifm-color-primary-lightest);
-  border-radius: 4px;
+  padding: 2px 0;
   transition: all 0.2s ease;
 }
 
 .doiLink:hover,
 .urlLink:hover {
-  background: var(--ifm-color-primary-lighter);
-  color: var(--ifm-color-primary-darkest);
+  color: var(--ifm-color-primary-darker);
   text-decoration: none;
 }
 
 /* Dark mode overrides for popup links */
 :global([data-theme='dark']) .doiLink,
 :global([data-theme='dark']) .urlLink {
-  background: rgba(96, 165, 250, 0.15);
-  color: var(--ifm-color-primary-light);
+  color: var(--ifm-color-primary-lighter);
 }
 
 :global([data-theme='dark']) .doiLink:hover,
 :global([data-theme='dark']) .urlLink:hover {
-  background: rgba(96, 165, 250, 0.25);
   color: var(--ifm-color-primary-lightest);
 }
 

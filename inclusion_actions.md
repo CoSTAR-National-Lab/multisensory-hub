@@ -83,7 +83,7 @@ Apply the same pattern as Action 3:
 
 ---
 
-## Action 5: Fix CollapsibleSection keyboard support
+## Action 5: Fix CollapsibleSection keyboard support [COMPLETED]
 
 **File:** `docusaurus-site/src/components/interactive/CollapsibleSection.tsx`
 
