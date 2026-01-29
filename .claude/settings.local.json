@@ -11,7 +11,9 @@
       "Bash(npm run start:*)",
       "Bash(npx docusaurus --version)",
       "Bash(npx docusaurus:*)",
-      "Bash(set NODE_OPTIONS=--max-old-space-size=4096)"
+      "Bash(set NODE_OPTIONS=--max-old-space-size=4096)",
+      "Bash(timeout:*)",
+      "Bash(dir:*)"
     ]
   }
 }

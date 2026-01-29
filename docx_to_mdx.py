@@ -373,6 +373,208 @@ def ensure_unique_slugs(pages: list[dict]) -> list[dict]:
     return pages
 
 
+def _find_page_for_position(markdown: str, pages: list[dict], char_position: int) -> int:
+    """Map a character position in the full markdown to a page index.
+
+    Reconstructs the H1/H2 split boundaries from the original markdown
+    to determine which page a given character offset falls within.
+    """
+    header_pattern = re.compile(r"^(#{1,2})\s+(.+)$", re.MULTILINE)
+    matches = list(header_pattern.finditer(markdown))
+
+    if not matches:
+        return 0
+
+    # Build boundaries: each page corresponds to a range [start, end) in the markdown
+    boundaries = []
+    first_match_start = matches[0].start()
+
+    # Preamble (content before first header)
+    if first_match_start > 0:
+        preamble = markdown[:first_match_start].strip()
+        if preamble:
+            boundaries.append((0, first_match_start))
+
+    for i, match in enumerate(matches):
+        start = match.start()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(markdown)
+        boundaries.append((start, end))
+
+    # Find which boundary range the position falls in
+    for page_idx, (start, end) in enumerate(boundaries):
+        if start <= char_position < end:
+            return page_idx
+
+    # Fallback: last page
+    return len(boundaries) - 1
+
+
+def collect_anchor_registry(markdown: str, pages: list[dict]) -> dict:
+    """Scan the full markdown for anchor targets and map each to its final page.
+
+    Collects:
+    - Word _Ref anchors: []{#_Ref205972686 .anchor}
+    - H3/H4/H5/H6 heading slugs (auto-generated fragment targets)
+
+    Returns dict: anchor_id -> {page_index, page_slug, fragment, page_level}
+    """
+    registry = {}
+
+    # Collect _Ref anchors
+    ref_pattern = re.compile(r'\[\]\{#(_Ref\d+)\s+\.anchor\}')
+    for match in ref_pattern.finditer(markdown):
+        anchor_id = match.group(1)
+        page_idx = _find_page_for_position(markdown, pages, match.start())
+        if page_idx < len(pages):
+            registry[anchor_id] = {
+                'page_index': page_idx,
+                'page_slug': pages[page_idx]['slug'],
+                'fragment': anchor_id,
+                'page_level': pages[page_idx]['level'],
+            }
+
+    # Collect H3-H6 heading slugs (these are sub-headings within pages)
+    heading_pattern = re.compile(r'^(#{3,6})\s+(.+)$', re.MULTILINE)
+    for match in heading_pattern.finditer(markdown):
+        heading_text = match.group(2).strip()
+        heading_slug = slugify(heading_text)
+        page_idx = _find_page_for_position(markdown, pages, match.start())
+        if page_idx < len(pages):
+            registry[heading_slug] = {
+                'page_index': page_idx,
+                'page_slug': pages[page_idx]['slug'],
+                'fragment': heading_slug,
+                'page_level': pages[page_idx]['level'],
+            }
+
+    # Also register H2 heading slugs (they become separate pages, fragment is empty)
+    h2_pattern = re.compile(r'^##\s+(.+)$', re.MULTILINE)
+    for match in h2_pattern.finditer(markdown):
+        heading_text = match.group(1).strip()
+        heading_slug = slugify(heading_text)
+        page_idx = _find_page_for_position(markdown, pages, match.start())
+        if page_idx < len(pages):
+            registry[heading_slug] = {
+                'page_index': page_idx,
+                'page_slug': pages[page_idx]['slug'],
+                'fragment': '',  # H2 is the page itself, no fragment needed
+                'page_level': pages[page_idx]['level'],
+            }
+
+    return registry
+
+
+def build_page_url_map(pages: list[dict]) -> dict:
+    """Map each page index to its Docusaurus URL path.
+
+    Mirrors the routing logic in save_mdx_files() and Docusaurus folder-based
+    routing with routeBasePath: '/':
+    - Pre-H1 content / first H1 -> '/'
+    - Subsequent H1s -> '/<h1slug>/<doc-id>' (category link page)
+    - H2s before first H1 -> '/' (merged into homepage)
+    - H2s after an H1 -> '/<h1slug>/<h1slug-h2slug>'
+    """
+    url_map = {}
+    found_first_h1 = False
+    current_h1_slug = None
+    current_h1_position = 0
+
+    for i, page in enumerate(pages):
+        if page['level'] == 1:
+            if not found_first_h1:
+                found_first_h1 = True
+                url_map[i] = '/'
+            else:
+                current_h1_position += 1
+                current_h1_slug = page['slug']
+                # H1 overview pages are linked via _category_.json which makes
+                # the category URL serve the doc, so the URL is just /<h1-slug>
+                url_map[i] = f'/{current_h1_slug}'
+        else:
+            # H2
+            if not found_first_h1:
+                # Pre-H1 H2s are merged into homepage
+                url_map[i] = '/'
+            else:
+                if current_h1_slug:
+                    h2_doc_id = f"{current_h1_slug}-{page['slug']}"
+                else:
+                    h2_doc_id = page['slug']
+                url_map[i] = f'/{current_h1_slug}/{h2_doc_id}'
+
+    return url_map
+
+
+def rewrite_internal_links(content: str, page_index: int, anchor_registry: dict, url_map: dict) -> str:
+    """Rewrite [text](#fragment) links to point to the correct cross-page URL.
+
+    For each internal link:
+    - If target is on the same page: leave as-is
+    - If target is on a different page: rewrite to [text](/page-url#fragment)
+    - If target is unknown: leave unchanged
+    """
+    def replace_link(match):
+        full_match = match.group(0)
+        link_text = match.group(1)
+        fragment = match.group(2)
+
+        # Look up the fragment in the anchor registry
+        if fragment not in anchor_registry:
+            return full_match
+
+        target_info = anchor_registry[fragment]
+        target_page_idx = target_info['page_index']
+
+        # Same page - leave as-is
+        if target_page_idx == page_index:
+            return full_match
+
+        # Different page - rewrite with cross-page URL
+        target_url = url_map.get(target_page_idx, '/')
+        target_fragment = target_info['fragment']
+        if target_fragment:
+            return f'[{link_text}]({target_url}#{target_fragment})'
+        else:
+            return f'[{link_text}]({target_url})'
+
+    # Match markdown links with fragment-only targets: [text](#fragment)
+    # Also handles [text](#fragment) where text may contain nested brackets
+    pattern = re.compile(r'\[([^\]]*)\]\(#([^)]+)\)')
+    return pattern.sub(replace_link, content)
+
+
+def preserve_ref_anchors(content: str) -> str:
+    """Convert Word _Ref anchors to HTML span elements before fix_mdx_syntax strips them.
+
+    Converts []{#_Ref... .anchor} to <span id="_Ref..."></span>
+    Special handling: when anchors appear inside image alt text (![...]),
+    the span is placed before the image to avoid invalid MDX.
+    """
+    # Handle anchors inside image markup: ![...[]{#_Ref... .anchor}...](...)
+    # Place the anchor on its own line before the image
+    content = re.sub(
+        r'(!\[)\[\]\{#(_Ref\d+)\s+\.anchor\}',
+        r'<span id="\2"></span>\n\n\1',
+        content
+    )
+
+    # Handle remaining standalone anchors: []{#_RefNNNNN .anchor}
+    content = re.sub(
+        r'\[\]\{#(_Ref\d+)\s+\.anchor\}',
+        r'<span id="\1"></span>',
+        content
+    )
+
+    # Clean up any remaining anchor attributes (e.g. inside other contexts)
+    content = re.sub(
+        r'\{#(_Ref\d+)\s+\.anchor\}',
+        r'',
+        content
+    )
+
+    return content
+
+
 def fix_mdx_syntax(content: str) -> str:
     """Fix common MDX syntax issues that cause compilation errors."""
 
@@ -444,11 +646,32 @@ def fix_mdx_syntax(content: str) -> str:
         # Fix " --**" at end of lines (artifact from pandoc)
         text = re.sub(r' --\*\*(\s|$)', r' --\1', text)
 
-        # Fix ":**" at end of lines (artifact)
-        text = re.sub(r':\*\*(\s|$)', r':\1', text)
+        # Note: Removed the ":**" fix as it was incorrectly removing valid closing bold markers
+        # The pattern `:**` followed by space is often a legitimate bold closer like "**Title:**"
 
-        # Fix trailing space before closing bold: "text: **" -> "text:**"
-        text = re.sub(r'(\S)\s+\*\*(?=\s|$|[.,;:!?)])', r'\1**', text)
+        # Fix leading whitespace inside bold markers: "** Adaptation**" -> "**Adaptation**"
+        # Use [^*\n] to avoid matching across lines
+        # When preceded by a word character, preserve the space before **
+        text = re.sub(r'(\w)\*\*\s+([^*\n]+?\*\*)', r'\1 **\2', text)
+        # When preceded by punctuation or start, just remove the leading space
+        text = re.sub(r'\*\*\s+([^*\n]+?\*\*)', r'**\1', text)
+
+        # Fix leading whitespace inside italic markers: "* text*" -> "*text*"
+        text = re.sub(r'(\w)(?<!\*)\*\s+([^*\n]+?\*(?!\*))', r'\1 *\2', text)
+        text = re.sub(r'(?<!\*)\*\s+([^*\n]+?\*(?!\*))', r'*\1', text)
+
+        # Fix trailing whitespace inside bold markers: "**text: **" -> "**text:**"
+        # This handles cases like "**Gen Z want goosebumps: **" where trailing space breaks bold
+        # Use [^*\n] to avoid matching across lines
+        # When followed by a word character, preserve the space after the closing **
+        text = re.sub(r'\*\*([^*\n]+?)\s+\*\*(\w)', r'**\1** \2', text)
+        # When followed by punctuation or end of line, just remove the trailing space
+        text = re.sub(r'\*\*([^*\n]+?)\s+\*\*(?=[^a-zA-Z0-9]|$)', r'**\1**', text)
+
+        # Fix trailing whitespace inside italic markers: "*text *" -> "*text*"
+        # Same logic: preserve space after if followed by word character
+        text = re.sub(r'(?<!\*)\*([^*\n]+?)\s+\*(?!\*)(\w)', r'*\1* \2', text)
+        text = re.sub(r'(?<!\*)\*([^*\n]+?)\s+\*(?!\*)(?=[^a-zA-Z0-9]|$)', r'*\1*', text)
 
         # Fix m**u**ltisensory (single character bolding inside word - clearly an artifact)
         # Apply multiple times to catch adjacent occurrences
@@ -571,7 +794,8 @@ readingTimeMinutes: {reading_time}
     return frontmatter + imports + header_line + fixed_content
 
 
-def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
+def save_mdx_files(pages: list[dict], output_folder: Path,
+                    anchor_registry: dict = None, url_map: dict = None) -> list[Path]:
     """Save pages as .mdx files with hierarchical folder structure.
 
     H1 sections become folders with collapsible categories.
@@ -600,12 +824,17 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
             found_first_h1 = True
 
             if is_first_h1:
+                # Apply cross-document link resolution before creating content
+                resolved_content = page['content']
+                if anchor_registry and url_map:
+                    resolved_content = preserve_ref_anchors(resolved_content)
+                    resolved_content = rewrite_internal_links(resolved_content, i, anchor_registry, url_map)
                 # Use the first H1 as the homepage
                 homepage_page = {
                     'title': page['title'],
                     'level': 1,
                     'slug': 'index',
-                    'content': page['content']
+                    'content': resolved_content
                 }
                 content = create_homepage_content(homepage_page, is_references_page=is_references_page)
                 filepath = output_folder / "index.mdx"
@@ -638,6 +867,11 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
             category_file = current_h1_folder / "_category_.json"
             category_file.write_text(json.dumps(category_meta, indent=2), encoding="utf-8")
 
+            # Apply cross-document link resolution before creating content
+            if anchor_registry and url_map:
+                page['content'] = preserve_ref_anchors(page['content'])
+                page['content'] = rewrite_internal_links(page['content'], i, anchor_registry, url_map)
+
             # Save H1 content as index.mdx in the folder (linked via _category_.json)
             overview_page = page.copy()
             overview_page['title'] = page['title']
@@ -652,15 +886,19 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
             # H2: Handle based on whether we've hit the first H1 yet
             if not found_first_h1:
                 # Before any H1 - merge into homepage content
+                resolved_content = page['content']
+                if anchor_registry and url_map:
+                    resolved_content = preserve_ref_anchors(resolved_content)
+                    resolved_content = rewrite_internal_links(resolved_content, i, anchor_registry, url_map)
                 if not homepage_content:
                     # Use the first H2 title as the homepage title
                     homepage_title = page['title']
-                    homepage_content = page['content']
+                    homepage_content = resolved_content
                     print(f"  Starting homepage with: {page['title']}")
                 else:
                     # Add subsequent H2s as sections in the homepage
                     h2_header = f"\n\n## {page['title']}\n\n"
-                    homepage_content += h2_header + page['content']
+                    homepage_content += h2_header + resolved_content
                     print(f"    Merged H2 into homepage: {page['title']}")
             else:
                 # After first H1: Normal H2 handling - save inside current H1 folder
@@ -673,6 +911,11 @@ def save_mdx_files(pages: list[dict], output_folder: Path) -> list[Path]:
                     filename = f"{h2_position:02d}-{page['slug']}.mdx"
                     filepath = current_h1_folder / filename
                     page['slug'] = f"{current_h1_slug}-{page['slug']}"
+
+                # Apply cross-document link resolution before creating content
+                if anchor_registry and url_map:
+                    page['content'] = preserve_ref_anchors(page['content'])
+                    page['content'] = rewrite_internal_links(page['content'], i, anchor_registry, url_map)
 
                 content = create_mdx_content(page, h2_position, is_references_page=is_references_page)
                 filepath.write_text(content, encoding="utf-8")
@@ -1025,8 +1268,13 @@ def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     pages = ensure_unique_slugs(pages)
     print(f"  Found {len(pages)} sections")
 
+    print("  Building cross-document link registry...")
+    anchor_registry = collect_anchor_registry(markdown, pages)
+    url_map = build_page_url_map(pages)
+    print(f"  Registered {len(anchor_registry)} link targets across {len(url_map)} pages")
+
     print("  Saving MDX files...")
-    save_mdx_files(pages, output_folder)
+    save_mdx_files(pages, output_folder, anchor_registry, url_map)
 
     # Note: index.mdx (homepage) is created by save_mdx_files from pre-H1 content
 
