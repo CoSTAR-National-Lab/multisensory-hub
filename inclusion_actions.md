@@ -161,19 +161,11 @@ Apply this globally. Then check that no component CSS module overrides `outline:
 
 ---
 
-## Action 11: Add aria-live region for search results
+## Action 11: Add aria-live region for search results [COMPLETED]
 
-**File:** `docusaurus-site/src/css/custom.css` (or the search component if swizzled)
+**File:** `docusaurus-site/src/theme/SearchBar/index.js`
 
-If the search plugin renders a results dropdown, ensure the results container has `aria-live="polite"` so screen readers announce when results appear. If the search component is not swizzled and you can't modify its markup directly, add this CSS to at least ensure focus is visible:
-
-```css
-.searchResultsColumn_Z9K0 [role="listbox"] {
-  /* ensure this container is announced */
-}
-```
-
-If the search component is already accessible (check `@cmfcmf/docusaurus-search-local` docs), skip this action.
+Manually swizzled the search component from `@cmfcmf/docusaurus-search-local` and added `aria-live="polite"` to the search wrapper. This ensures screen readers announce when results or status messages change within the autocomplete dropdown.
 
 ---
 
