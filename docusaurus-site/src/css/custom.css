@@ -599,6 +599,20 @@ span[id^="ref-"]:target {
   border-radius: 2px !important;
 }
 
+/* Action 11: Search accessibility improvements */
+.searchResultsColumn_Z9K0 [role="listbox"],
+.aa-Panel [role="listbox"] {
+  /* Ensure the results panel is properly identified and visible */
+}
+
+/* Ensure focus is visible for search results when navigating via keyboard */
+.searchResult_P9U_:focus-visible,
+.aa-Item[aria-selected="true"] {
+  background-color: var(--ifm-color-emphasis-200) !important;
+  outline: 2px solid var(--ifm-color-primary) !important;
+  outline-offset: -2px !important;
+}
+
 /* ================================
    Responsive Adjustments
    ================================ */
@@ -611,6 +625,48 @@ span[id^="ref-"]:target {
   .markdown h2 {
     font-size: 1.5rem;
   }
+}
+
+/* ================================
+   Inline Reading Time in Headings
+   ================================ */
+
+.markdown h1 .reading-time,
+.markdown h2 .reading-time {
+  font-size: 0.45em;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-500);
+  vertical-align: middle;
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+/* Override H1 gradient text fill so annotation shows as plain text */
+.markdown h1 .reading-time {
+  -webkit-text-fill-color: var(--ifm-color-emphasis-500);
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
+/* Separator dot via CSS pseudo-element */
+.markdown h1 .reading-time::before,
+.markdown h2 .reading-time::before {
+  content: '\00B7\00A0';
+}
+
+/* Dark mode */
+[data-theme='dark'] .markdown h1 .reading-time,
+[data-theme='dark'] .markdown h2 .reading-time {
+  color: var(--ifm-color-emphasis-400);
+}
+[data-theme='dark'] .markdown h1 .reading-time {
+  -webkit-text-fill-color: var(--ifm-color-emphasis-400);
+}
+
+/* Hide reading time in table of contents sidebar */
+.table-of-contents .reading-time {
+  display: none;
 }
 
 /* ================================

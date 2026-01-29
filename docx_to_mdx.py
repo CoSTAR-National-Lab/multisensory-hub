@@ -777,7 +777,18 @@ readingTimeMinutes: {reading_time}
     header_prefix = "#" * page["level"]
     # Clean up title for the main header as well
     clean_header_title = page['title'].replace('\\', '')
-    header_line = f"{header_prefix} {clean_header_title}\n\n"
+
+    # Inject inline reading time annotation if available
+    reading_time_display = page.get('reading_time_display')
+    if reading_time_display:
+        header_line = f'{header_prefix} {clean_header_title} <span className="reading-time">{reading_time_display} min</span>\n\n'
+        # Update frontmatter to reflect the displayed time (aggregate for H1s)
+        frontmatter = frontmatter.replace(
+            f'readingTimeMinutes: {reading_time}',
+            f'readingTimeMinutes: {reading_time_display}'
+        )
+    else:
+        header_line = f"{header_prefix} {clean_header_title}\n\n"
 
     # Fix MDX syntax issues in the content
     fixed_content = fix_mdx_syntax(page["content"])
@@ -830,9 +841,37 @@ readingTimeMinutes: {reading_time}
     # Convert citations
     fixed_content, has_citations = convert_citations_in_content(fixed_content)
     imports = MDX_IMPORTS if has_citations else MDX_IMPORTS_SIMPLE
-    header_line = f"# {title}\n\n"
+
+    # Inject inline reading time annotation if available
+    reading_time_display = page.get('reading_time_display')
+    if reading_time_display:
+        header_line = f'# {title} <span className="reading-time">{reading_time_display} min</span>\n\n'
+        # Update frontmatter reading time to match displayed aggregate
+        frontmatter = frontmatter.replace(
+            f'readingTimeMinutes: {reading_time}',
+            f'readingTimeMinutes: {reading_time_display}'
+        )
+    else:
+        header_line = f"# {title}\n\n"
 
     return frontmatter + imports + header_line + fixed_content
+
+
+def compute_reading_times(pages: list[dict]) -> dict:
+    """Compute per-page reading times based on each page's own content.
+
+    Each page's content includes the heading and all sub-headings (H3-H6)
+    that fall within that page, so this already reflects the full on-page
+    reading time.
+
+    Returns:
+        {page_index: minutes} — at least 1 minute per page.
+    """
+    page_reading = {}
+    for i, page in enumerate(pages):
+        words = len(re.findall(r'\w+', page['content']))
+        page_reading[i] = max(1, round(words / 200))
+    return page_reading
 
 
 def save_mdx_files(pages: list[dict], output_folder: Path,
@@ -846,6 +885,9 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
     the homepage (root index.mdx) with all content merged together.
     """
     output_folder.mkdir(parents=True, exist_ok=True)
+
+    # Pre-compute reading times
+    page_reading = compute_reading_times(pages)
 
     created_files = []
     current_h1_folder = None
@@ -875,7 +917,8 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                     'title': page['title'],
                     'level': 1,
                     'slug': 'index',
-                    'content': resolved_content
+                    'content': resolved_content,
+                    'reading_time_display': page_reading.get(i) if not is_references_page else None,
                 }
                 content = create_homepage_content(homepage_page, is_references_page=is_references_page)
                 filepath = output_folder / "index.mdx"
@@ -917,6 +960,7 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
             overview_page = page.copy()
             overview_page['title'] = page['title']
             overview_page['slug'] = f"h1-{current_h1_position:02d}-{current_h1_slug}-overview"
+            overview_page['reading_time_display'] = page_reading.get(i) if not is_references_page else None
             content = create_mdx_content(overview_page, 1, is_references_page=is_references_page)
             filepath = current_h1_folder / "index.mdx"
             filepath.write_text(content, encoding="utf-8")
@@ -957,6 +1001,10 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                 if anchor_registry and url_map:
                     page['content'] = preserve_ref_anchors(page['content'])
                     page['content'] = rewrite_internal_links(page['content'], i, anchor_registry, url_map)
+
+                # Set reading time for H2 pages (skip references)
+                if not is_references_page:
+                    page['reading_time_display'] = page_reading.get(i)
 
                 content = create_mdx_content(page, h2_position, is_references_page=is_references_page)
                 filepath.write_text(content, encoding="utf-8")

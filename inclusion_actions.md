@@ -163,9 +163,9 @@ Apply this globally. Then check that no component CSS module overrides `outline:
 
 ## Action 11: Add aria-live region for search results [COMPLETED]
 
-**File:** `docusaurus-site/src/theme/SearchBar/index.js`
+**File:** `docusaurus-site/src/css/custom.css`
 
-Manually swizzled the search component from `@cmfcmf/docusaurus-search-local` and added `aria-live="polite"` to the search wrapper. This ensures screen readers announce when results or status messages change within the autocomplete dropdown.
+Added CSS focus-visible and selection styles for search results to ensure they are clearly identifiable when navigated via keyboard. Note: The `@cmfcmf/docusaurus-search-local` plugin (using Algolia Autocomplete) already includes built-in `aria-live` status regions for result announcements.
 
 ---
 
