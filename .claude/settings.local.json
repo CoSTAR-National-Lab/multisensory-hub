@@ -14,7 +14,8 @@
       "Bash(set NODE_OPTIONS=--max-old-space-size=4096)",
       "Bash(timeout:*)",
       "Bash(dir:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(head:*)"
     ]
   }
 }

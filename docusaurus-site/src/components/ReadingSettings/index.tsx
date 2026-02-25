@@ -1,14 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
 
 const STORAGE_KEY_FONT = 'reading-settings-font';
 const STORAGE_KEY_WORD_SPACING = 'reading-settings-word-spacing';
 const STORAGE_KEY_LINE_SPACING = 'reading-settings-line-spacing';
+const STORAGE_KEY_CONTRAST = 'reading-settings-contrast';
+const STORAGE_KEY_TEXT_SIZE = 'reading-settings-text-size';
+const STORAGE_KEY_MOTION = 'reading-settings-motion';
 const OLD_DYSLEXIA_KEY = 'dyslexia-font-enabled';
 
 type FontOption = 'default' | 'lexend' | 'system';
 type WordSpacingOption = 'wide' | 'normal' | 'narrow';
 type LineSpacingOption = 'relaxed' | 'normal' | 'compact';
+type ContrastOption = 'standard' | 'low' | 'high';
+type TextSizeOption = 'standard' | 'large' | 'xl';
+type MotionOption = 'standard' | 'reduced';
 
 interface ReadingSettingsProps {
   /** If true, renders as a panel instead of dropdown (for mobile sidebar) */
@@ -16,10 +23,14 @@ interface ReadingSettingsProps {
 }
 
 export default function ReadingSettings({ variant = 'dropdown' }: ReadingSettingsProps): JSX.Element {
+  const { colorMode, setColorMode } = useColorMode();
   const [isOpen, setIsOpen] = useState(false);
   const [font, setFont] = useState<FontOption>('default');
   const [wordSpacing, setWordSpacing] = useState<WordSpacingOption>('normal');
   const [lineSpacing, setLineSpacing] = useState<LineSpacingOption>('normal');
+  const [contrast, setContrast] = useState<ContrastOption>('standard');
+  const [textSize, setTextSize] = useState<TextSizeOption>('standard');
+  const [motion, setMotion] = useState<MotionOption>('standard');
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Load preferences from localStorage on mount
@@ -37,6 +48,9 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
     const storedFont = localStorage.getItem(STORAGE_KEY_FONT) as FontOption | null;
     const storedWordSpacing = localStorage.getItem(STORAGE_KEY_WORD_SPACING) as WordSpacingOption | null;
     const storedLineSpacing = localStorage.getItem(STORAGE_KEY_LINE_SPACING) as LineSpacingOption | null;
+    const storedContrast = localStorage.getItem(STORAGE_KEY_CONTRAST) as ContrastOption | null;
+    const storedTextSize = localStorage.getItem(STORAGE_KEY_TEXT_SIZE) as TextSizeOption | null;
+    const storedMotion = localStorage.getItem(STORAGE_KEY_MOTION) as MotionOption | null;
 
     if (storedFont) {
       setFont(storedFont);
@@ -49,6 +63,18 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
     if (storedLineSpacing) {
       setLineSpacing(storedLineSpacing);
       document.documentElement.setAttribute('data-reading-line-spacing', storedLineSpacing);
+    }
+    if (storedContrast) {
+      setContrast(storedContrast);
+      document.documentElement.setAttribute('data-accessibility-contrast', storedContrast);
+    }
+    if (storedTextSize) {
+      setTextSize(storedTextSize);
+      document.documentElement.setAttribute('data-accessibility-text-size', storedTextSize);
+    }
+    if (storedMotion) {
+      setMotion(storedMotion);
+      document.documentElement.setAttribute('data-accessibility-motion', storedMotion);
     }
   }, []);
 
@@ -106,6 +132,66 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
     localStorage.setItem(STORAGE_KEY_LINE_SPACING, newLineSpacing);
   };
 
+  const updateContrast = (newContrast: ContrastOption) => {
+    setContrast(newContrast);
+    document.documentElement.setAttribute('data-accessibility-contrast', newContrast);
+    localStorage.setItem(STORAGE_KEY_CONTRAST, newContrast);
+  };
+
+  const updateTextSize = (newTextSize: TextSizeOption) => {
+    setTextSize(newTextSize);
+    document.documentElement.setAttribute('data-accessibility-text-size', newTextSize);
+    localStorage.setItem(STORAGE_KEY_TEXT_SIZE, newTextSize);
+  };
+
+  const updateMotion = (newMotion: MotionOption) => {
+    setMotion(newMotion);
+    document.documentElement.setAttribute('data-accessibility-motion', newMotion);
+    localStorage.setItem(STORAGE_KEY_MOTION, newMotion);
+  };
+
+  const resetToDefaults = () => {
+    setFont('default');
+    setWordSpacing('normal');
+    setLineSpacing('normal');
+    setContrast('standard');
+    setTextSize('standard');
+    setMotion('standard');
+
+    document.documentElement.setAttribute('data-reading-font', 'default');
+    document.documentElement.setAttribute('data-reading-word-spacing', 'normal');
+    document.documentElement.setAttribute('data-reading-line-spacing', 'normal');
+    document.documentElement.removeAttribute('data-accessibility-contrast');
+    document.documentElement.removeAttribute('data-accessibility-text-size');
+    document.documentElement.removeAttribute('data-accessibility-motion');
+
+    [
+      STORAGE_KEY_FONT,
+      STORAGE_KEY_WORD_SPACING,
+      STORAGE_KEY_LINE_SPACING,
+      STORAGE_KEY_CONTRAST,
+      STORAGE_KEY_TEXT_SIZE,
+      STORAGE_KEY_MOTION,
+    ].forEach((key) => localStorage.removeItem(key));
+  };
+
+  const contrastOptions: { value: ContrastOption; label: string }[] = [
+    { value: 'standard', label: 'Standard' },
+    { value: 'low', label: 'Low' },
+    { value: 'high', label: 'High' },
+  ];
+
+  const textSizeOptions: { value: TextSizeOption; label: string }[] = [
+    { value: 'standard', label: 'Standard' },
+    { value: 'large', label: 'Large' },
+    { value: 'xl', label: 'Extra Large' },
+  ];
+
+  const motionOptions: { value: MotionOption; label: string }[] = [
+    { value: 'standard', label: 'Standard' },
+    { value: 'reduced', label: 'Reduced' },
+  ];
+
   const fontOptions: { value: FontOption; label: string }[] = [
     { value: 'default', label: 'Default' },
     { value: 'lexend', label: 'Lexend' },
@@ -126,7 +212,81 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
 
   const settingsContent = (
     <div className={styles.settingsContent}>
-      {/* Font Selection */}
+      <p className={styles.subtitle}>Adjust how this site looks to suit your needs.</p>
+
+      {/* Theme */}
+      <div className={styles.settingGroup}>
+        <span className={styles.settingLabel}>Theme</span>
+        <div className={styles.buttonGroup}>
+          <button
+            className={`${styles.optionButton} ${colorMode === 'light' ? styles.active : ''}`}
+            onClick={() => setColorMode('light')}
+            aria-pressed={colorMode === 'light'}
+          >
+            Light
+          </button>
+          <button
+            className={`${styles.optionButton} ${colorMode === 'dark' ? styles.active : ''}`}
+            onClick={() => setColorMode('dark')}
+            aria-pressed={colorMode === 'dark'}
+          >
+            Dark
+          </button>
+        </div>
+      </div>
+
+      {/* Contrast */}
+      <div className={styles.settingGroup}>
+        <span className={styles.settingLabel}>Contrast</span>
+        <div className={styles.buttonGroup}>
+          {contrastOptions.map((option) => (
+            <button
+              key={option.value}
+              className={`${styles.optionButton} ${contrast === option.value ? styles.active : ''}`}
+              onClick={() => updateContrast(option.value)}
+              aria-pressed={contrast === option.value}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Text Size */}
+      <div className={styles.settingGroup}>
+        <span className={styles.settingLabel}>Text Size</span>
+        <div className={styles.buttonGroup}>
+          {textSizeOptions.map((option) => (
+            <button
+              key={option.value}
+              className={`${styles.optionButton} ${textSize === option.value ? styles.active : ''}`}
+              onClick={() => updateTextSize(option.value)}
+              aria-pressed={textSize === option.value}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Motion */}
+      <div className={styles.settingGroup}>
+        <span className={styles.settingLabel}>Motion</span>
+        <div className={styles.buttonGroup}>
+          {motionOptions.map((option) => (
+            <button
+              key={option.value}
+              className={`${styles.optionButton} ${motion === option.value ? styles.active : ''}`}
+              onClick={() => updateMotion(option.value)}
+              aria-pressed={motion === option.value}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Font */}
       <div className={styles.settingGroup}>
         <span className={styles.settingLabel}>Font</span>
         <div className={styles.buttonGroup}>
@@ -176,6 +336,10 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
           ))}
         </div>
       </div>
+
+      <button className={styles.resetButton} onClick={resetToDefaults}>
+        Reset to defaults
+      </button>
     </div>
   );
 
@@ -185,7 +349,7 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
       <div className={styles.panel}>
         <div className={styles.panelHeader}>
           <span className={styles.panelIcon}>Aa</span>
-          <span className={styles.panelTitle}>Reading Settings</span>
+          <span className={styles.panelTitle}>Accessibility</span>
         </div>
         {settingsContent}
       </div>
@@ -199,12 +363,12 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
         className={styles.trigger}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
-        aria-haspopup="true"
-        aria-label="Reading settings"
-        title="Reading settings"
+        aria-haspopup="dialog"
+        aria-label="Accessibility settings"
+        title="Accessibility settings"
       >
         <span className={styles.icon}>Aa</span>
-        <span className={styles.triggerLabel}>Reading</span>
+        <span className={styles.triggerLabel}>Accessibility</span>
         <svg
           className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
           width="12"
@@ -224,8 +388,21 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
       </button>
 
       {isOpen && (
-        <div className={styles.dropdown} role="menu">
-          <div className={styles.dropdownHeader}>Reading Settings</div>
+        <div
+          className={styles.dropdown}
+          role="dialog"
+          aria-label="Accessibility settings"
+        >
+          <div className={styles.dropdownHeader}>
+            <span className={styles.dropdownTitle}>Accessibility</span>
+            <button
+              className={styles.closeButton}
+              onClick={() => setIsOpen(false)}
+              aria-label="Close accessibility settings"
+            >
+              ×
+            </button>
+          </div>
           {settingsContent}
         </div>
       )}

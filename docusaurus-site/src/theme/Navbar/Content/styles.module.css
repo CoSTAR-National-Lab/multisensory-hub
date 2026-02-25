@@ -1,23 +1,5 @@
-.colorModeToggle {
-  margin-left: 0.5rem;
-}
-
 .accessibilityControls {
-  display: none;
+  display: flex;
   align-items: center;
   margin-left: 0.5rem;
-}
-
-/* Hide color mode toggle on mobile - it appears in mobile sidebar instead */
-@media (max-width: 996px) {
-  .colorModeToggle {
-    display: none;
-  }
-}
-
-/* Show accessibility controls on desktop only */
-@media (min-width: 997px) {
-  .accessibilityControls {
-    display: flex;
-  }
 }

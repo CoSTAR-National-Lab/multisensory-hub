@@ -5,7 +5,6 @@ import {
   useNavbarMobileSidebar,
 } from '@docusaurus/theme-common/internal';
 import NavbarItem from '@theme/NavbarItem';
-import NavbarColorModeToggle from '@theme/Navbar/ColorModeToggle';
 import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import styles from './styles.module.css';
@@ -65,7 +64,6 @@ export default function NavbarContent() {
           <div className={styles.accessibilityControls}>
             <ReadingSettings />
           </div>
-          <NavbarColorModeToggle className={styles.colorModeToggle} />
         </>
       }
     />

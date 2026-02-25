@@ -42,7 +42,7 @@
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 997px) {
   .triggerLabel {
     display: inline;
   }
@@ -56,12 +56,12 @@
   transform: rotate(180deg);
 }
 
-/* Dropdown menu */
+/* Dropdown panel */
 .dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 260px;
+  min-width: 300px;
   background: #ffffff;
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 12px;
@@ -69,6 +69,20 @@
   z-index: 9999;
   overflow: hidden;
   animation: slideIn 0.15s ease-out;
+}
+
+/* On small screens: fix to viewport so it can't overflow left or right */
+@media (max-width: 996px) {
+  .dropdown {
+    position: fixed;
+    top: var(--ifm-navbar-height);
+    left: 0.75rem;
+    right: 0.75rem;
+    min-width: unset;
+    max-height: calc(100vh - var(--ifm-navbar-height) - 1rem);
+    overflow-y: auto;
+    border-radius: 12px;
+  }
 }
 
 @keyframes slideIn {
@@ -87,25 +101,63 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
+/* Dropdown header: title + close button */
 .dropdownHeader {
-  padding: 0.75rem 1rem;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--ifm-color-emphasis-800);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem 0.75rem;
   border-bottom: 1px solid var(--ifm-color-emphasis-200);
-  background: var(--ifm-color-emphasis-100);
+}
+
+.dropdownTitle {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-900);
+  letter-spacing: -0.01em;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.15s ease, color 0.15s ease;
+  padding: 0;
+  font-family: var(--ifm-font-family-base);
+}
+
+.closeButton:hover {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-900);
 }
 
 /* Settings content shared between dropdown and panel */
 .settingsContent {
-  padding: 0.75rem;
+  padding: 0.85rem 1rem 0.75rem;
+}
+
+/* Subtitle */
+.subtitle {
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.45;
+  margin: 0 0 0.85rem 0;
 }
 
 .settingGroup {
   margin-bottom: 0.75rem;
 }
 
-.settingGroup:last-child {
+.settingGroup:last-of-type {
   margin-bottom: 0;
 }
 
@@ -126,16 +178,17 @@
 
 .optionButton {
   flex: 1;
-  padding: 0.5rem 0.5rem;
+  padding: 0.45rem 0.4rem;
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 8px;
   background: var(--ifm-background-color);
   color: var(--ifm-color-emphasis-700);
-  font-size: 0.75rem;
+  font-size: 0.73rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: var(--ifm-font-family-base);
+  white-space: nowrap;
 }
 
 .optionButton:hover {
@@ -146,7 +199,37 @@
 .optionButton.active {
   background: var(--ifm-color-primary);
   border-color: var(--ifm-color-primary);
-  color: white;
+  color: #ffffff;
+}
+
+/* Divider between accessibility and reading settings */
+.divider {
+  height: 1px;
+  background: var(--ifm-color-emphasis-200);
+  margin: 0.5rem 0 0.85rem;
+}
+
+/* Reset to defaults */
+.resetButton {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.6rem;
+  border: none;
+  background: none;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.78rem;
+  font-family: var(--ifm-font-family-base);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.resetButton:hover {
+  color: var(--ifm-color-emphasis-900);
+  text-decoration-color: var(--ifm-color-emphasis-700);
 }
 
 /* Panel variant for mobile sidebar */
@@ -189,5 +272,5 @@
 
 .panel .optionButton {
   flex: 1 1 auto;
-  min-width: 70px;
+  min-width: 60px;
 }

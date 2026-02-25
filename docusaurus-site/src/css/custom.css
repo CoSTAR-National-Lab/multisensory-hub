@@ -157,8 +157,7 @@ body {
 }
 
 .navbar__inner,
-.navbar__items,
-.navbar-sidebar {
+.navbar__items {
   overflow: visible !important;
   overflow-x: visible !important;
 }
@@ -552,11 +551,6 @@ span[id^="ref-"]:target {
    Search Styles
    ================================ */
 
-/* Hide the magnifying glass icon */
-.aa-DetachedSearchButtonIcon {
-  display: none !important;
-}
-
 /* Style the search button */
 .aa-DetachedSearchButton {
   border-radius: 20px !important;
@@ -572,7 +566,11 @@ span[id^="ref-"]:target {
   background-color: var(--ifm-color-emphasis-200) !important;
 }
 
-/* Replace "Search..." with "Search" */
+/* Desktop: icon hidden, show "Search" text */
+.aa-DetachedSearchButtonIcon {
+  display: none !important;
+}
+
 .aa-DetachedSearchButtonPlaceholder {
   font-size: 0 !important;
 }
@@ -580,6 +578,31 @@ span[id^="ref-"]:target {
 .aa-DetachedSearchButtonPlaceholder::before {
   content: 'Search';
   font-size: 0.85rem;
+}
+
+/* Small/medium screens: icon only — saves navbar space */
+@media (max-width: 996px) {
+  .aa-DetachedSearchButtonIcon {
+    display: flex !important;
+    color: var(--ifm-color-emphasis-700);
+  }
+
+  .aa-DetachedSearchButtonPlaceholder {
+    display: none !important;
+  }
+
+  .aa-DetachedSearchButton {
+    padding: 0.4rem 0.6rem !important;
+  }
+
+  /*
+   * Docusaurus sets the search wrapper to position:absolute on mobile, which
+   * pulls it out of the flex flow and causes it to overlap the Accessibility
+   * button. Force it back into normal flow so both sit side-by-side.
+   */
+  [class*="navbarSearchContainer"] {
+    position: static !important;
+  }
 }
 
 .searchBar_8S_h {
@@ -644,6 +667,59 @@ span[id^="ref-"]:target {
 }
 
 /* ================================
+   Mobile Sidebar – Accessibility Panel
+   ================================ */
+
+/*
+ * Replace Infima's slide-in sidebar with a simple full-width dropdown that
+ * falls below the navbar and scrolls its own content.
+ * This avoids all the height-calc fights with navbar-sidebar__items.
+ */
+@media (max-width: 996px) {
+  /* Stretch sidebar item widths to match full-viewport dropdown */
+  :root {
+    --ifm-navbar-sidebar-width: 100vw;
+  }
+
+  /* Drop down from below the navbar */
+  .navbar-sidebar {
+    top: var(--ifm-navbar-height) !important;
+    bottom: auto !important;
+    width: 100% !important;
+    /* hide via max-height instead of translate / opacity */
+    max-height: 0 !important;
+    overflow: hidden !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: max-height 0.25s ease !important;
+    border-radius: 0 !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Open state */
+  .navbar-sidebar--show .navbar-sidebar {
+    max-height: calc(100vh - var(--ifm-navbar-height)) !important;
+    overflow-y: auto !important;
+  }
+
+  /* No full-page backdrop for a dropdown */
+  .navbar-sidebar__backdrop {
+    display: none !important;
+  }
+
+  /* Brand bar (logo + close button) is redundant — navbar already has those */
+  .navbar-sidebar__brand {
+    display: none !important;
+  }
+
+  /* Let content height determine item height; sidebar scroll handles the rest */
+  .navbar-sidebar .navbar-sidebar__items {
+    height: auto !important;
+  }
+}
+
+/* ================================
    Responsive Adjustments
    ================================ */
 
@@ -703,6 +779,76 @@ span[id^="ref-"]:target {
 /* Hide reading time in table of contents sidebar */
 .table-of-contents .reading-time {
   display: none;
+}
+
+/* ================================
+   Accessibility Settings - Contrast
+   ================================ */
+
+/* Low contrast: soften text for visual sensitivity */
+html[data-accessibility-contrast='low'] .markdown p,
+html[data-accessibility-contrast='low'] .markdown li,
+html[data-accessibility-contrast='low'] .markdown td,
+html[data-accessibility-contrast='low'] .markdown th {
+  color: var(--ifm-color-emphasis-600) !important;
+}
+
+/* High contrast: maximise text/background separation */
+html[data-accessibility-contrast='high']:not([data-theme='dark']) {
+  --ifm-color-primary: #3730a3;
+  --ifm-color-primary-dark: #2e2791;
+  --custom-shadow: none;
+}
+
+html[data-accessibility-contrast='high']:not([data-theme='dark']) .markdown p,
+html[data-accessibility-contrast='high']:not([data-theme='dark']) .markdown li,
+html[data-accessibility-contrast='high']:not([data-theme='dark']) .markdown td {
+  color: #000000 !important;
+}
+
+html[data-accessibility-contrast='high']:not([data-theme='dark']) .markdown h2,
+html[data-accessibility-contrast='high']:not([data-theme='dark']) .markdown h3,
+html[data-accessibility-contrast='high']:not([data-theme='dark']) .markdown h4 {
+  color: #000000 !important;
+}
+
+/* H1 uses gradient fill — override to solid in high contrast */
+html[data-accessibility-contrast='high']:not([data-theme='dark']) .markdown h1 {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: #000000 !important;
+  color: #000000 !important;
+}
+
+html[data-accessibility-contrast='high'][data-theme='dark'] {
+  --ifm-color-primary: #c7d2fe;
+  --custom-shadow: none;
+}
+
+/* ================================
+   Accessibility Settings - Text Size
+   ================================ */
+
+html[data-accessibility-text-size='large'] {
+  font-size: 112.5%; /* scales all rem units — approx 18px base */
+}
+
+html[data-accessibility-text-size='xl'] {
+  font-size: 125%; /* approx 20px base */
+}
+
+/* ================================
+   Accessibility Settings - Motion
+   ================================ */
+
+html[data-accessibility-motion='reduced'] *,
+html[data-accessibility-motion='reduced'] *::before,
+html[data-accessibility-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 /* ================================
