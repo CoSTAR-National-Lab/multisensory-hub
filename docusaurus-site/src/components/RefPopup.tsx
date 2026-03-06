@@ -61,10 +61,10 @@ export default function RefPopup({ refNum, refText }: RefPopupProps) {
   }, [clearHideTimeout]);
 
   const handleMouseLeave = useCallback(() => {
-    // Delay hiding so user can move to the popup
+    // Longer delay so user can move to the centred popup
     hideTimeoutRef.current = setTimeout(() => {
       setShowPopup(false);
-    }, 300);
+    }, 800);
   }, []);
 
   const handleFocus = useCallback(() => {
@@ -112,6 +112,12 @@ export default function RefPopup({ refNum, refText }: RefPopupProps) {
       </sup>
 
       {showPopup && (
+        <>
+        <div
+          className={styles.overlay}
+          onClick={() => setShowPopup(false)}
+          aria-hidden="true"
+        />
         <div
           id={popupId}
           role="tooltip"
@@ -197,6 +203,7 @@ export default function RefPopup({ refNum, refText }: RefPopupProps) {
             </div>
           </div>
         </div>
+        </>
       )}
     </span>
   );

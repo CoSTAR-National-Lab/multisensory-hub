@@ -1,6 +1,4 @@
 .card {
-  display: flex;
-  gap: 16px;
   padding: 16px 20px;
   background: var(--ifm-background-surface-color);
   border: 1px solid var(--ifm-color-emphasis-200);
@@ -19,18 +17,12 @@
   box-shadow: 0 0 0 3px var(--ifm-color-primary-lightest);
 }
 
-.number {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--ifm-color-primary);
-  color: white;
+.numLabel {
   font-weight: 700;
-  font-size: 0.9rem;
-  border-radius: 50%;
+  font-size: 0.8rem;
+  color: var(--ifm-color-primary);
+  margin-right: 6px;
+  font-variant-numeric: tabular-nums;
 }
 
 .content {
@@ -100,6 +92,19 @@
 
 .year {
   color: var(--ifm-font-color-secondary);
+}
+
+.titleLink {
+  color: var(--ifm-font-color-base);
+  text-decoration: underline;
+  text-decoration-color: var(--ifm-color-emphasis-400);
+  text-underline-offset: 2px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.titleLink:hover {
+  color: var(--ifm-color-primary);
+  text-decoration-color: var(--ifm-color-primary);
 }
 
 .inlineLink {

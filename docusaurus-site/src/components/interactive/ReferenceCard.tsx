@@ -55,6 +55,9 @@ export default function ReferenceCard({
 }: ReferenceCardProps) {
   const [copied, setCopied] = useState(false);
 
+  const titleHref = doi ? `https://doi.org/${doi}` : url || null;
+  const titleHasInlineUrl = /https?:\/\//.test(title || '');
+
   // Format reference for copying
   const formatReferenceText = (): string => {
     const parts: string[] = [];
@@ -81,7 +84,6 @@ export default function ReferenceCard({
 
   return (
     <div className={styles.card} id={`ref-${num}`}>
-      <div className={styles.number}>{num}</div>
       <div className={styles.content}>
         <div className={styles.actions}>
           {doi && (
@@ -132,8 +134,23 @@ export default function ReferenceCard({
             )}
           </button>
         </div>
-        <div className={styles.authors}>{renderWithLinks(authors)}</div>
-        <div className={styles.title}>{renderWithLinks(title)}</div>
+        {authors ? (
+          <>
+            <div className={styles.authors}><span className={styles.numLabel}>[{num}]</span>{renderWithLinks(authors)}</div>
+            <div className={styles.title}>
+              {titleHref && !titleHasInlineUrl ? (
+                <a href={titleHref} target="_blank" rel="noopener noreferrer" className={styles.titleLink}>{title}</a>
+              ) : renderWithLinks(title)}
+            </div>
+          </>
+        ) : (
+          <div className={styles.title}>
+            <span className={styles.numLabel}>[{num}]</span>
+            {titleHref && !titleHasInlineUrl ? (
+              <a href={titleHref} target="_blank" rel="noopener noreferrer" className={styles.titleLink}>{title}</a>
+            ) : renderWithLinks(title)}
+          </div>
+        )}
         {journal && (
           <div className={styles.publication}>
             <span className={styles.journal}>{renderWithLinks(journal)}</span>

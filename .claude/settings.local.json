@@ -15,7 +15,8 @@
       "Bash(timeout:*)",
       "Bash(dir:*)",
       "Bash(tree:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(node:*)"
     ]
   }
 }

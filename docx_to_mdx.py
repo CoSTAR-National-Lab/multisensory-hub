@@ -509,6 +509,95 @@ def build_page_url_map(pages: list[dict]) -> dict:
     return url_map
 
 
+def build_title_link_registry(markdown: str, pages: list[dict], url_map: dict) -> dict:
+    """Map every heading's display text (case-insensitive) to its full Docusaurus URL.
+
+    H1 / H2 headings  → page URL (no fragment)
+    H3 – H6 headings  → page URL + '#' + slug fragment
+
+    Returns dict: stripped_lowercase_text -> url_string
+    """
+    registry = {}
+    fmt = re.compile(r'[*_`\[\]()\\]')
+
+    def clean(text: str) -> str:
+        return fmt.sub('', text).lower().strip()
+
+    # H1 / H2 pages → their page URL
+    for i, page in enumerate(pages):
+        url = url_map.get(i, '/')
+        registry[clean(page['title'])] = url
+
+    # H3–H6 sub-headings → page URL + fragment
+    sub_heading = re.compile(r'^(#{3,6})\s+(.+)$', re.MULTILINE)
+    for match in sub_heading.finditer(markdown):
+        heading_text = match.group(2).strip()
+        heading_slug = slugify(heading_text)
+        page_idx = _find_page_for_position(markdown, pages, match.start())
+        if page_idx < len(pages):
+            url = url_map.get(page_idx, '/')
+            registry[clean(heading_text)] = f'{url}#{heading_slug}'
+
+    return registry
+
+
+def resolve_bare_title_links(content: str, title_registry: dict) -> tuple[str, list[str]]:
+    """Replace [Title] references with Docusaurus links where the title matches a heading.
+
+    Skips:
+    - Image alt text  ``![Alt](...)``
+    - Existing links  ``[text](url)``  or  ``[text][ref]``
+    - Content inside fenced code blocks or inline code spans
+
+    Returns:
+        new_content  – content with matched titles converted to links
+        unresolved   – de-duplicated list of texts that had no matching heading
+    """
+    # Unescape pandoc bracket escaping (\[ → [ and \] → ]) before matching,
+    # so bare links written as \[Title\] in the pandoc output are still found.
+    content = content.replace('\\[', '[').replace('\\]', ']')
+
+    fmt = re.compile(r'[*_`\[\]()\\]')
+    bare_link = re.compile(r'(?<!!)\[([^\]\n]+)\](?!\(|\[)')
+    code_block = re.compile(r'(```[\s\S]*?```|`[^`\n]+`)')
+
+    unresolved: list[str] = []
+    seen: set[str] = set()
+
+    def replace(match: re.Match) -> str:
+        text = match.group(1)
+        # Format: [Title to search: label to display]
+        # The part before the colon is used to find the heading in the registry.
+        # The part after the colon is used as the button label.
+        # If there is no colon, the full text is used for both.
+        if ':' in text:
+            search_text, label = text.split(':', 1)
+            search_text = search_text.strip()
+            label = label.strip()
+        else:
+            search_text = text
+            label = text
+        key = fmt.sub('', search_text).lower().strip()
+        if key in title_registry:
+            url = title_registry[key]
+            return f'<a href="{url}" className="button button--secondary button--sm">{label}</a>'
+        if key not in seen:
+            seen.add(key)
+            unresolved.append(text)
+        return match.group(0)
+
+    # Split on code blocks (capturing group keeps delimiters in the list)
+    segments = code_block.split(content)
+    new_parts = []
+    for j, segment in enumerate(segments):
+        if j % 2 == 0:
+            new_parts.append(bare_link.sub(replace, segment))
+        else:
+            new_parts.append(segment)  # leave code verbatim
+
+    return ''.join(new_parts), unresolved
+
+
 def rewrite_internal_links(content: str, page_index: int, anchor_registry: dict, url_map: dict) -> str:
     """Rewrite [text](#fragment) links to point to the correct cross-page URL.
 
@@ -665,6 +754,12 @@ def fix_mdx_syntax(content: str) -> str:
     content = re.sub(r'-->', r'*/}', content)
 
     # STEP: Normalize dashes AFTER HTML comment conversion
+    # Protect -- inside HTML/JSX tags (e.g. className="button--sm") before normalising,
+    # then restore afterwards so JSX attributes are never mangled.
+    _html_tag = re.compile(r'<[^>]+>')
+    _DD = '\x00DD\x00'
+    content = _html_tag.sub(lambda m: m.group(0).replace('--', _DD), content)
+
     # Em-dash: --- to — (but not at line start which could be frontmatter delimiter)
     # Only convert --- that's surrounded by word characters or spaces (not line-initial)
     content = re.sub(r'(?<=\w)---(?=\w)', '—', content)
@@ -679,6 +774,9 @@ def fix_mdx_syntax(content: str) -> str:
 
     # Any remaining -- becomes en-dash (but not part of --- or inside JSX comments {/* */})
     content = re.sub(r'(?<!-)--(?!-)', '–', content)
+
+    # Restore double-dashes protected inside HTML/JSX tags
+    content = content.replace(_DD, '--')
 
     # Fix 4: Clean up bold and italic marker artifacts
     # Preserve legitimate **text** and *text* formatting for rendering
@@ -945,7 +1043,8 @@ def compute_reading_times(pages: list[dict]) -> dict:
 
 
 def save_mdx_files(pages: list[dict], output_folder: Path,
-                    anchor_registry: dict = None, url_map: dict = None) -> list[Path]:
+                    anchor_registry: dict = None, url_map: dict = None,
+                    title_link_registry: dict = None) -> tuple[list[Path], list[str]]:
     """Save pages as .mdx files with hierarchical folder structure.
 
     H1 sections become folders with collapsible categories.
@@ -960,6 +1059,7 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
     page_reading = compute_reading_times(pages)
 
     created_files = []
+    all_unresolved: list[str] = []  # accumulate unresolved bare-title links
     current_h1_folder = None
     current_h1_slug = None
     current_h1_position = 0
@@ -982,6 +1082,9 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                 if anchor_registry and url_map:
                     resolved_content = preserve_ref_anchors(resolved_content)
                     resolved_content = rewrite_internal_links(resolved_content, i, anchor_registry, url_map)
+                if title_link_registry:
+                    resolved_content, unresolved = resolve_bare_title_links(resolved_content, title_link_registry)
+                    all_unresolved.extend(unresolved)
                 # Use the first H1 as the homepage
                 homepage_page = {
                     'title': page['title'],
@@ -1025,6 +1128,9 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
             if anchor_registry and url_map:
                 page['content'] = preserve_ref_anchors(page['content'])
                 page['content'] = rewrite_internal_links(page['content'], i, anchor_registry, url_map)
+            if title_link_registry:
+                page['content'], unresolved = resolve_bare_title_links(page['content'], title_link_registry)
+                all_unresolved.extend(unresolved)
 
             # Save H1 content as index.mdx in the folder (linked via _category_.json)
             overview_page = page.copy()
@@ -1045,6 +1151,9 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                 if anchor_registry and url_map:
                     resolved_content = preserve_ref_anchors(resolved_content)
                     resolved_content = rewrite_internal_links(resolved_content, i, anchor_registry, url_map)
+                if title_link_registry:
+                    resolved_content, unresolved = resolve_bare_title_links(resolved_content, title_link_registry)
+                    all_unresolved.extend(unresolved)
                 if not homepage_content:
                     # Use the first H2 title as the homepage title
                     homepage_title = page['title']
@@ -1071,6 +1180,9 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                 if anchor_registry and url_map:
                     page['content'] = preserve_ref_anchors(page['content'])
                     page['content'] = rewrite_internal_links(page['content'], i, anchor_registry, url_map)
+                if title_link_registry:
+                    page['content'], unresolved = resolve_bare_title_links(page['content'], title_link_registry)
+                    all_unresolved.extend(unresolved)
 
                 # Set reading time for H2 pages (skip references)
                 if not is_references_page:
@@ -1112,7 +1224,7 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                 homepage_path.write_text(new_content, encoding="utf-8")
                 print(f"  Prepended pre-H1 content to index.mdx")
 
-    return created_files
+    return created_files, all_unresolved
 
 
 def post_process_mdx_files(folder: Path) -> None:
@@ -1329,70 +1441,87 @@ def wait_for_server(url: str = "http://localhost:3000", timeout: int = 60) -> bo
 
 
 def remove_word_toc(markdown: str) -> str:
-    """Remove Microsoft Word generated Table of Contents from markdown."""
-    # Look for TOC-like patterns: multiple links followed by page numbers in brackets
-    # Example: [Section Name [9](#section-name)](#section-name)
-    # Often preceded by "What are you looking for?" or "Table of Contents"
-    
+    """Remove Microsoft Word generated Table of Contents from markdown.
+
+    Handles two cases:
+    1. TOC has a visible heading (e.g. "Table of Contents", "Contents") — skip from
+       that heading to the next H1.
+    2. No explicit heading — detect 3+ TOC-style link lines (blank lines between them
+       are tolerated) and skip to the next H1.
+    """
     lines = markdown.splitlines()
-    new_lines = []
-    skip_mode = False
-    
-    # Simple heuristic: if we see multiple consecutive lines that look like TOC entries,
-    # we start skipping until we hit a header or a line that doesn't look like a TOC entry.
-    
-    toc_link_pattern = re.compile(r'^\[.+? \[\d+\]\(#_?Toc\d+\)\]\(#_?Toc\d+\)$')
-    toc_link_pattern_alt = re.compile(r'^\[.+? \[\d+\]\(#.+?\)\]\(#.+?\)$')
-    # Even simpler pattern for some Pandoc versions
-    toc_link_pattern_simple = re.compile(r'^\[.+? \[\d+\]\(#.+?\)\]\(#.+?\)')
-    
-    consecutive_toc_lines = 0
-    
-    for i, line in enumerate(lines):
-        clean_line = line.strip()
-        
-        # Check if line looks like a TOC entry
-        is_toc = bool(toc_link_pattern.match(clean_line) or 
-                      toc_link_pattern_alt.match(clean_line) or
-                      toc_link_pattern_simple.match(clean_line))
-        
-        if is_toc:
-            consecutive_toc_lines += 1
-            if consecutive_toc_lines >= 3:
-                skip_mode = True
-        else:
-            if skip_mode:
-                # If we're skipping and hit a header, stop skipping
-                if clean_line.startswith('#'):
-                    skip_mode = False
-                    consecutive_toc_lines = 0
-                # If we hit an empty line, keep skipping but reset counter
-                elif not clean_line:
-                    pass
-                # If we hit something else, stop skipping if we've seen a few non-TOC lines
-                else:
-                    # Check next few lines to see if TOC continues
-                    is_future_toc = False
-                    for j in range(i + 1, min(i + 5, len(lines))):
-                        if toc_link_pattern.match(lines[j].strip()) or toc_link_pattern_alt.match(lines[j].strip()):
-                            is_future_toc = True
-                            break
-                    if not is_future_toc:
-                        skip_mode = False
-                        consecutive_toc_lines = 0
-            else:
-                consecutive_toc_lines = 0
-        
-        if not skip_mode:
-            # Also remove the "What are you looking for?" intro if it's right before TOC
-            if "What are you looking for?" in line and i + 1 < len(lines) and \
-               (toc_link_pattern.match(lines[i+1].strip()) or 
-                toc_link_pattern_alt.match(lines[i+1].strip()) or
-                toc_link_pattern_simple.match(lines[i+1].strip())):
+    n = len(lines)
+
+    # TOC entry patterns produced by pandoc from Word hyperlinked TOCs:
+    #   [Title [9](#_Toc12345)](#_Toc12345)
+    #   [Title [9](#section-slug)](#section-slug)
+    #   [Title](#section-slug)   (some pandoc versions)
+    toc_entry = re.compile(
+        r'^\[.+\]\(#_?Toc\d+\)'           # any link to #_TocNNN
+        r'|^\[.+? \[\d+\]\(#.+?\)\]\(#.+?\)'  # [Text [N](#x)](#x) with page number
+        r'|^\[.+\]\(#[-\w]+\)\s*$',       # plain [Text](#slug) — whole line
+        re.IGNORECASE
+    )
+
+    # Heading-style TOC titles (various pandoc renderings of the Word TOC title)
+    toc_heading = re.compile(
+        r'^#{1,3}\s*(table\s+of\s+contents|contents)\s*$'
+        r'|^\*{1,2}(table\s+of\s+contents|contents)\*{1,2}\s*.*$'
+        r'|\[?\*{0,2}(table\s+of\s+contents|contents)\*{0,2}\]?.*\{.*\.TOC',
+        re.IGNORECASE
+    )
+
+    def skip_to_next_h1(start: int) -> int:
+        """Return the index of the next H1 line at or after `start`."""
+        for k in range(start, n):
+            if re.match(r'^#\s', lines[k]):
+                return k
+        return n  # no H1 found — skip to end
+
+    result = []
+    i = 0
+    # Only scan the first 150 lines for a TOC (it's always near the top)
+    toc_search_limit = min(150, n)
+
+    while i < n:
+        clean = lines[i].strip()
+
+        if i < toc_search_limit:
+            # Strategy 1: explicit TOC heading detected → skip to next H1
+            if toc_heading.match(clean):
+                i = skip_to_next_h1(i + 1)
                 continue
-            new_lines.append(line)
-            
-    return "\n".join(new_lines)
+
+            # Strategy 2: TOC entry line — look ahead (tolerating blank lines)
+            # to see if there are 3+ such lines in a cluster
+            if toc_entry.match(clean):
+                j = i
+                toc_count = 0
+                scanned = 0
+                while j < n and scanned < 30:
+                    jclean = lines[j].strip()
+                    if toc_entry.match(jclean):
+                        toc_count += 1
+                    elif jclean:          # non-empty, non-TOC → end of cluster
+                        break
+                    j += 1
+                    scanned += 1
+
+                if toc_count >= 3:
+                    i = skip_to_next_h1(j)
+                    continue
+
+            # Remove "What are you looking for?" navigation prompts before TOC entries
+            if "What are you looking for?" in lines[i]:
+                next_clean = lines[i + 1].strip() if i + 1 < n else ""
+                if toc_entry.match(next_clean):
+                    i += 1
+                    continue
+
+        result.append(lines[i])
+        i += 1
+
+    return "\n".join(result)
 
 
 def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
@@ -1432,10 +1561,21 @@ def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     url_map = build_page_url_map(pages)
     print(f"  Registered {len(anchor_registry)} link targets across {len(url_map)} pages")
 
+    print("  Building title-link registry...")
+    title_link_registry = build_title_link_registry(markdown, pages, url_map)
+    print(f"  Indexed {len(title_link_registry)} headings for bare-title linking")
+
     print("  Saving MDX files...")
-    save_mdx_files(pages, output_folder, anchor_registry, url_map)
+    _, unresolved_titles = save_mdx_files(pages, output_folder, anchor_registry, url_map, title_link_registry)
 
     # Note: index.mdx (homepage) is created by save_mdx_files from pre-H1 content
+
+    if unresolved_titles:
+        print("\n  WARNING – unresolved bare-title links (no matching heading found):")
+        for title in unresolved_titles:
+            print(f"    [!] [{title}]")
+    else:
+        print("  All bare-title links resolved successfully.")
 
     return pages
 
