@@ -1,0 +1,120 @@
+/* Colour tokens — override per theme/contrast */
+.chartWrapper {
+  --latency-tolerance-fill: #440154FF;
+  --latency-imperceptible-fill: #5DC863FF;
+  margin: 1.5rem 0;
+}
+
+[data-theme='dark'] .chartWrapper {
+  --latency-tolerance-fill: #b06fd8;
+  --latency-imperceptible-fill: #5DC863FF;
+}
+
+html[data-accessibility-contrast='high'] .chartWrapper {
+  --latency-tolerance-fill: #5a0080;
+  --latency-imperceptible-fill: #1a6e1e;
+}
+
+html[data-accessibility-contrast='high'][data-theme='dark'] .chartWrapper {
+  --latency-tolerance-fill: #d9a0f0;
+  --latency-imperceptible-fill: #7de881;
+}
+
+/* Muted text — opacity removed in high-contrast mode */
+.dimText {
+  opacity: 0.75;
+}
+
+html[data-accessibility-contrast='high'] .dimText {
+  opacity: 1;
+}
+
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-700);
+  align-items: center;
+}
+
+.legendSwatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.panelGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 1400px) {
+  .panelGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1.25rem;
+  }
+}
+
+.panel {
+  min-width: 0;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  padding: 0.6rem 0.5rem 0.4rem;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.imperceptiblePanel {
+  margin-top: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  padding: 0.6rem 0.5rem 0.4rem;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.panelTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 0.1rem;
+  padding-left: 158px;
+}
+
+/* Bar entrance animation */
+.bar {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: barGrow 0.45s ease-out both;
+}
+
+@keyframes barGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.errorBar {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+.valueLabel {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .errorBar,
+  .valueLabel {
+    animation: none;
+  }
+}

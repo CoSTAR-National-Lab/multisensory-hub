@@ -1,0 +1,325 @@
+import React, { useEffect, useRef, useState } from 'react';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import styles from './LatencyChart.module.css';
+import rawData from '@site/src/data/latency_data.json';
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+interface BarEntry {
+  group?: string;
+  label: string;
+  value: number;
+  errorBar: number;
+  citations?: number[];
+}
+
+interface LatencyData {
+  meta: {
+    xAxisLabel: string;
+    xMax: number;
+    toleranceColour: string;
+    imperceptibleColour: string;
+    legend?: string;
+  };
+  toleranceBars: BarEntry[];
+  imperceptibleBars: BarEntry[];
+}
+
+const { meta, toleranceBars, imperceptibleBars } = rawData as unknown as LatencyData;
+
+// ── SVG layout constants ───────────────────────────────────────────────────────
+
+const VIEW_W    = 500;  // viewBox width
+const X_START   = 158;  // left edge of bar area
+const X_END     = 448;  // right edge of bar area (labels overflow beyond)
+const X_RANGE   = X_END - X_START;
+const BAR_H     = 15;   // bar thickness px
+const LINE_H    = 13;   // line-height for multi-line labels
+const ROW_PAD   = 5;    // vertical padding above/below each bar
+const STAGGER   = 0.04; // seconds between bar animations
+
+function xScale(val: number): number {
+  return X_START + (val / meta.xMax) * X_RANGE;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function getOrderedGroups(bars: BarEntry[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const b of bars) {
+    if (b.group && !seen.has(b.group)) { seen.add(b.group); out.push(b.group); }
+  }
+  return out;
+}
+
+function barsForGroup(bars: BarEntry[], group: string): BarEntry[] {
+  return [...bars.filter(b => b.group === group)].sort((a, b) => a.value - b.value);
+}
+
+function rowHeight(label: string): number {
+  const lines = label.split('\n').length;
+  return Math.max(BAR_H + ROW_PAD * 2, lines * LINE_H + ROW_PAD * 2);
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+const FONT = 'inherit';  // inherits document font (respects Lexend/system setting)
+
+function CitationSuperscripts({ citations, x, y }: { citations: number[]; x: number; y: number }) {
+  if (!citations || citations.length === 0) return null;
+  return (
+    <a href="#references" style={{ textDecoration: 'none' }}>
+      <text x={x} y={y} fontSize="0.47em" fontFamily={FONT}
+        fill="currentColor" className={styles.dimText} dominantBaseline="auto">
+        {citations.join(',')}
+      </text>
+    </a>
+  );
+}
+
+function YLabel({ label, x, yCenter, citations }: { label: string; x: number; yCenter: number; citations?: number[] }) {
+  const lines = label.split('\n');
+  const lastLineY = yCenter + (lines.length > 1 ? ((lines.length - 1) / 2) * LINE_H : 0);
+
+  if (lines.length === 1) {
+    return (
+      <g>
+        <text x={x} y={yCenter} textAnchor="end" dominantBaseline="middle"
+          fontSize="0.625em" fontFamily={FONT} fill="currentColor" className={styles.dimText}>
+          {lines[0]}
+        </text>
+        <CitationSuperscripts citations={citations} x={x + 1} y={yCenter - 5} />
+      </g>
+    );
+  }
+  return (
+    <g>
+      <text textAnchor="end" fontSize="0.625em" fontFamily={FONT}
+        fill="currentColor" className={styles.dimText}>
+        {lines.map((line, i) => (
+          <tspan key={i} x={x} y={yCenter + (i - (lines.length - 1) / 2) * LINE_H}
+            dominantBaseline="middle">
+            {line}
+          </tspan>
+        ))}
+      </text>
+      <CitationSuperscripts citations={citations} x={x + 1} y={lastLineY - 5} />
+    </g>
+  );
+}
+
+// ── Panel ─────────────────────────────────────────────────────────────────────
+
+interface PanelProps {
+  bars: BarEntry[];
+  colour: string;
+  showXAxis?: boolean;
+  baseDelay?: number;
+}
+
+function Panel({ bars, colour, showXAxis = false, baseDelay = 0 }: PanelProps) {
+  const sorted = [...bars].sort((a, b) => a.value - b.value);
+  const TOP    = 6;
+  const BOTTOM = showXAxis ? 34 : 6;
+
+  // Compute y-center for each row
+  let y = TOP;
+  const rows = sorted.map((bar, i) => {
+    const rh = rowHeight(bar.label);
+    const yCenter = y + rh / 2;
+    y += rh;
+    return { bar, yCenter, delay: baseDelay + i * STAGGER };
+  });
+  const totalH = y;
+  const svgH   = totalH + BOTTOM;
+  const axisY  = totalH;
+
+  const xTicks = [0, 50, 100, 150, 200, 250].filter(t => t <= meta.xMax);
+
+  return (
+    <svg viewBox={`0 0 ${VIEW_W} ${svgH}`} width="100%"
+      style={{ overflow: 'visible', display: 'block' }} aria-hidden="true">
+
+      {/* Subtle vertical grid lines */}
+      {xTicks.map(tick => (
+        <line key={tick} x1={xScale(tick)} x2={xScale(tick)}
+          y1={TOP} y2={totalH}
+          stroke="currentColor" strokeOpacity={0.07} strokeWidth={1} />
+      ))}
+
+      {rows.map(({ bar, yCenter, delay }, i) => {
+        const barW   = Math.max(1, xScale(bar.value) - X_START);
+        const errPx  = (bar.errorBar / meta.xMax) * X_RANGE;
+        const labelX = xScale(bar.value + bar.errorBar) + 5;
+
+        return (
+          <g key={i}>
+            {/* Y-axis label */}
+            <YLabel label={bar.label} x={X_START - 6} yCenter={yCenter} citations={bar.citations} />
+
+            {/* Bar */}
+            <rect
+              className={styles.bar}
+              x={X_START} y={yCenter - BAR_H / 2}
+              width={barW} height={BAR_H}
+              fill={colour} rx={2}
+              style={{ animationDelay: `${delay}s` } as React.CSSProperties}
+            />
+
+            {/* Error bar — horizontal line, no caps */}
+            {bar.errorBar > 0 && (
+              <line
+                className={styles.errorBar}
+                x1={xScale(bar.value) - errPx} x2={xScale(bar.value) + errPx}
+                y1={yCenter} y2={yCenter}
+                stroke="currentColor" strokeOpacity={0.55} strokeWidth={1.5}
+                style={{ animationDelay: `${delay + 0.25}s` } as React.CSSProperties}
+              />
+            )}
+
+            {/* Value label */}
+            <text
+              className={`${styles.valueLabel} ${styles.dimText}`}
+              x={labelX} y={yCenter}
+              dominantBaseline="middle"
+              fontSize="0.625em" fontFamily={FONT}
+              fill="currentColor"
+              style={{ animationDelay: `${delay + 0.1}s` } as React.CSSProperties}
+            >
+              {bar.value}
+            </text>
+          </g>
+        );
+      })}
+
+      {/* X axis — only on bottom panel */}
+      {showXAxis && (
+        <g>
+          <line x1={X_START} x2={X_END} y1={axisY} y2={axisY}
+            stroke="currentColor" strokeOpacity={0.25} strokeWidth={1} />
+          {xTicks.map(tick => (
+            <g key={tick}>
+              <line x1={xScale(tick)} x2={xScale(tick)}
+                y1={axisY} y2={axisY + 4}
+                stroke="currentColor" strokeOpacity={0.4} strokeWidth={1} />
+              <text x={xScale(tick)} y={axisY + 14}
+                textAnchor="middle" fontSize="0.5625em"
+                fill="currentColor" className={styles.dimText}
+                fontFamily={FONT}>
+                {tick}
+              </text>
+            </g>
+          ))}
+          <text x={(X_START + X_END) / 2} y={axisY + 28}
+            textAnchor="middle" fontSize="0.625em"
+            fill="currentColor" className={styles.dimText}
+            fontFamily={FONT}>
+            {meta.xAxisLabel}
+          </text>
+        </g>
+      )}
+    </svg>
+  );
+}
+
+// ── Main chart ────────────────────────────────────────────────────────────────
+
+function LatencyChartInner() {
+  const wrapperRef = useRef<HTMLElement>(null);
+  const [animKey, setAnimKey] = useState(0);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setAnimKey(k => k + 1);
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const groups = getOrderedGroups(toleranceBars);
+
+  // Precompute per-group start delays so animation flows top-left → bottom-right
+  let cumulative = 0;
+  const groupEntries = groups.map(group => {
+    const bars  = barsForGroup(toleranceBars, group);
+    const delay = cumulative;
+    cumulative += bars.length * STAGGER;
+    return { group, bars, delay };
+  });
+  const imperceptibleDelay = cumulative;
+
+  // Use CSS variables so dark-mode overrides apply
+  const toleranceFill     = 'var(--latency-tolerance-fill)';
+  const imperceptibleFill = 'var(--latency-imperceptible-fill)';
+
+  // Pair groups into 2-column rows
+  const pairs: [typeof groupEntries[0], typeof groupEntries[0] | null][] = [];
+  for (let i = 0; i < groupEntries.length; i += 2) {
+    pairs.push([groupEntries[i], groupEntries[i + 1] ?? null]);
+  }
+
+  return (
+    <figure className={styles.chartWrapper} ref={wrapperRef}>
+      {/* Legend */}
+      <div className={styles.legend} aria-hidden="true">
+        <span>
+          <span className={styles.legendSwatch} style={{ background: toleranceFill }} />
+          Acceptable
+        </span>
+        <span>
+          <span className={styles.legendSwatch} style={{ background: imperceptibleFill }} />
+          Not noticeable
+        </span>
+      </div>
+
+      {/* 2-column tolerance panels */}
+      <div key={animKey} className={styles.panelGrid}>
+        {pairs.map(([left, right]) => (
+          <React.Fragment key={left.group}>
+            <div className={styles.panel}>
+              <div className={styles.panelTitle}>{left.group}</div>
+              <Panel bars={left.bars} colour={toleranceFill} baseDelay={left.delay} />
+            </div>
+            {right && (
+              <div className={styles.panel}>
+                <div className={styles.panelTitle}>{right.group}</div>
+                <Panel bars={right.bars} colour={toleranceFill} baseDelay={right.delay} />
+              </div>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* Full-width imperceptible panel */}
+      <div key={`imp-${animKey}`} className={styles.imperceptiblePanel}>
+        <div className={styles.panelTitle}>Not noticeable</div>
+        <Panel
+          bars={imperceptibleBars}
+          colour={imperceptibleFill}
+          showXAxis
+          baseDelay={imperceptibleDelay}
+        />
+      </div>
+
+      {meta.legend && (
+        <figcaption>{meta.legend}</figcaption>
+      )}
+    </figure>
+  );
+}
+
+export default function LatencyChart() {
+  return (
+    <BrowserOnly fallback={<div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}>Loading chart…</div>}>
+      {() => <LatencyChartInner />}
+    </BrowserOnly>
+  );
+}

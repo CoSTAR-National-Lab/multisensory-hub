@@ -384,6 +384,20 @@ body {
   box-shadow: var(--custom-shadow);
 }
 
+/* Figure captions — shared by images (converted from Pandoc `: text`) and interactive charts */
+.markdown figcaption {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.5;
+}
+
+[data-theme='dark'] .markdown figcaption {
+  color: var(--ifm-color-emphasis-500);
+}
+
 /* Images */
 .markdown img {
   border-radius: var(--custom-border-radius);

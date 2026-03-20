@@ -11,6 +11,7 @@ Pipeline to convert Word documents to MDX pages and serve with Docusaurus.
 """
 
 import json
+import math
 import os
 import re
 import shutil
@@ -35,6 +36,7 @@ import DataTable from '@site/src/components/interactive/DataTable';
 import InteractiveDemo from '@site/src/components/interactive/InteractiveDemo';
 import CollapsibleSection from '@site/src/components/interactive/CollapsibleSection';
 import QuoteBlock from '@site/src/components/interactive/QuoteBlock';
+import LatencyChart from '@site/src/components/interactive/LatencyChart';
 import RefPopup from '@site/src/components/RefPopup';
 
 """
@@ -46,6 +48,7 @@ import DataTable from '@site/src/components/interactive/DataTable';
 import InteractiveDemo from '@site/src/components/interactive/InteractiveDemo';
 import CollapsibleSection from '@site/src/components/interactive/CollapsibleSection';
 import QuoteBlock from '@site/src/components/interactive/QuoteBlock';
+import LatencyChart from '@site/src/components/interactive/LatencyChart';
 
 """
 
@@ -742,6 +745,26 @@ def fix_mdx_syntax(content: str) -> str:
     # Re-run a scan specifically for warnings (without changing content yet)
     re.sub(r'\!\[([^\]]*)\]\(([^)]+)\)', check_alt_text, content)
 
+    # Extract Figure N: captions from image alt text and render as visible <figcaption>
+    # Keeps alt text intact for accessibility; adds figcaption for sighted readers
+    def add_figure_caption(match):
+        alt = match.group(1).strip()
+        src = match.group(2)
+        if re.match(r'^Figure\s+\d+[:.]\s*', alt, re.IGNORECASE):
+            return f'![{alt}]({src})\n\n<figcaption>{alt}</figcaption>'
+        return match.group(0)
+
+    content = re.sub(r'!\[([^\]]+)\]\(([^)]+)\)', add_figure_caption, content)
+
+    # Convert Pandoc paragraph captions (`: text` after an image) to <figcaption>
+    # so they share styling with the LatencyChart figcaption
+    content = re.sub(
+        r'(!\[[^\]]*\]\([^)]+\))\n\n^: (.+)$',
+        lambda m: m.group(1) + '\n\n<figcaption>' + m.group(2).strip() + '</figcaption>',
+        content,
+        flags=re.MULTILINE
+    )
+
     # Fix URLs in angle brackets - convert <https://...> to just the URL without brackets
     content = re.sub(r'<(https?://[^>]+)>', r'\1', content)
 
@@ -1256,6 +1279,22 @@ def post_process_mdx_files(folder: Path) -> None:
         # Remove any remaining Word anchors
         content = re.sub(r'\[\]\{#[^}]+\}', '', content)
 
+        # Replace latency chart embed marker (primary — set in Word doc)
+        # Matches both inline code `[CHART: latency-tolerance]` (Pandoc Code style)
+        # and plain text [CHART: latency-tolerance]
+        content = re.sub(
+            r'`\[CHART:\s*latency-tolerance\]`|\[CHART:\s*latency-tolerance\]',
+            '\n\n<LatencyChart />\n\n',
+            content
+        )
+
+        # Fallback: replace latency graph PNG by filename (for already-generated MDX)
+        content = re.sub(
+            r'!\[[^\]]*\]\(/media/image7\.png\)',
+            '\n\n<LatencyChart />\n\n',
+            content
+        )
+
         # Convert existing <sup>number</sup> to reference popups with copy and navigation buttons
         def add_ref_popup(match):
             num = match.group(1)
@@ -1358,6 +1397,14 @@ def copy_to_docusaurus(source_folder: Path, docs_folder: Path) -> None:
             shutil.rmtree(static_folder)
         shutil.copytree(media_source, static_folder)
         print(f"  Copied media folder to {static_folder}")
+
+    # Copy data files from report/ into Docusaurus src/data/
+    src_data_folder = docs_folder.parent / "src" / "data"
+    src_data_folder.mkdir(parents=True, exist_ok=True)
+    for data_file in INPUT_FOLDER.glob("*.json"):
+        dest = src_data_folder / data_file.name
+        shutil.copy2(data_file, dest)
+        print(f"  Copied {data_file.name} to {dest}")
 
     print(f"  Copied content to {docs_folder}")
 
@@ -1524,6 +1571,151 @@ def remove_word_toc(markdown: str) -> str:
     return "\n".join(result)
 
 
+def extract_chart_data_tables(markdown: str) -> str:
+    """Detect [CHART-DATA: <id>] markers followed by a markdown table, extract
+    the data as JSON into report/, and replace the marker+table with
+    [CHART: <id>] so the rest of the pipeline injects the component.
+
+    Table columns expected (order-independent, case-insensitive):
+      Group | Label | Value (ms) | Error (ms) | Threshold | Citations
+
+    Mendeley/Pandoc superscripts in the Citations cell (e.g. ^46^ or ^46,47^)
+    are parsed into a list of integer reference numbers.
+    """
+    # Match the marker line then optional blank lines then the table
+    marker_pattern = re.compile(
+        r'(?P<marker>\[CHART-DATA:\s*(?P<chart_id>[^\]]+)\])'
+        r'(?P<gap>\s*\n)'
+        r'(?P<table>(?:\|[^\n]+\n)+)',
+        re.MULTILINE
+    )
+
+    def _parse_cell_citations(cell: str) -> list[int]:
+        """Extract reference numbers from superscripts like ^46^ or ^46,47^."""
+        nums = []
+        for m in re.finditer(r'\^([\d,\s]+)\^', cell):
+            for part in m.group(1).split(','):
+                part = part.strip()
+                if part.isdigit():
+                    nums.append(int(part))
+        return nums
+
+    def _col_index(headers: list[str], *candidates: str) -> int:
+        """Find column index by trying candidate names (case-insensitive)."""
+        for h in headers:
+            for c in candidates:
+                if c.lower() in h.lower():
+                    return headers.index(h)
+        return -1
+
+    def _wrap_label(text: str, width: int = 28) -> str:
+        """Auto-wrap long label text at word boundaries, matching R str_wrap behaviour."""
+        words = text.split()
+        lines, current, current_len = [], [], 0
+        for word in words:
+            if current and current_len + 1 + len(word) > width:
+                lines.append(' '.join(current))
+                current, current_len = [word], len(word)
+            else:
+                current.append(word)
+                current_len += (1 if current_len else 0) + len(word)
+        if current:
+            lines.append(' '.join(current))
+        return '\n'.join(lines)
+
+    def _replace_table(match: re.Match) -> str:
+        chart_id = match.group('chart_id').strip()
+        raw_table = match.group('table')
+
+        rows = [
+            [cell.strip() for cell in line.strip().strip('|').split('|')]
+            for line in raw_table.strip().splitlines()
+            if line.strip() and not re.match(r'^\s*\|[-:| ]+\|\s*$', line)
+        ]
+        if len(rows) < 2:
+            return match.group(0)  # not enough rows — leave unchanged
+
+        headers = rows[0]
+        i_group     = _col_index(headers, 'group')
+        i_label     = _col_index(headers, 'label')
+        i_value     = _col_index(headers, 'value')
+        i_error     = _col_index(headers, 'error')
+        i_threshold = _col_index(headers, 'threshold')
+        i_citations = _col_index(headers, 'citation', 'ref')
+
+        if -1 in (i_group, i_label, i_value, i_threshold):
+            print(f"  [CHART-DATA] WARNING: could not identify required columns in {chart_id} table — skipping")
+            return match.group(0)
+
+        tolerance_bars = []
+        imperceptible_bars = []
+        legend_text = None
+
+        for row in rows[1:]:
+            if not row or not any(cell.strip() for cell in row):
+                continue
+
+            group = row[i_group].strip() if i_group < len(row) else ''
+
+            # Legend row: first cell is [LEGEND]
+            if group.upper() == '[LEGEND]':
+                legend_text = row[i_label].strip() if i_label < len(row) else ''
+                continue
+
+            if len(row) <= max(i_group, i_label, i_value, i_threshold):
+                continue
+
+            label     = _wrap_label(row[i_label])
+            raw_val   = re.sub(r'[^\d.]', '', row[i_value])
+            raw_err   = re.sub(r'[^\d.]', '', row[i_error]) if i_error != -1 and i_error < len(row) else '0'
+            threshold = row[i_threshold].strip()
+            citations = _parse_cell_citations(row[i_citations]) if i_citations != -1 and i_citations < len(row) else []
+
+            try:
+                value    = float(raw_val) if raw_val else 0.0
+                errorBar = float(raw_err) if raw_err else 0.0
+            except ValueError:
+                continue
+
+            entry = {'label': label, 'value': value, 'errorBar': errorBar}
+            if citations:
+                entry['citations'] = citations
+
+            if threshold.lower() == 'not noticeable':
+                imperceptible_bars.append(entry)
+            else:
+                entry['group'] = group
+                tolerance_bars.append(entry)
+
+        # Compute shared xMax (rounded up to nearest 25)
+        all_vals = [b['value'] + b['errorBar'] for b in tolerance_bars + imperceptible_bars]
+        raw_max  = max(all_vals) if all_vals else 275
+        x_max    = int(math.ceil(raw_max / 25) * 25)
+
+        meta_block = {
+            'xAxisLabel':          'Value (ms)',
+            'xMax':                x_max,
+            'toleranceColour':     '#440154FF',
+            'imperceptibleColour': '#5DC863FF',
+        }
+        if legend_text:
+            meta_block['legend'] = legend_text
+
+        payload = {
+            'meta':             meta_block,
+            'toleranceBars':    tolerance_bars,
+            'imperceptibleBars': imperceptible_bars,
+        }
+
+        out_path = INPUT_FOLDER / 'latency_data.json'
+        out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
+        print(f"  [CHART-DATA] Wrote {out_path} ({len(tolerance_bars)} tolerance bars, {len(imperceptible_bars)} imperceptible bars)")
+
+        return f'\n\n[CHART: {chart_id}]\n\n'
+
+    return marker_pattern.sub(_replace_table, markdown)
+
+
 def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     """Process a single Word document through the pipeline."""
     print(f"\nProcessing: {docx_path}")
@@ -1534,6 +1726,10 @@ def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     # Remove Word-generated TOC
     print("  Removing Word-generated Table of Contents...")
     markdown = remove_word_toc(markdown)
+
+    # Extract [CHART-DATA: ...] tables → write JSON → replace with [CHART: ...] marker
+    print("  Extracting chart data tables...")
+    markdown = extract_chart_data_tables(markdown)
 
     md_path = output_folder / f"{docx_path.stem}.md"
     output_folder.mkdir(parents=True, exist_ok=True)
