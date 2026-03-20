@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import styles from './LatencyChart.module.css';
 import rawData from '@site/src/data/latency_data.json';
+import { references, Reference } from '@site/src/data/references';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -62,37 +64,153 @@ function rowHeight(label: string): number {
   return Math.max(BAR_H + ROW_PAD * 2, lines * LINE_H + ROW_PAD * 2);
 }
 
+// ── Citation portal popup ─────────────────────────────────────────────────────
+// Renders a popup at document.body level (via portal) so it's never clipped
+// by SVG boundaries.  Same reference data and UI as RefPopup.
+
+function formatRef(ref: Reference): string {
+  const parts: string[] = [];
+  if (ref.authors) parts.push(ref.authors);
+  if (ref.title)   parts.push(ref.title);
+  if (ref.journal) parts.push(ref.journal);
+  if (ref.volume)  parts.push(ref.volume);
+  if (ref.pages)   parts.push(ref.pages);
+  if (ref.year)    parts.push(`(${ref.year})`);
+  return parts.filter(Boolean).join('. ').replace(/\.\./g, '.');
+}
+
+interface CitationPopupProps {
+  refNum: number;
+  onClose: () => void;
+}
+
+function CitationPopup({ refNum, onClose }: CitationPopupProps) {
+  const ref = references.find(r => r.num === refNum);
+  const [copied, setCopied] = useState(false);
+
+  const displayText = ref ? formatRef(ref) : `Reference ${refNum}`;
+  const doi  = ref?.doi;
+  const url  = ref?.url;
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(`[${refNum}] ${displayText}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
+
+  const handleGoTo = () => {
+    window.location.href = `/references#ref-${refNum}`;
+  };
+
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') onClose();
+  };
+
+  return ReactDOM.createPortal(
+    <>
+      {/* full-screen dismiss overlay */}
+      <div
+        style={{ position: 'fixed', inset: 0, zIndex: 9999 }}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      {/* popup — same style as RefPopup */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        onKeyDown={handleKey}
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 10000,
+          width: 'min(400px, calc(100vw - 32px))',
+          background: 'var(--ifm-background-surface-color)',
+          border: '1px solid var(--ifm-color-emphasis-300)',
+          borderRadius: 8,
+          padding: 12,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          fontSize: '0.875rem',
+        }}
+      >
+        <div style={{ fontWeight: 'bold', color: 'var(--ifm-color-primary)', marginBottom: 6 }}>
+          [{refNum}]
+        </div>
+        {ref ? (
+          <div style={{ marginBottom: 12 }}>
+            {ref.authors && <div style={{ fontWeight: 500, marginBottom: 4, lineHeight: 1.4 }}>{ref.authors}</div>}
+            {ref.title   && <div style={{ marginBottom: 4, lineHeight: 1.4 }}>{ref.title}</div>}
+            <div style={{ fontSize: '0.813rem', color: 'var(--ifm-font-color-secondary)', lineHeight: 1.4 }}>
+              {ref.journal && <span style={{ fontStyle: 'italic' }}>{ref.journal}</span>}
+              {ref.volume  && <span>, {ref.volume}</span>}
+              {ref.pages   && <span>: {ref.pages}</span>}
+              {ref.year    && <span> ({ref.year})</span>}
+            </div>
+            {(doi || url) && (
+              <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px dashed var(--ifm-color-emphasis-200)' }}>
+                {doi && (
+                  <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize: '0.75rem', color: 'var(--ifm-color-primary)', wordBreak: 'break-all' }}
+                    onClick={e => e.stopPropagation()}>
+                    DOI: {doi}
+                  </a>
+                )}
+                {!doi && url && (
+                  <a href={url} target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize: '0.75rem', color: 'var(--ifm-color-primary)', wordBreak: 'break-all' }}
+                    onClick={e => e.stopPropagation()}>
+                    {url.length > 50 ? url.slice(0, 50) + '…' : url}
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ marginBottom: 12, lineHeight: 1.5 }}>Reference {refNum}</div>
+        )}
+        <div style={{ display: 'flex', gap: 8, borderTop: '1px solid var(--ifm-color-emphasis-200)', paddingTop: 10 }}>
+          {[
+            { label: copied ? 'Copied!' : 'Copy', action: handleCopy },
+            { label: 'View all', action: handleGoTo },
+          ].map(btn => (
+            <button key={btn.label} onClick={btn.action}
+              style={{
+                flex: 1, padding: '6px 12px', cursor: 'pointer',
+                background: 'var(--ifm-color-emphasis-100)',
+                border: '1px solid var(--ifm-color-emphasis-300)',
+                borderRadius: 4, fontSize: '0.813rem',
+                color: 'var(--ifm-font-color-base)',
+              }}>
+              {btn.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </>,
+    document.body
+  );
+}
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const FONT = 'inherit';  // inherits document font (respects Lexend/system setting)
 
-function CitationSuperscripts({ citations, x, y }: { citations: number[]; x: number; y: number }) {
-  if (!citations || citations.length === 0) return null;
-  return (
-    <a href="#references" style={{ textDecoration: 'none' }}>
-      <text x={x} y={y} fontSize="0.47em" fontFamily={FONT}
-        fill="currentColor" className={styles.dimText} dominantBaseline="auto">
-        {citations.join(',')}
-      </text>
-    </a>
-  );
+interface YLabelProps {
+  label: string;
+  x: number;
+  yCenter: number;
+  citations?: number[];
+  onCitationClick: (refNum: number) => void;
 }
 
-function YLabel({ label, x, yCenter, citations }: { label: string; x: number; yCenter: number; citations?: number[] }) {
+function YLabel({ label, x, yCenter, citations, onCitationClick }: YLabelProps) {
   const lines = label.split('\n');
   const lastLineY = yCenter + (lines.length > 1 ? ((lines.length - 1) / 2) * LINE_H : 0);
+  const citStr = citations && citations.length > 0 ? citations.join(',') : null;
 
-  if (lines.length === 1) {
-    return (
-      <g>
-        <text x={x} y={yCenter} textAnchor="end" dominantBaseline="middle"
-          fontSize="0.625em" fontFamily={FONT} fill="currentColor" className={styles.dimText}>
-          {lines[0]}
-        </text>
-        <CitationSuperscripts citations={citations} x={x + 1} y={yCenter - 5} />
-      </g>
-    );
-  }
   return (
     <g>
       <text textAnchor="end" fontSize="0.625em" fontFamily={FONT}
@@ -104,7 +222,24 @@ function YLabel({ label, x, yCenter, citations }: { label: string; x: number; yC
           </tspan>
         ))}
       </text>
-      <CitationSuperscripts citations={citations} x={x + 1} y={lastLineY - 5} />
+      {citStr && (
+        <text
+          x={x + 2} y={lastLineY - 5}
+          fontSize="0.47em" fontFamily={FONT}
+          fill="var(--ifm-color-primary)"
+          className={styles.citationSup}
+          style={{ cursor: 'pointer' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            // Open popup for first citation number; multi-citations open first
+            onCitationClick(citations![0]);
+          }}
+          role="button"
+          aria-label={`Reference${citations!.length > 1 ? 's' : ''} ${citStr}`}
+        >
+          {citStr}
+        </text>
+      )}
     </g>
   );
 }
@@ -116,9 +251,10 @@ interface PanelProps {
   colour: string;
   showXAxis?: boolean;
   baseDelay?: number;
+  onCitationClick: (refNum: number) => void;
 }
 
-function Panel({ bars, colour, showXAxis = false, baseDelay = 0 }: PanelProps) {
+function Panel({ bars, colour, showXAxis = false, baseDelay = 0, onCitationClick }: PanelProps) {
   const sorted = [...bars].sort((a, b) => a.value - b.value);
   const TOP    = 6;
   const BOTTOM = showXAxis ? 34 : 6;
@@ -156,7 +292,10 @@ function Panel({ bars, colour, showXAxis = false, baseDelay = 0 }: PanelProps) {
         return (
           <g key={i}>
             {/* Y-axis label */}
-            <YLabel label={bar.label} x={X_START - 6} yCenter={yCenter} citations={bar.citations} />
+            <YLabel
+              label={bar.label} x={X_START - 6} yCenter={yCenter}
+              citations={bar.citations} onCitationClick={onCitationClick}
+            />
 
             {/* Bar */}
             <rect
@@ -228,6 +367,7 @@ function Panel({ bars, colour, showXAxis = false, baseDelay = 0 }: PanelProps) {
 function LatencyChartInner() {
   const wrapperRef = useRef<HTMLElement>(null);
   const [animKey, setAnimKey] = useState(0);
+  const [openRef, setOpenRef] = useState<number | null>(null);
 
   useEffect(() => {
     const el = wrapperRef.current;
@@ -242,6 +382,14 @@ function LatencyChartInner() {
     );
     observer.observe(el);
     return () => observer.disconnect();
+  }, []);
+
+  const handleCitationClick = useCallback((refNum: number) => {
+    setOpenRef(refNum);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setOpenRef(null);
   }, []);
 
   const groups = getOrderedGroups(toleranceBars);
@@ -286,12 +434,14 @@ function LatencyChartInner() {
           <React.Fragment key={left.group}>
             <div className={styles.panel}>
               <div className={styles.panelTitle}>{left.group}</div>
-              <Panel bars={left.bars} colour={toleranceFill} baseDelay={left.delay} />
+              <Panel bars={left.bars} colour={toleranceFill} baseDelay={left.delay}
+                onCitationClick={handleCitationClick} />
             </div>
             {right && (
               <div className={styles.panel}>
                 <div className={styles.panelTitle}>{right.group}</div>
-                <Panel bars={right.bars} colour={toleranceFill} baseDelay={right.delay} />
+                <Panel bars={right.bars} colour={toleranceFill} baseDelay={right.delay}
+                  onCitationClick={handleCitationClick} />
               </div>
             )}
           </React.Fragment>
@@ -306,11 +456,17 @@ function LatencyChartInner() {
           colour={imperceptibleFill}
           showXAxis
           baseDelay={imperceptibleDelay}
+          onCitationClick={handleCitationClick}
         />
       </div>
 
       {meta.legend && (
         <figcaption>{meta.legend}</figcaption>
+      )}
+
+      {/* Citation popup — rendered at document.body via portal, never clipped */}
+      {openRef !== null && (
+        <CitationPopup refNum={openRef} onClose={handleClose} />
       )}
     </figure>
   );

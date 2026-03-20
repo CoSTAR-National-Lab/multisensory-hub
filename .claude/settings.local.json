@@ -18,7 +18,10 @@
       "Bash(head:*)",
       "Bash(node:*)",
       "Bash(grep -rn \"^: \\\\|^Figure\\\\|figcaption\" \"C:\\\\Users\\\\andyt\\\\PycharmProjects\\\\MultisensoryHub\\\\mdx\"\" --include=\"*.mdx \")",
-      "Bash(find C:UsersandytPycharmProjectsMultisensoryHubdocusaurus-site -name custom.css -o -name *.css)"
+      "Bash(find C:UsersandytPycharmProjectsMultisensoryHubdocusaurus-site -name custom.css -o -name *.css)",
+      "Bash(cd:*)",
+      "Bash(tasklist)",
+      "Bash(netstat -ano)"
     ]
   }
 }

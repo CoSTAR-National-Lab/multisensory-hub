@@ -192,6 +192,17 @@ export const references: Reference[] = [
   },
   {
     "num": 17,
+    "authors": "",
+    "title": "Kirshenblatt-Gimblett, B",
+    "journal": "Destination Culture: Tourism, Museums, and Heritage.",
+    "year": null,
+    "volume": null,
+    "pages": null,
+    "doi": null,
+    "url": null
+  },
+  {
+    "num": 18,
     "authors": "Woods, A. T. *et al.*",
     "title": "Going Beyond the Ordinary — User Perceptions of the Impact of Multisensory Elements on Presence in Virtual Reality at the Royal Opera House",
     "journal": "Multisens. Res.",
@@ -202,7 +213,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 18,
+    "num": 19,
     "authors": "Herz, R",
     "title": "The Role of Odor-Evoked Memory in Psychological and Physiological Health",
     "journal": "Brain Sci.",
@@ -213,7 +224,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 19,
+    "num": 20,
     "authors": "Shams, L. & Seitz, A. R",
     "title": "Benefits of multisensory learning",
     "journal": "Trends Cogn. Sci.",
@@ -224,7 +235,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 20,
+    "num": 21,
     "authors": "Pecher, D. & Zeelenberg, R",
     "title": "Does multisensory study benefit memory for pictures and sounds?",
     "journal": "Cognition",
@@ -235,7 +246,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 21,
+    "num": 22,
     "authors": "Dinh, H. Q., Walker, N., Hodges, L. F., Chang Song & Kobayashi, A",
     "title": "Evaluating the importance of multi-sensory input on memory and the sense of presence in virtual environments. in",
     "journal": "Proceedings IEEE Virtual Reality (Cat. No. 99CB36316)",
@@ -246,7 +257,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 22,
+    "num": 23,
     "authors": "Soto-Faraco, S. & Spence, C",
     "title": "Crossmodal semantics in memory: Scoping review and meta-analyses of multisensory effects in short-term and episodic memory systems",
     "journal": "Psychol. Bull.",
@@ -257,7 +268,7 @@ export const references: Reference[] = [
     "url": "https://doi.org/10.1037/bul0000483"
   },
   {
-    "num": 23,
+    "num": 24,
     "authors": "Tran, H., Veflen, N., Jørgensen, E. J. B. & Velasco, C",
     "title": "Multisensory Food Experiences in Northern Norway: An Exploratory Study",
     "journal": "Foods",
@@ -268,7 +279,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 24,
+    "num": 25,
     "authors": "Parker, M., Spennemann, D. H. R. & Bond, J",
     "title": "Sensory perception in cultural studies—a review of sensorial and multisensorial heritage",
     "journal": "The Senses and Society",
@@ -279,7 +290,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 25,
+    "num": 26,
     "authors": "Avni, Y., Danial-Saad, A., Sheidin, J. & Kuflik, T",
     "title": "Enhancing museum accessibility for blind and low vision visitors through interactive multimodal tangible interfaces",
     "journal": "Int. J. Hum. Comput. Stud.",
@@ -290,7 +301,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 26,
+    "num": 27,
     "authors": "Lloyd-Esenkaya, T., Lloyd-Esenkaya, V., O'Neill, E. & Proulx, M. J",
     "title": "Multisensory inclusive design with sensory substitution",
     "journal": "Cognitive Research: Principles and Implications",
@@ -301,7 +312,7 @@ export const references: Reference[] = [
     "url": "https://doi.org/10.1186/s41235-020-00240-7"
   },
   {
-    "num": 27,
+    "num": 28,
     "authors": "",
     "title": "Reid, B. E",
     "journal": "The Curb-Cut Effect and the Perils of Accessibility without Disability",
@@ -312,7 +323,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 28,
+    "num": 29,
     "authors": "Fotiadi, S. E",
     "title": "Multisensory Technologies for Inclusive Exhibition Spaces: Disability Access Meets Artistic and Curatorial Research",
     "journal": "Multimodal Technologies and Interaction",
@@ -323,7 +334,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 29,
+    "num": 30,
     "authors": "Verbeek, C., Leemans, I. & Fleming, B",
     "title": "How can scents enhance the impact of guided museum tours? towards an impact approach for olfactory museology",
     "journal": "The Senses and Society",
@@ -334,7 +345,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 30,
+    "num": 31,
     "authors": "Wood-Nartker, J",
     "title": "Calm In Chaos: Creating Refuge Spaces In The Theme Park Setting For People With Autism Spectrum Disorder And Post-Traumatic Stress Disorder",
     "journal": "Physical Medicine, Rehabilitation and Disabilities",
@@ -345,7 +356,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 31,
+    "num": 32,
     "authors": "",
     "title": "Velasco, C. & Obrist, M",
     "journal": "Multisensory Experiences",
@@ -356,21 +367,10 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 32,
+    "num": 33,
     "authors": "Botvinick, M. & Cohen, J",
     "title": "Rubber hands 'feel' touch that eyes see",
     "journal": "Nature",
-    "year": "1998",
-    "volume": null,
-    "pages": null,
-    "doi": null,
-    "url": null
-  },
-  {
-    "num": 33,
-    "authors": "Jousmäki, V. & Hari, R",
-    "title": "Parchment-skin illusion: sound-biased touch",
-    "journal": "Current Biology",
     "year": "1998",
     "volume": null,
     "pages": null,
@@ -390,10 +390,10 @@ export const references: Reference[] = [
   },
   {
     "num": 35,
-    "authors": "Spence, C",
-    "title": "Exploring Group Differences in the Crossmodal Correspondences",
-    "journal": "Multisens. Res.",
-    "year": "2022",
+    "authors": "Jousmäki, V. & Hari, R",
+    "title": "Parchment-skin illusion: sound-biased touch",
+    "journal": "Current Biology",
+    "year": "1998",
     "volume": null,
     "pages": null,
     "doi": null,
@@ -412,6 +412,17 @@ export const references: Reference[] = [
   },
   {
     "num": 37,
+    "authors": "Spence, C",
+    "title": "Exploring Group Differences in the Crossmodal Correspondences",
+    "journal": "Multisens. Res.",
+    "year": "2022",
+    "volume": null,
+    "pages": null,
+    "doi": null,
+    "url": null
+  },
+  {
+    "num": 38,
     "authors": "Ćwiek, A. *et al.*",
     "title": "The bouba/kiki effect is robust across cultures and writing systems",
     "journal": "Philosophical Transactions of the Royal Society B: Biological Sciences",
@@ -422,7 +433,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 38,
+    "num": 39,
     "authors": "Zeljko, M., Kritikos, A. & Grove, P. M",
     "title": "Lightness/pitch and elevation/pitch crossmodal correspondences are low-level sensory effects",
     "journal": "Atten. Percept. Psychophys.",
@@ -433,7 +444,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 39,
+    "num": 40,
     "authors": "Di Stefano, N. & Spence, C",
     "title": "Roughness perception: A multisensory/crossmodal perspective",
     "journal": "Atten. Percept. Psychophys.",
@@ -444,7 +455,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 40,
+    "num": 41,
     "authors": "Spence, C",
     "title": "Cinnamon: The historic spice, medicinal uses, and flavour chemistry",
     "journal": "Int. J. Gastron. Food Sci.",
@@ -455,7 +466,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 41,
+    "num": 42,
     "authors": "Ludden, G. D. S., Schifferstein, H. N. J. & Hekkert, P. N. J",
     "title": "Surprising the Senses",
     "journal": "The Senses and Society",
@@ -466,7 +477,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 42,
+    "num": 43,
     "authors": "Kolarik, A. J. *et al.*",
     "title": "Factors Affecting Auditory Estimates of Virtual Room Size: Effects of Stimulus, Level, and Reverberation",
     "journal": "Perception",
@@ -477,7 +488,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 43,
+    "num": 44,
     "authors": "Dobbs-Beck, V",
     "title": "Vicki Dobbs-Beck -- Executive in Charge, ILMxLAB. https://www.lucasfilm.com/leadership/vicki-dobbs-beck/",
     "journal": null,
@@ -488,7 +499,7 @@ export const references: Reference[] = [
     "url": "https://www.lucasfilm.com/leadership/vicki-dobbs-beck/"
   },
   {
-    "num": 44,
+    "num": 45,
     "authors": "Tussyadiah, I. P., Wang, D., Jung, T. H. & tom Dieck, M. C",
     "title": "Virtual reality, presence, and attitude change: Empirical evidence from tourism",
     "journal": "Tour. Manag.",
@@ -499,7 +510,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 45,
+    "num": 46,
     "authors": "Diemer, J., Alpers, G. W., Peperkorn, H. M., Shiban, Y. & MÃ¼hlberger, A",
     "title": "The impact of perception and presence on emotional reactions: a review of research in virtual reality",
     "journal": "Front. Psychol.",
@@ -510,7 +521,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 46,
+    "num": 47,
     "authors": "Fiedler, M., Hossfeld, T. & Tran-Gia, P",
     "title": "A generic quantitative relationship between quality of experience and quality of service",
     "journal": "IEEE Netw.",
@@ -521,7 +532,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 47,
+    "num": 48,
     "authors": "Bartlette, C., Headlam, D., Bocko, M. & Velikic, G",
     "title": "Effect of Network Latency on Interactive Musical Performance",
     "journal": "Music Percept.",
@@ -532,7 +543,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 48,
+    "num": 49,
     "authors": "Shay, G",
     "title": "The Hierarchy of Latency. in",
     "journal": "NAB Broadcast Engineering and Information Technology (BEIT) Conference",
@@ -543,7 +554,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 49,
+    "num": 50,
     "authors": "",
     "title": "Fink, J",
     "journal": "The Youngs: The Brothers Who Built AC/DC",
@@ -554,7 +565,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 50,
+    "num": 51,
     "authors": "Löfqvist, T., Sokas, K. & Delsing, J",
     "title": "Speed of sound measurements in humid air using an ultrasonic flow meter. in",
     "journal": "IMEKO World Congress 2003: Metrology in the 3rd Millenium",
@@ -565,7 +576,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 51,
+    "num": 52,
     "authors": "Zerr, M. *et al.*",
     "title": "Brief Sensory Training Narrows the Temporal Binding Window and Enhances Long-Term Multimodal Speech Perception",
     "journal": "Front. Psychol.",
@@ -576,7 +587,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 52,
+    "num": 53,
     "authors": "Wallace, M. T. & Stevenson, R. A",
     "title": "The construct of the multisensory temporal binding window and its dysregulation in developmental disabilities",
     "journal": "Neuropsychologia",
@@ -587,7 +598,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 53,
+    "num": 54,
     "authors": "Hillock, A. R., Powers, A. R. & Wallace, M. T",
     "title": "Binding of sights and sounds: Age-related changes in multisensory temporal processing",
     "journal": "Neuropsychologia",
@@ -598,7 +609,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 54,
+    "num": 55,
     "authors": "Francisco, A. A., Jesse, A., Groen, M. A. & McQueen, J. M",
     "title": "Audiovisual temporal sensitivity in typical and dyslexic adult readers. in",
     "journal": "Interspeech 2014",
@@ -609,7 +620,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 55,
+    "num": 56,
     "authors": "Zhou, H. *et al.*",
     "title": "Audiovisual temporal processing in adult patients with first-episode schizophrenia and high-functioning autism",
     "journal": "Schizophrenia",
@@ -620,7 +631,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 56,
+    "num": 57,
     "authors": "Bruns, P",
     "title": "The Ventriloquist Illusion as a Tool to Study Multisensory Processing: An Update",
     "journal": "Front. Integr. Neurosci.",
@@ -631,7 +642,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 57,
+    "num": 58,
     "authors": "JACK, C. E. & THURLOW, W. R",
     "title": "Effects of degree of visual association and angle of displacement on the 'ventriloquism' effect",
     "journal": "Percept. Mot. Skills",
@@ -642,7 +653,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 58,
+    "num": 59,
     "authors": "Welch, R. B. & Warren, D. H",
     "title": "Immediate perceptual response to intersensory discrepancy",
     "journal": "Psychol. Bull.",
@@ -653,7 +664,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 59,
+    "num": 60,
     "authors": "Alais, D. & Burr, D",
     "title": "The Ventriloquist Effect Results from Near-Optimal Bimodal Integration",
     "journal": "Current Biology",
@@ -664,7 +675,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 60,
+    "num": 61,
     "authors": "Zhou, L.-F. & Meng, M",
     "title": "Do you see the \"face\"? Individual differences in face pareidolia",
     "journal": "Journal of Pacific Rim Psychology",
@@ -675,7 +686,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 61,
+    "num": 62,
     "authors": "Horstmann, G",
     "title": "The surprise--attention link: a review",
     "journal": "Ann. N. Y. Acad. Sci.",
@@ -686,7 +697,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 62,
+    "num": 63,
     "authors": "Bronkhorst, A. W",
     "title": "The cocktail-party problem revisited: early processing and selection of multi-talker speech",
     "journal": "Atten. Percept. Psychophys.",
@@ -697,7 +708,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 63,
+    "num": 64,
     "authors": "Talsma, D., Senkowski, D., Soto-Faraco, S. & Woldorff, M. G",
     "title": "The multifaceted interplay between attention and multisensory integration",
     "journal": "Trends Cogn. Sci.",
@@ -708,7 +719,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 64,
+    "num": 65,
     "authors": "Liu, T., Abrams, J. & Carrasco, M",
     "title": "Voluntary Attention Enhances Contrast Appearance",
     "journal": "Psychol. Sci.",
@@ -719,7 +730,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 65,
+    "num": 66,
     "authors": "Small, D. M. & Prescott, J",
     "title": "Odor/taste integration and the perception of flavor",
     "journal": "Exp. Brain Res.",
@@ -730,7 +741,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 66,
+    "num": 67,
     "authors": "Vuilleumier, P",
     "title": "How brains beware: neural mechanisms of emotional attention",
     "journal": "Trends Cogn. Sci.",
@@ -741,7 +752,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 67,
+    "num": 68,
     "authors": "Whittaker, L",
     "title": "Onboarding and offboarding in virtual reality: A user-centred framework for audience experience across genres and spaces",
     "journal": "Convergence: The International Journal of Research into New Media Technologies",
@@ -752,7 +763,29 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 68,
+    "num": 69,
+    "authors": "",
+    "title": "Sphere Entertainment Co. Sphere Entertainment Unveils The Most Advanced Concert-Grade Audio System In The World: Sphere Immersive Sound, Powered By HOLOPLOT. https://www.sphereentertainmentco.com/sphere-entertainment-unveils-the-most-advanced-concert-grade-audio-system-in-the-world-sphere-immersive-sound-powered-by-holoplot/",
+    "journal": null,
+    "year": "2023",
+    "volume": null,
+    "pages": null,
+    "doi": null,
+    "url": "https://www.sphereentertainmentco.com/sphere-entertainment-unveils-the-most-advanced-concert-grade-audio-system-in-the-world-sphere-immersive-sound-powered-by-holoplot/"
+  },
+  {
+    "num": 70,
+    "authors": "",
+    "title": "Mix Staff. Sphere Shakes Things Up with Haptic Seating. https://www.mixonline.com/live-sound/sphere-shakes-things-up-with-haptic-seating",
+    "journal": null,
+    "year": "2023",
+    "volume": null,
+    "pages": null,
+    "doi": null,
+    "url": "https://www.mixonline.com/live-sound/sphere-shakes-things-up-with-haptic-seating"
+  },
+  {
+    "num": 71,
     "authors": "",
     "title": "The Guardian. It was the best day of my life!",
     "journal": null,
@@ -763,7 +796,40 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 69,
+    "num": 72,
+    "authors": "Matthews, J. & Nairn, A",
+    "title": "Holographic ABBA: Examining Fan Responses to ABBA's Virtual \"Live\" Concert",
+    "journal": "Popular Music and Society",
+    "year": "2023",
+    "volume": null,
+    "pages": null,
+    "doi": null,
+    "url": null
+  },
+  {
+    "num": 73,
+    "authors": "Michaud, A",
+    "title": "Locating liveness in holographic performances: technological anxiety and participatory fandom at Vocaloid concerts",
+    "journal": "Popular Music",
+    "year": "2022",
+    "volume": null,
+    "pages": null,
+    "doi": null,
+    "url": null
+  },
+  {
+    "num": 74,
+    "authors": "",
+    "title": "Imada, K. A super realistic giant 3D cat has appeared on a billboard in Shinjuku",
+    "journal": "TimeOut Tokyo",
+    "year": "2021",
+    "volume": null,
+    "pages": null,
+    "doi": null,
+    "url": "https://www.timeout.com/tokyo/news/a-super-realistic-giant-3d-cat-has-appeared-on-a-billboard-in-shinjuku-070621"
+  },
+  {
+    "num": 75,
     "authors": "Potter, M. C., Wyble, B., Hagmann, C. E. & McCourt, E. S",
     "title": "Detecting meaning in RSVP at 13 ms per picture",
     "journal": "Atten. Percept. Psychophys.",
@@ -774,7 +840,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 70,
+    "num": 76,
     "authors": "Koessler, T. & Hill, H",
     "title": "Pinhole Viewing Strengthens the Hollow-Face Illusion",
     "journal": "Iperception",
@@ -785,7 +851,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 71,
+    "num": 77,
     "authors": "Pietroni, E., Ferdani, D., Forlani, M., Pagano, A. & Rufa, C",
     "title": "Bringing the Illusion of Reality Inside Museums—A Methodological Proposal for an Advanced Museology Using Holographic Showcases",
     "journal": "Informatics",
@@ -796,7 +862,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 72,
+    "num": 78,
     "authors": "",
     "title": "Royal National Institute of Blind People",
     "journal": "Key Statistics about Sight Loss",
@@ -807,7 +873,7 @@ export const references: Reference[] = [
     "url": "https://media.rnib.org.uk/documents/Key_stats_about_sight_loss_2021.pdf"
   },
   {
-    "num": 73,
+    "num": 79,
     "authors": "Pradhan, B. K. *et al.*",
     "title": "Investigating the effect of sound in horror clip on the cardiac electrophysiology of young adults using wavelet packet decomposition and machine learning classifiers",
     "journal": "Biomedical Engineering Advances",
@@ -818,7 +884,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 74,
+    "num": 80,
     "authors": "Zhang, H., Li, X., Qiu, C. & Fu, X",
     "title": "Decoding Fear: Exploring User Experiences in Virtual Reality Horror Games. in",
     "journal": "Proceedings of the Eleventh International Symposium of Chinese CHI",
@@ -829,7 +895,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 75,
+    "num": 81,
     "authors": "Scott, F",
     "title": "Limits of Control: Rain Room and Immersive Environments. https://www.artforum.com/features/limits-of-control-rain-room-and-immersive-environments-217722/",
     "journal": null,
@@ -840,7 +906,7 @@ export const references: Reference[] = [
     "url": "https://www.artforum.com/features/limits-of-control-rain-room-and-immersive-environments-217722/"
   },
   {
-    "num": 76,
+    "num": 82,
     "authors": "Lederman, S. J. & Klatzky, R. L",
     "title": "Haptic perception: A tutorial",
     "journal": "Atten. Percept. Psychophys.",
@@ -851,7 +917,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 77,
+    "num": 83,
     "authors": "Marquardt, A. *et al.*",
     "title": "Temperature Matters: Thermal Feedback for Awe Experiences in VR. in",
     "journal": "2025 IEEE Conference on Virtual Reality and 3D User Interfaces Abstracts and Workshops (VRW)",
@@ -862,7 +928,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 78,
+    "num": 84,
     "authors": "Fairhurst, M. T., McGlone, F. & Croy, I",
     "title": "Affective touch: a communication channel for social exchange",
     "journal": "Curr. Opin. Behav. Sci.",
@@ -873,7 +939,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 79,
+    "num": 85,
     "authors": "MacLean, K. E",
     "title": "Designing affective haptic experience for wellness and social communication: where designers need affective neuroscience and psychology",
     "journal": "Curr. Opin. Behav. Sci.",
@@ -884,7 +950,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 80,
+    "num": 86,
     "authors": "Hokka, J",
     "title": "Gender and the Diversity of the Human Body as Challenges for the Inclusive Design of Wearable Technology",
     "journal": "Fashion Practice",
@@ -895,7 +961,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 81,
+    "num": 87,
     "authors": "Topliss, J., Lukosch, S., Coutts, E. & Piumsomboon, T",
     "title": "Is modularity the future of haptics in XR? A systematic literature review",
     "journal": "Virtual Real.",
@@ -906,7 +972,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 82,
+    "num": 88,
     "authors": "Lipp, C. *et al.*",
     "title": "Devices for the electrical stimulation of the olfactory system: A review",
     "journal": "Biosens. Bioelectron.",
@@ -917,7 +983,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 83,
+    "num": 89,
     "authors": "Kim, K., Bae, J., Jin, Y. & Moon, C",
     "title": "Odor habituation can modulate very early olfactory event-related potential",
     "journal": "Sci. Rep.",
@@ -928,7 +994,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 84,
+    "num": 90,
     "authors": "Bushdid, C., Magnasco, M. O., Vosshall, L. B. & Keller, A",
     "title": "Humans Can Discriminate More than 1 Trillion Olfactory Stimuli",
     "journal": "Science (1979).",
@@ -939,7 +1005,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 85,
+    "num": 91,
     "authors": "Thiele, V. *et al.*",
     "title": "Influence of uncomfortable environmental conditions on odor detection thresholds for n-butanol determined with a dynamic dilution olfactometer and in room air",
     "journal": "Indoor Environments",
@@ -950,7 +1016,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 86,
+    "num": 92,
     "authors": "de Araujo, I. E., Rolls, E. T., Velazco, M. I., Margot, C. & Cayeux, I",
     "title": "Cognitive Modulation of Olfactory Processing",
     "journal": "Neuron",
@@ -961,7 +1027,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 87,
+    "num": 93,
     "authors": "Herz, R. S. & von Clef, J",
     "title": "The Influence of Verbal Labeling on the Perception of Odors: Evidence for Olfactory Illusions?",
     "journal": "Perception",
@@ -972,7 +1038,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 88,
+    "num": 94,
     "authors": "Caress, S. M. & Steinemann, A. C",
     "title": "Prevalence of fragrance sensitivity in the American population",
     "journal": "J. Environ. Health",
@@ -983,7 +1049,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 89,
+    "num": 95,
     "authors": "Brämerson, A., Johansson, L., Ek, L., Nordin, S. & Bende, M",
     "title": "Prevalence of Olfactory Dysfunction: The Skövde Population‐Based Study",
     "journal": "Laryngoscope",
@@ -994,7 +1060,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 90,
+    "num": 96,
     "authors": "Murphy, C",
     "title": "Prevalence of Olfactory Impairment in Older Adults",
     "journal": "JAMA",
@@ -1005,7 +1071,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 91,
+    "num": 97,
     "authors": "Ochadleus, C., Kirby, C. & Scollon, C. N",
     "title": "It's awe-fully unfamiliar: The effect of familiarity on awe within a virtual reality setting",
     "journal": "Front. Psychol.",
@@ -1016,7 +1082,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 92,
+    "num": 98,
     "authors": "Han, E. *et al.*",
     "title": "The influence of spatial dimensions of virtual environments on attitudes and nonverbal behaviors during social interactions",
     "journal": "J. Environ. Psychol.",
@@ -1027,7 +1093,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 93,
+    "num": 99,
     "authors": "Slater, M., Lotto, B., Arnold, M. M. & Sanchez-Vives, M. V",
     "title": "How we experience immersive virtual environments: the concept of presence and its measurement",
     "journal": "Anuario de psicología",
@@ -1038,7 +1104,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 94,
+    "num": 100,
     "authors": "Diemer, J., Alpers, G. W., Peperkorn, H. M., Shiban, Y. & MÃ¼hlberger, A",
     "title": "The impact of perception and presence on emotional reactions: a review of research in virtual reality",
     "journal": "Front. Psychol.",
@@ -1049,7 +1115,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 95,
+    "num": 101,
     "authors": "Suma, E. A. *et al.*",
     "title": "Leveraging change blindness for redirection in virtual environments. in",
     "journal": "2011 IEEE Virtual Reality Conference",
@@ -1060,7 +1126,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 96,
+    "num": 102,
     "authors": "Suma, E. A., Lipps, Z., Finkelstein, S., Krum, D. M. & Bolas, M",
     "title": "Impossible Spaces: Maximizing Natural Walking in Virtual Environments with Self-Overlapping Architecture",
     "journal": "IEEE Trans. Vis. Comput. Graph.",
@@ -1071,7 +1137,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 97,
+    "num": 103,
     "authors": "Chang, E., Kim, H. T. & Yoo, B",
     "title": "Virtual Reality Sickness: A Review of Causes and Measurements",
     "journal": "Int. J. Hum. Comput. Interact.",
@@ -1082,7 +1148,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 98,
+    "num": 104,
     "authors": "",
     "title": "Hall, E. T. & Hall, E. T",
     "journal": "The Hidden Dimension",
@@ -1093,7 +1159,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 99,
+    "num": 105,
     "authors": "Sorokowska, A. *et al.*",
     "title": "Preferred Interpersonal Distances: A Global Comparison",
     "journal": "J. Cross. Cult. Psychol.",
@@ -1104,7 +1170,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 100,
+    "num": 106,
     "authors": "Bailenson, J. N., Blascovich, J., Beall, A. C. & Loomis, J. M",
     "title": "Interpersonal distance in immersive virtual environments",
     "journal": "Personality and Social Psychology Bulletin",
@@ -1115,7 +1181,7 @@ export const references: Reference[] = [
     "url": "https://doi.org/10.1177/0146167203029007002"
   },
   {
-    "num": 101,
+    "num": 107,
     "authors": "Serino, A",
     "title": "Peripersonal space (PPS) as a multisensory interface between the individual and the environment, defining the space of the self",
     "journal": "Neuroscience and Biobehavioral Reviews",
@@ -1126,7 +1192,7 @@ export const references: Reference[] = [
     "url": "https://doi.org/10.1016/j.neubiorev.2019.01.016"
   },
   {
-    "num": 102,
+    "num": 108,
     "authors": "Holmes, N. P. & Spence, C",
     "title": "The body schema and multisensory representation(s) of peripersonal space",
     "journal": "Cogn. Process.",
@@ -1137,7 +1203,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 103,
+    "num": 109,
     "authors": "Woods, A. T., Whittaker, L., Verhulst, I., Bennett, J. & Dalton, P",
     "title": "The Impact of an Audience on the Appeal of Virtual Reality",
     "journal": "Front. Virtual Real.",
@@ -1148,7 +1214,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 104,
+    "num": 110,
     "authors": "Greenwood, B. M. & Garfinkel, S. N",
     "title": "Interoceptive Mechanisms and Emotional Processing",
     "journal": "Annu. Rev. Psychol.",
@@ -1159,7 +1225,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 105,
+    "num": 111,
     "authors": "Yu, Z., Peng, W., Li, X., Hong, X. & Zhao, G",
     "title": "Remote Heart Rate Measurement From Highly Compressed Facial Videos: An End-to-End Deep Learning Solution With Video Enhancement. in",
     "journal": "2019 IEEE/CVF International Conference on Computer Vision (ICCV)",
@@ -1170,7 +1236,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 106,
+    "num": 112,
     "authors": "Di Lernia, D., Finotti, G., Tsakiris, M., Riva, G. & Naber, M",
     "title": "Remote photoplethysmography (rPPG) in the wild: Remote heart rate imaging via online webcams",
     "journal": "Behav. Res. Methods",
@@ -1181,7 +1247,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 107,
+    "num": 113,
     "authors": "Vicentin, S., Guglielmi, S., Stramucci, G., Bisiacchi, P. & Cainelli, E",
     "title": "Listen to the beat: Behavioral and neurophysiological correlates of slow and fast heartbeat sounds",
     "journal": "International Journal of Psychophysiology",
@@ -1192,7 +1258,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 108,
+    "num": 114,
     "authors": "",
     "title": "La Biennale di Venezia. Body of Mine. https://www.labiennale.org/en/cinema/2023/venice-immersive/body-mine",
     "journal": null,
@@ -1203,7 +1269,7 @@ export const references: Reference[] = [
     "url": "https://www.labiennale.org/en/cinema/2023/venice-immersive/body-mine"
   },
   {
-    "num": 109,
+    "num": 115,
     "authors": "Lenggenhager, B., Tadi, T., Metzinger, T. & Blanke, O",
     "title": "Video ergo sum: Manipulating bodily self-consciousness",
     "journal": "Science (1979).",
@@ -1214,7 +1280,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 110,
+    "num": 116,
     "authors": "Cressman, E. K. & Henriques, D. Y. P",
     "title": "Sensory recalibration of hand position following visuomotor adaptation",
     "journal": "J. Neurophysiol.",
@@ -1225,7 +1291,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 111,
+    "num": 117,
     "authors": "Pouke, M. *et al.*",
     "title": "The Body Scaling Effect and Its Impact on Physics Plausibility",
     "journal": "Front. Virtual Real.",
@@ -1236,7 +1302,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 112,
+    "num": 118,
     "authors": "Kaufmann, M. *et al.*",
     "title": "EM-POSE: 3D Human Pose Estimation from Sparse Electromagnetic Trackers. in",
     "journal": "Proceedings of the IEEE International Conference on Computer Vision",
@@ -1247,7 +1313,7 @@ export const references: Reference[] = [
     "url": null
   },
   {
-    "num": 113,
+    "num": 119,
     "authors": "Frederiksen, E",
     "title": "Bill Burr Got His Mandalorian Role By Dunking On Star Wars. https://www.gamespot.com/articles/bill-burr-got-his-mandalorian-role-by-dunking-on-star-wars/1100-6495117/",
     "journal": null,
@@ -1258,7 +1324,7 @@ export const references: Reference[] = [
     "url": "https://www.gamespot.com/articles/bill-burr-got-his-mandalorian-role-by-dunking-on-star-wars/1100-6495117/"
   },
   {
-    "num": 114,
+    "num": 120,
     "authors": "Guarducci, S., Jayousi, S., Caputo, S. & Mucchi, L",
     "title": "Key Fundamentals and Examples of Sensors for Human Health: Wearable, Non-Continuous, and Non-Contact Monitoring Devices",
     "journal": "Sensors",
@@ -1266,6 +1332,6 @@ export const references: Reference[] = [
     "volume": null,
     "pages": null,
     "doi": null,
-    "url": "https://neon.reviewjournal.com/entertainment/heres-the-sphere-by-the-numbers-2881041>"
+    "url": null
   }
 ];

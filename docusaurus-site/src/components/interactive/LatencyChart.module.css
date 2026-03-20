@@ -29,6 +29,16 @@ html[data-accessibility-contrast='high'] .dimText {
   opacity: 1;
 }
 
+/* Citation superscript numbers inside SVG — styled like a link */
+.citationSup {
+  fill: var(--ifm-color-primary);
+  cursor: pointer;
+}
+
+.citationSup:hover {
+  text-decoration: underline;
+}
+
 .legend {
   display: flex;
   gap: 1.5rem;

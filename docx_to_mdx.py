@@ -70,7 +70,11 @@ def find_docx_files(folder: Path) -> list[Path]:
 
 def convert_docx_to_md(docx_path: Path, extract_media_to: Path = None) -> str:
     """Use pandoc to convert Word document to markdown with media extraction."""
-    cmd = ["pandoc", str(docx_path), "-t", "markdown", "--wrap=none"]
+    # Disable simple/multiline/grid table formats so Pandoc always outputs pipe
+    # tables (|col|col|), which extract_chart_data_tables can parse reliably.
+    cmd = ["pandoc", str(docx_path),
+           "-t", "markdown+pipe_tables-simple_tables-multiline_tables-grid_tables",
+           "--wrap=none"]
 
     # Extract media to specified folder
     if extract_media_to:
@@ -1582,11 +1586,13 @@ def extract_chart_data_tables(markdown: str) -> str:
     Mendeley/Pandoc superscripts in the Citations cell (e.g. ^46^ or ^46,47^)
     are parsed into a list of integer reference numbers.
     """
-    # Match the marker line then optional blank lines then the table
+    # Pandoc escapes [ and ] in plain paragraphs → \[CHART-DATA: ...\]
+    # Also handle unescaped form and backtick-wrapped inline-code form.
+    # The table may be a pipe table (|col|) or a Pandoc grid table (+---+---+).
     marker_pattern = re.compile(
-        r'(?P<marker>\[CHART-DATA:\s*(?P<chart_id>[^\]]+)\])'
-        r'(?P<gap>\s*\n)'
-        r'(?P<table>(?:\|[^\n]+\n)+)',
+        r'`?\\?\[CHART-DATA:\s*(?P<chart_id>[^\]\\\n]+?)\\?\]`?'
+        r'\s*'
+        r'(?P<table>(?:(?:\|[^\n]+|\+[-=:+| ]+)\n)+)',
         re.MULTILINE
     )
 
@@ -1630,7 +1636,9 @@ def extract_chart_data_tables(markdown: str) -> str:
         rows = [
             [cell.strip() for cell in line.strip().strip('|').split('|')]
             for line in raw_table.strip().splitlines()
-            if line.strip() and not re.match(r'^\s*\|[-:| ]+\|\s*$', line)
+            if line.strip()
+            and line.strip().startswith('|')           # skip +---+ grid separators
+            and not re.match(r'^\s*\|[-:| ]+\|\s*$', line)  # skip pipe-table divider
         ]
         if len(rows) < 2:
             return match.group(0)  # not enough rows — leave unchanged
@@ -1655,21 +1663,30 @@ def extract_chart_data_tables(markdown: str) -> str:
             if not row or not any(cell.strip() for cell in row):
                 continue
 
-            group = row[i_group].strip() if i_group < len(row) else ''
+            # Strip Pandoc backslash-escapes (e.g. \[LEGEND\] → [LEGEND])
+            group = re.sub(r'\\(.)', r'\1', row[i_group].strip()) if i_group < len(row) else ''
 
             # Legend row: first cell is [LEGEND]
             if group.upper() == '[LEGEND]':
-                legend_text = row[i_label].strip() if i_label < len(row) else ''
+                raw = row[i_label].strip() if i_label < len(row) else ''
+                legend_text = re.sub(r'\\(.)', r'\1', raw)
                 continue
 
             if len(row) <= max(i_group, i_label, i_value, i_threshold):
                 continue
 
-            label     = _wrap_label(row[i_label])
+            raw_label = re.sub(r'\\(.)', r'\1', row[i_label])  # unescape \[ etc.
+            # Extract citations from dedicated column or (if none) from label cell;
+            # then strip the ^N^ markers from the label text itself.
+            if i_citations != -1 and i_citations < len(row):
+                citations = _parse_cell_citations(row[i_citations])
+            else:
+                citations = _parse_cell_citations(raw_label)
+                raw_label = re.sub(r'\s*\^[\d,\s]+\^', '', raw_label).strip()
+            label     = _wrap_label(raw_label)
             raw_val   = re.sub(r'[^\d.]', '', row[i_value])
             raw_err   = re.sub(r'[^\d.]', '', row[i_error]) if i_error != -1 and i_error < len(row) else '0'
             threshold = row[i_threshold].strip()
-            citations = _parse_cell_citations(row[i_citations]) if i_citations != -1 and i_citations < len(row) else []
 
             try:
                 value    = float(raw_val) if raw_val else 0.0
@@ -1712,6 +1729,11 @@ def extract_chart_data_tables(markdown: str) -> str:
         print(f"  [CHART-DATA] Wrote {out_path} ({len(tolerance_bars)} tolerance bars, {len(imperceptible_bars)} imperceptible bars)")
 
         return f'\n\n[CHART: {chart_id}]\n\n'
+
+    # First, strip any legacy \[CHART: id\] or [CHART: id] embed markers that were
+    # manually added to Word in a previous pass — the pipeline now generates them
+    # automatically from [CHART-DATA: id], so keeping both would create duplicates.
+    markdown = re.sub(r'\\?\[CHART(?!-DATA):\s*[^\]\\\n]+\\?\]', '', markdown)
 
     return marker_pattern.sub(_replace_table, markdown)
 

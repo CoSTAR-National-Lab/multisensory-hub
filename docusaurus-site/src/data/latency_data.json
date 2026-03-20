@@ -1,38 +1,171 @@
 {
   "meta": {
     "xAxisLabel": "Value (ms)",
-    "xMax": 275,
+    "xMax": 200,
     "toleranceColour": "#440154FF",
-    "imperceptibleColour": "#5DC863FF"
+    "imperceptibleColour": "#5DC863FF",
+    "legend": "Key latency tolerances for multisensory experiences. The graph shows approximate tolerated time delays and imperceptible time delays across a range of activities including motion-to-photon latency in gaming remote collaborative performance live music streaming and everyday sound propagation. Error bars show that several studies have been undertaken for a given activity and that their reported time delays do not match exactly."
   },
   "toleranceBars": [
-    { "group": "Collaborative music", "label": "Drumming, pro drummers 'feel'", "value": 1, "errorBar": 0 },
-    { "group": "Collaborative music", "label": "Play to ear' music eg jazz,\nrock", "value": 7.5, "errorBar": 2.5 },
-    { "group": "Collaborative music", "label": "Musicians", "value": 25, "errorBar": 5 },
-    { "group": "Collaborative music", "label": "Lip sync", "value": 25, "errorBar": 5 },
-    { "group": "Collaborative music", "label": "Singers", "value": 50, "errorBar": 0 },
-    { "group": "Collaborative music", "label": "Musicians can practice to\nadapt to", "value": 50, "errorBar": 0 },
-    { "group": "Collaborative music", "label": "Musicians with the aid of\nvibrotactile feedback", "value": 70, "errorBar": 10 },
-    { "group": "Collaborative music", "label": "Drumming with a virtual\npartner", "value": 160, "errorBar": 0 },
-    { "group": "XR", "label": "Motion to Photon", "value": 25, "errorBar": 5 },
-    { "group": "XR", "label": "Vibrotactile", "value": 50, "errorBar": 0 },
-    { "group": "XR", "label": "Surgery, visual delay", "value": 50, "errorBar": 0 },
-    { "group": "XR", "label": "Auditory-vision", "value": 60, "errorBar": 40 },
-    { "group": "TV", "label": "Audio ahead of video", "value": 45, "errorBar": 0 },
-    { "group": "TV", "label": "Video ahead of audio", "value": 125, "errorBar": 0 },
-    { "group": "Gaming", "label": "Shooting accuracy, motion to\nphoton", "value": 20, "errorBar": 0 },
-    { "group": "Gaming", "label": "Auditory delay, Counter\nStrike, pros do not like", "value": 270, "errorBar": 0 },
-    { "group": "Live show", "label": "Mixing desk with live voice", "value": 5, "errorBar": 0 },
-    { "group": "Live show", "label": "Mixing desk", "value": 60, "errorBar": 10 },
-    { "group": "Live show", "label": "Audience: auditory & vision", "value": 100, "errorBar": 0 },
-    { "group": "Tactile displays", "label": "Vibration & auditory", "value": 35, "errorBar": 15 },
-    { "group": "Tactile displays", "label": "Vibration & vision", "value": 35, "errorBar": 15 },
-    { "group": "Speech", "label": "Speech over mobile phone", "value": 150, "errorBar": 50 }
+    {
+      "label": "Drumming pro drummers feel",
+      "value": 1.0,
+      "errorBar": 0.0,
+      "citations": [
+        48
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Play to ear music eg jazz\nrock",
+      "value": 7.5,
+      "errorBar": 2.5,
+      "citations": [
+        48
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Musicians",
+      "value": 25.0,
+      "errorBar": 5.0,
+      "citations": [
+        49,
+        50
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Lip sync",
+      "value": 25.0,
+      "errorBar": 5.0,
+      "citations": [
+        51,
+        52
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Singers",
+      "value": 50.0,
+      "errorBar": 0.0,
+      "citations": [
+        53
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Drumming with a virtual\npartner",
+      "value": 160.0,
+      "errorBar": 0.0,
+      "citations": [
+        54
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Motion to Photon",
+      "value": 25.0,
+      "errorBar": 5.0,
+      "citations": [
+        55
+      ],
+      "group": "XR"
+    },
+    {
+      "label": "Vibrotactile",
+      "value": 50.0,
+      "errorBar": 0.0,
+      "citations": [
+        56,
+        57
+      ],
+      "group": "XR"
+    },
+    {
+      "label": "Surgery visual delay",
+      "value": 50.0,
+      "errorBar": 0.0,
+      "citations": [
+        58
+      ],
+      "group": "XR"
+    },
+    {
+      "label": "Audio ahead of video",
+      "value": 45.0,
+      "errorBar": 0.0,
+      "citations": [
+        59
+      ],
+      "group": "TV"
+    },
+    {
+      "label": "Video ahead of audio",
+      "value": 125.0,
+      "errorBar": 0.0,
+      "citations": [
+        59
+      ],
+      "group": "TV"
+    },
+    {
+      "label": "Mixing desk with live voice",
+      "value": 5.0,
+      "errorBar": 0.0,
+      "citations": [
+        59
+      ],
+      "group": "Live show"
+    },
+    {
+      "label": "Mixing desk",
+      "value": 60.0,
+      "errorBar": 10.0,
+      "citations": [
+        59
+      ],
+      "group": "Live show"
+    },
+    {
+      "label": "Speech over mobile phone",
+      "value": 150.0,
+      "errorBar": 50.0,
+      "citations": [
+        59
+      ],
+      "group": "Speech"
+    }
   ],
   "imperceptibleBars": [
-    { "label": "Augmented visual, real visual", "value": 0, "errorBar": 0 },
-    { "label": "Own speech", "value": 0.5, "errorBar": 0 },
-    { "label": "Speech p2p", "value": 6, "errorBar": 0 },
-    { "label": "Speech p2p, over 10ft", "value": 25, "errorBar": 5 }
+    {
+      "label": "Augmented visual real visual",
+      "value": 0.0,
+      "errorBar": 0.0,
+      "citations": [
+        60
+      ]
+    },
+    {
+      "label": "Own speech",
+      "value": 0.5,
+      "errorBar": 0.0
+    },
+    {
+      "label": "Speech, person to person, 2m\napart",
+      "value": 6.0,
+      "errorBar": 0.0,
+      "citations": [
+        48
+      ]
+    },
+    {
+      "label": "Speech, person to person, 3m\napart",
+      "value": 25.0,
+      "errorBar": 5.0,
+      "citations": [
+        51
+      ]
+    }
   ]
 }

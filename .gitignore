@@ -344,3 +344,7 @@ docusaurus-site/.cache-loader/
 # Generated output (can be rebuilt from pipeline)
 /mdx/
 docusaurus-site/docs/
+docusaurus-site/src/data/latency_data.json
+
+# One-time helpers (legacy once Word table is set up)
+report/latency_chart_table.csv
