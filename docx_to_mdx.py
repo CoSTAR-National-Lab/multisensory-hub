@@ -1292,12 +1292,6 @@ def post_process_mdx_files(folder: Path) -> None:
             content
         )
 
-        # Fallback: replace latency graph PNG by filename (for already-generated MDX)
-        content = re.sub(
-            r'!\[[^\]]*\]\(/media/image7\.png\)',
-            '\n\n<LatencyChart />\n\n',
-            content
-        )
 
         # Convert existing <sup>number</sup> to reference popups with copy and navigation buttons
         def add_ref_popup(match):
@@ -1589,10 +1583,15 @@ def extract_chart_data_tables(markdown: str) -> str:
     # Pandoc escapes [ and ] in plain paragraphs → \[CHART-DATA: ...\]
     # Also handle unescaped form and backtick-wrapped inline-code form.
     # The table may be a pipe table (|col|) or a Pandoc grid table (+---+---+).
+    # An optional end tag [/CHART-DATA] or [/CHART-DATA <id>] (escaped or
+    # backtick-wrapped) may follow the table; any whitespace around the table
+    # (between prefix/table and table/suffix) is consumed and discarded.
     marker_pattern = re.compile(
         r'`?\\?\[CHART-DATA:\s*(?P<chart_id>[^\]\\\n]+?)\\?\]`?'
         r'\s*'
-        r'(?P<table>(?:(?:\|[^\n]+|\+[-=:+| ]+)\n)+)',
+        r'(?P<table>(?:(?:\|[^\n]+|\+[-=:+| ]+)\n)+)'
+        r'\s*'
+        r'(?:`?\\?\[/CHART-DATA(?:\s+[^\]\\\n]+?)?\\?\]`?)?',
         re.MULTILINE
     )
 
