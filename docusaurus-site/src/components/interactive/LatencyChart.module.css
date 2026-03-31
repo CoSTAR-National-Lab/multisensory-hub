@@ -65,15 +65,15 @@ html[data-accessibility-contrast='high'] .dimText {
 
 .panel {
   min-width: 0;
-  border: 1px solid rgba(68, 1, 84, 0.2);
+  border: 1px solid rgba(68, 1, 84, 0.3);
   border-radius: 6px;
   padding: 0.6rem 0.5rem 0.4rem;
-  background: rgba(68, 1, 84, 0.05);
+  background: rgba(68, 1, 84, 0.1);
 }
 
 [data-theme='dark'] .panel {
-  border-color: rgba(176, 111, 216, 0.25);
-  background: rgba(176, 111, 216, 0.07);
+  border-color: rgba(176, 111, 216, 0.35);
+  background: rgba(176, 111, 216, 0.13);
 }
 
 .imperceptiblePanel {

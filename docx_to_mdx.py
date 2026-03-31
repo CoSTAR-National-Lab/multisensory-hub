@@ -910,6 +910,7 @@ def fix_mdx_syntax(content: str) -> str:
     content = re.sub(r'(?<=\w)---(?=\w)', '—', content)
     content = re.sub(r'(?<=\w)---(?=\s)', '—', content)
     content = re.sub(r'(?<=\s)---(?=\w)', '—', content)
+    content = re.sub(r'(?<=\s)---(?=\s)', '—', content)
 
     # For compound words (letter--letter), use regular hyphen (e.g., high--speed -> high-speed)
     content = re.sub(r'([a-zA-Z])--([a-zA-Z])', r'\1-\2', content)
@@ -956,6 +957,22 @@ def fix_mdx_syntax(content: str) -> str:
         # Same logic: preserve space after if followed by word character
         text = re.sub(r'(?<!\*)\*([^*\n]+?)\s+\*(?!\*)(\w)', r'*\1* \2', text)
         text = re.sub(r'(?<!\*)\*([^*\n]+?)\s+\*(?!\*)(?=[^a-zA-Z0-9]|$)', r'*\1*', text)
+
+        # Fix bold split at hyphen: word**-**word -> word-word (Pandoc artefact when
+        # bold formatting spans a hyphenated compound and splits at the hyphen)
+        text = re.sub(r'\*\*-\*\*', '-', text)
+
+        # Fix missing space after closing bold/bold+italic when followed directly by a word:
+        # ***Arcade***is -> ***Arcade*** is
+        text = re.sub(r'(?<=\w)(\*{2,3})(?=[a-zA-Z])', r'\1 ', text)
+
+        # Ensure "Tip:" labels start on a new paragraph (not glued to preceding case study link)
+        # e.g. [Case study: X]** Tip:** -> [Case study: X]\n\n**Tip:**
+        text = re.sub(r'\]\*\*\s+Tip:', ']\n\n**Tip:', text)
+
+        # Ensure numbered section headers start on a new paragraph after inline elements
+        # e.g. </a>** 3) Title** -> </a>\n\n**3) Title**
+        text = re.sub(r'(</[a-zA-Z]+>)\*\*\s+(\d+\))', r'\1\n\n**\2', text)
 
         # Fix m**u**ltisensory (single character bolding inside word - clearly an artifact)
         # Apply multiple times to catch adjacent occurrences
