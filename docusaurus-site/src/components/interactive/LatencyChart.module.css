@@ -63,27 +63,30 @@ html[data-accessibility-contrast='high'] .dimText {
   gap: 0.75rem;
 }
 
-@media (min-width: 1400px) {
-  .panelGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem 1.25rem;
-  }
-}
-
 .panel {
   min-width: 0;
-  border: 1px solid var(--ifm-color-emphasis-200);
+  border: 1px solid rgba(68, 1, 84, 0.2);
   border-radius: 6px;
   padding: 0.6rem 0.5rem 0.4rem;
-  background: var(--ifm-color-emphasis-100);
+  background: rgba(68, 1, 84, 0.05);
+}
+
+[data-theme='dark'] .panel {
+  border-color: rgba(176, 111, 216, 0.25);
+  background: rgba(176, 111, 216, 0.07);
 }
 
 .imperceptiblePanel {
   margin-top: 1rem;
-  border: 1px solid var(--ifm-color-emphasis-200);
+  border: 1px solid rgba(93, 200, 99, 0.3);
   border-radius: 6px;
   padding: 0.6rem 0.5rem 0.4rem;
-  background: var(--ifm-color-emphasis-100);
+  background: rgba(93, 200, 99, 0.07);
+}
+
+[data-theme='dark'] .imperceptiblePanel {
+  border-color: rgba(93, 200, 99, 0.25);
+  background: rgba(93, 200, 99, 0.06);
 }
 
 .panelTitle {
@@ -93,7 +96,7 @@ html[data-accessibility-contrast='high'] .dimText {
   letter-spacing: 0.05em;
   color: var(--ifm-color-emphasis-600);
   margin-bottom: 0.1rem;
-  padding-left: 158px;
+  padding-left: 270px;
 }
 
 /* Bar entrance animation */

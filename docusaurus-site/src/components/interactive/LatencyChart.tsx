@@ -32,7 +32,7 @@ const { meta, toleranceBars, imperceptibleBars } = rawData as unknown as Latency
 // ── SVG layout constants ───────────────────────────────────────────────────────
 
 const VIEW_W    = 500;  // viewBox width
-const X_START   = 158;  // left edge of bar area
+const X_START   = 270;  // left edge of bar area
 const X_END     = 448;  // right edge of bar area (labels overflow beyond)
 const X_RANGE   = X_END - X_START;
 const BAR_H     = 15;   // bar thickness px
@@ -59,9 +59,8 @@ function barsForGroup(bars: BarEntry[], group: string): BarEntry[] {
   return [...bars.filter(b => b.group === group)].sort((a, b) => a.value - b.value);
 }
 
-function rowHeight(label: string): number {
-  const lines = label.split('\n').length;
-  return Math.max(BAR_H + ROW_PAD * 2, lines * LINE_H + ROW_PAD * 2);
+function rowHeight(_label: string): number {
+  return BAR_H + ROW_PAD * 2;
 }
 
 // ── Citation portal popup ─────────────────────────────────────────────────────
@@ -207,25 +206,20 @@ interface YLabelProps {
 }
 
 function YLabel({ label, x, yCenter, citations, onCitationClick }: YLabelProps) {
-  const lines = label.split('\n');
-  const lastLineY = yCenter + (lines.length > 1 ? ((lines.length - 1) / 2) * LINE_H : 0);
+  const singleLine = label.split('\n').join(' ');
   const citStr = citations && citations.length > 0 ? citations.join(',') : null;
 
   return (
     <g>
-      <text textAnchor="end" fontSize="0.625em" fontFamily={FONT}
+      <text textAnchor="end" x={x} y={yCenter} dominantBaseline="middle"
+        fontSize="0.625em" fontFamily={FONT}
         fill="currentColor" className={styles.dimText}>
-        {lines.map((line, i) => (
-          <tspan key={i} x={x} y={yCenter + (i - (lines.length - 1) / 2) * LINE_H}
-            dominantBaseline="middle">
-            {line}
-          </tspan>
-        ))}
+        {singleLine}
       </text>
       {citStr && (
         <text
-          x={x + 2} y={lastLineY - 5}
-          fontSize="0.47em" fontFamily={FONT}
+          textAnchor="end" x={X_START - 2} y={yCenter - 9}
+          fontSize="0.5em" fontFamily={FONT}
           fill="var(--ifm-color-primary)"
           className={styles.citationSup}
           style={{ cursor: 'pointer' }}
