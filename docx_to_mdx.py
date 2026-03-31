@@ -699,6 +699,13 @@ def resolve_bare_title_links(content: str, title_registry: dict) -> tuple[str, l
             search_text = text
             label = text
         key = fmt.sub('', search_text).lower().strip()
+        if key not in title_registry:
+            # Fall back to the full text as the key — handles headings whose title
+            # contains a colon (e.g. "Case study: Arcade") where the colon is
+            # structural rather than a search/label separator.
+            full_key = fmt.sub('', text).lower().strip()
+            if full_key in title_registry:
+                key = full_key
         if key in title_registry:
             url = title_registry[key]
             return f'<a href="{url}" className="button button--secondary button--sm">{label}</a>'
@@ -966,13 +973,13 @@ def fix_mdx_syntax(content: str) -> str:
         # ***Arcade***is -> ***Arcade*** is
         text = re.sub(r'(?<=\w)(\*{2,3})(?=[a-zA-Z])', r'\1 ', text)
 
-        # Ensure "Tip:" labels start on a new paragraph (not glued to preceding case study link)
-        # e.g. [Case study: X]** Tip:** -> [Case study: X]\n\n**Tip:**
-        text = re.sub(r'\]\*\*\s+Tip:', ']\n\n**Tip:', text)
+        # Ensure "Tip:" labels start on a new paragraph (not glued to preceding link/button)
+        # Handles both bare [Case study: X]** Tip:** and resolved <a ...>** Tip:**
+        text = re.sub(r'(\]|</a>)\*\*\s+Tip:', r'\1\n\n**Tip:', text)
 
-        # Ensure numbered section headers start on a new paragraph after inline elements
-        # e.g. </a>** 3) Title** -> </a>\n\n**3) Title**
-        text = re.sub(r'(</[a-zA-Z]+>)\*\*\s+(\d+\))', r'\1\n\n**\2', text)
+        # Ensure numbered section headers start on a new paragraph wherever they appear
+        # mid-line (e.g. "...matter.** 2) Chase..." -> "...matter.\n\n**2) Chase...")
+        text = re.sub(r'(?<!\n)\*\*\s+(\d+\)\s)', r'\n\n**\1', text)
 
         # Fix m**u**ltisensory (single character bolding inside word - clearly an artifact)
         # Apply multiple times to catch adjacent occurrences
