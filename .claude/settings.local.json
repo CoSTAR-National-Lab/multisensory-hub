@@ -21,7 +21,10 @@
       "Bash(find C:UsersandytPycharmProjectsMultisensoryHubdocusaurus-site -name custom.css -o -name *.css)",
       "Bash(cd:*)",
       "Bash(tasklist)",
-      "Bash(netstat -ano)"
+      "Bash(netstat -ano)",
+      "Bash(git checkout:*)",
+      "Bash(pip show:*)",
+      "Bash(git branch:*)"
     ]
   }
 }

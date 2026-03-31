@@ -29,6 +29,18 @@ DOCUSAURUS_DIR = Path("docusaurus-site")
 DOCS_FOLDER = DOCUSAURUS_DIR / "docs"
 REFERENCES_DATA_PATH = DOCUSAURUS_DIR / "src" / "data" / "references.ts"
 
+# SharePoint download config — set these to enable automatic fetching.
+# Defaults to the well-known Azure CLI public client (no app registration needed).
+# Set SHAREPOINT_FETCH=0 to skip the download step entirely.
+SHAREPOINT_FETCH     = os.environ.get("SHAREPOINT_FETCH", "0") != "0"
+SHAREPOINT_CLIENT_ID = os.environ.get("SHAREPOINT_CLIENT_ID", "04b07795-8542-4462-a58f-a12c68021efc")
+SHAREPOINT_TENANT_ID = os.environ.get("SHAREPOINT_TENANT_ID", "rhul.ac.uk")
+# Drive item ID from the SharePoint URL (the d=w<id> parameter, without the leading 'w')
+SHAREPOINT_ITEM_ID   = os.environ.get("SHAREPOINT_ITEM_ID", "33cce5b6dafa485eac746bc64f20aed8")
+SHAREPOINT_DEST_NAME = os.environ.get("SHAREPOINT_DEST_NAME", "Multisensory_Hub_April.docx")
+# Token cache file so you only log in once
+TOKEN_CACHE_PATH = Path(".sharepoint_token_cache.json")
+
 # MDX imports for Docusaurus - using relative paths from @site
 MDX_IMPORTS = """import Callout from '@site/src/components/interactive/Callout';
 import Chart from '@site/src/components/interactive/Chart';
@@ -61,6 +73,108 @@ import { references } from '@site/src/data/references';
 
 # Global list to collect accessibility warnings
 ACCESSIBILITY_WARNINGS = []
+
+
+def fetch_from_sharepoint() -> bool:
+    """Download the report docx from SharePoint via Microsoft Graph API.
+
+    Uses MSAL interactive (device-code) auth with a persistent token cache so
+    the user only needs to log in once.  Returns True if a file was downloaded,
+    False if the step was skipped (no credentials configured).
+    """
+    if not SHAREPOINT_FETCH or not SHAREPOINT_CLIENT_ID or not SHAREPOINT_TENANT_ID:
+        return False
+
+    try:
+        import msal
+        import requests as http_requests
+    except ImportError:
+        print("  [SharePoint] msal/requests not installed — run: pip install msal requests")
+        return False
+
+    # ------------------------------------------------------------------
+    # Build a token cache backed by a local file
+    # ------------------------------------------------------------------
+    cache = msal.SerializableTokenCache()
+    if TOKEN_CACHE_PATH.exists():
+        cache.deserialize(TOKEN_CACHE_PATH.read_text(encoding="utf-8"))
+
+    app = msal.PublicClientApplication(
+        SHAREPOINT_CLIENT_ID,
+        authority=f"https://login.microsoftonline.com/{SHAREPOINT_TENANT_ID}",
+        token_cache=cache,
+    )
+
+    scopes = ["https://graph.microsoft.com/Files.Read"]
+
+    # Try silent first (uses cached token / refresh token)
+    accounts = app.get_accounts()
+    result = app.acquire_token_silent(scopes, account=accounts[0]) if accounts else None
+
+    if not result:
+        # Use device code flow: prints a URL + code you open in any browser.
+        # This works even when interactive/redirect flows are blocked by Conditional Access.
+        flow = app.initiate_device_flow(scopes=scopes)
+        if "user_code" not in flow:
+            print(f"  [SharePoint] Could not start device flow: {flow}")
+            return False
+        print("\n" + "=" * 60)
+        print("  SharePoint login required.")
+        print(f"  1. Open:  {flow['verification_uri']}")
+        print(f"  2. Enter: {flow['user_code']}")
+        print("  3. Sign in with your RHUL account")
+        print("=" * 60)
+        result = app.acquire_token_by_device_flow(flow)  # blocks until login complete
+
+    # Persist updated cache
+    if cache.has_state_changed:
+        TOKEN_CACHE_PATH.write_text(cache.serialize(), encoding="utf-8")
+
+    if "access_token" not in result:
+        print(f"  [SharePoint] Auth failed: {result.get('error_description', result)}")
+        return False
+
+    token = result["access_token"]
+
+    # ------------------------------------------------------------------
+    # Download the file via Graph API
+    # ------------------------------------------------------------------
+    url = f"https://graph.microsoft.com/v1.0/me/drive/items/{SHAREPOINT_ITEM_ID}/content"
+    print(f"  [SharePoint] Downloading item {SHAREPOINT_ITEM_ID}...")
+    resp = http_requests.get(url, headers={"Authorization": f"Bearer {token}"}, timeout=60)
+
+    if resp.status_code == 200:
+        dest = INPUT_FOLDER / SHAREPOINT_DEST_NAME
+        INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(resp.content)
+        print(f"  [SharePoint] Saved {len(resp.content) // 1024} KB → {dest}")
+        return True
+
+    # If /me/drive doesn't work the file may be on a SharePoint site drive;
+    # fall back to the shares/driveItem endpoint using the encoded sharing URL.
+    if resp.status_code in (400, 403, 404):
+        print(f"  [SharePoint] /me/drive returned {resp.status_code}, trying shares endpoint...")
+        import base64
+        sharing_url = (
+            "https://rhul.sharepoint.com/:w:/r/sites/StoryFutures/Shared%20Documents/"
+            "CoSTAR/R%26D/Users/Multisensory%20Pillar/"
+            "Multisensory%20Hub_April.docx"
+        )
+        # Graph API encodes the URL as unpadded base64 with u! prefix
+        encoded = base64.urlsafe_b64encode(sharing_url.encode()).rstrip(b"=").decode()
+        share_id = "u!" + encoded
+        url2 = f"https://graph.microsoft.com/v1.0/shares/{share_id}/driveItem/content"
+        resp2 = http_requests.get(url2, headers={"Authorization": f"Bearer {token}"}, timeout=60)
+        if resp2.status_code == 200:
+            dest = INPUT_FOLDER / SHAREPOINT_DEST_NAME
+            INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(resp2.content)
+            print(f"  [SharePoint] Saved {len(resp2.content) // 1024} KB → {dest}")
+            return True
+        print(f"  [SharePoint] shares endpoint returned {resp2.status_code}: {resp2.text[:200]}")
+
+    print(f"  [SharePoint] Download failed ({resp.status_code}): {resp.text[:200]}")
+    return False
 
 
 def find_docx_files(folder: Path) -> list[Path]:
@@ -755,10 +869,14 @@ def fix_mdx_syntax(content: str) -> str:
         alt = match.group(1).strip()
         src = match.group(2)
         if re.match(r'^Figure\s+\d+[:.]\s*', alt, re.IGNORECASE):
-            return f'![{alt}]({src})\n\n<figcaption>{alt}</figcaption>'
+            # Alt text may contain markdown links [text](url); convert to <a> tags
+            # so the figcaption is valid JSX (raw markdown links break MDX parsing)
+            caption = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', alt)
+            return f'![{alt}]({src})\n\n<figcaption>{caption}</figcaption>'
         return match.group(0)
 
-    content = re.sub(r'!\[([^\]]+)\]\(([^)]+)\)', add_figure_caption, content)
+    # Allow one level of bracket nesting in alt text (e.g. [link text](url) inside alt)
+    content = re.sub(r'!\[((?:[^\[\]]|\[[^\]]*\])*)\]\(([^)]+)\)', add_figure_caption, content)
 
     # Convert Pandoc paragraph captions (`: text` after an image) to <figcaption>
     # so they share styling with the LatencyChart figcaption
@@ -1819,6 +1937,14 @@ def main():
     except FileNotFoundError:
         print("ERROR: npm not found. Please install Node.js first.")
         sys.exit(1)
+
+    # Optionally fetch the latest report from SharePoint
+    if SHAREPOINT_FETCH:
+        print("\n" + "-" * 60)
+        print("Fetching report from SharePoint...")
+        fetch_from_sharepoint()
+    else:
+        print("\n[INFO] SHAREPOINT_FETCH=0 — using local files in report/")
 
     # Find Word documents
     docx_files = find_docx_files(INPUT_FOLDER)
