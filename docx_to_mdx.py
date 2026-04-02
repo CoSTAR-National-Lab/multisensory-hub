@@ -21,6 +21,24 @@ import time
 import webbrowser
 from pathlib import Path
 
+import colorama
+from colorama import Fore, Style
+
+colorama.init(autoreset=True)
+
+
+def _c_error(msg: str) -> None:
+    print(f"{Fore.RED}{Style.BRIGHT}{msg}{Style.RESET_ALL}")
+
+def _c_warn(msg: str) -> None:
+    print(f"{Fore.YELLOW}{msg}{Style.RESET_ALL}")
+
+def _c_ok(msg: str) -> None:
+    print(f"{Fore.GREEN}{msg}{Style.RESET_ALL}")
+
+def _c_info(msg: str) -> None:
+    print(f"{Fore.CYAN}{msg}{Style.RESET_ALL}")
+
 
 # Configuration
 INPUT_FOLDER = Path("report")
@@ -71,8 +89,8 @@ import { references } from '@site/src/data/references';
 """
 
 
-# Global list to collect accessibility warnings
-ACCESSIBILITY_WARNINGS = []
+# Global list to collect all pipeline warnings (shown en masse at the end)
+WARNINGS = []
 
 
 def fetch_from_sharepoint() -> bool:
@@ -89,7 +107,7 @@ def fetch_from_sharepoint() -> bool:
         import msal
         import requests as http_requests
     except ImportError:
-        print("  [SharePoint] msal/requests not installed — run: pip install msal requests")
+        _c_warn("  [SharePoint] msal/requests not installed — run: pip install msal requests")
         return False
 
     # ------------------------------------------------------------------
@@ -116,7 +134,7 @@ def fetch_from_sharepoint() -> bool:
         # This works even when interactive/redirect flows are blocked by Conditional Access.
         flow = app.initiate_device_flow(scopes=scopes)
         if "user_code" not in flow:
-            print(f"  [SharePoint] Could not start device flow: {flow}")
+            _c_error(f"  [SharePoint] Could not start device flow: {flow}")
             return False
         print("\n" + "=" * 60)
         print("  SharePoint login required.")
@@ -131,7 +149,7 @@ def fetch_from_sharepoint() -> bool:
         TOKEN_CACHE_PATH.write_text(cache.serialize(), encoding="utf-8")
 
     if "access_token" not in result:
-        print(f"  [SharePoint] Auth failed: {result.get('error_description', result)}")
+        _c_error(f"  [SharePoint] Auth failed: {result.get('error_description', result)}")
         return False
 
     token = result["access_token"]
@@ -147,13 +165,13 @@ def fetch_from_sharepoint() -> bool:
         dest = INPUT_FOLDER / SHAREPOINT_DEST_NAME
         INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(resp.content)
-        print(f"  [SharePoint] Saved {len(resp.content) // 1024} KB → {dest}")
+        _c_ok(f"  [SharePoint] Saved {len(resp.content) // 1024} KB → {dest}")
         return True
 
     # If /me/drive doesn't work the file may be on a SharePoint site drive;
     # fall back to the shares/driveItem endpoint using the encoded sharing URL.
     if resp.status_code in (400, 403, 404):
-        print(f"  [SharePoint] /me/drive returned {resp.status_code}, trying shares endpoint...")
+        _c_warn(f"  [SharePoint] /me/drive returned {resp.status_code}, trying shares endpoint...")
         import base64
         sharing_url = (
             "https://rhul.sharepoint.com/:w:/r/sites/StoryFutures/Shared%20Documents/"
@@ -169,11 +187,11 @@ def fetch_from_sharepoint() -> bool:
             dest = INPUT_FOLDER / SHAREPOINT_DEST_NAME
             INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
             dest.write_bytes(resp2.content)
-            print(f"  [SharePoint] Saved {len(resp2.content) // 1024} KB → {dest}")
+            _c_ok(f"  [SharePoint] Saved {len(resp2.content) // 1024} KB → {dest}")
             return True
-        print(f"  [SharePoint] shares endpoint returned {resp2.status_code}: {resp2.text[:200]}")
+        _c_error(f"  [SharePoint] shares endpoint returned {resp2.status_code}: {resp2.text[:200]}")
 
-    print(f"  [SharePoint] Download failed ({resp.status_code}): {resp.text[:200]}")
+    _c_error(f"  [SharePoint] Download failed ({resp.status_code}): {resp.text[:200]}")
     return False
 
 
@@ -833,18 +851,18 @@ def fix_mdx_syntax(content: str) -> str:
     content = re.sub(r'\!\[([^\]]*)\]\(media/', r'![\1](/media/', content)
 
     # Action 12: Flag missing or generic alt text
-    def check_alt_text(match):
-        alt_text = match.group(1).strip()
-        img_path = match.group(2)
-        
+    generic_patterns = [
+        "A picture", "A screenshot", "A close up", "A group of",
+        "image", "Image", "graphic", "Graphic", "figure", "Figure"
+    ]
+    img_pattern = re.compile(r'\!\[((?:[^\[\]]|\[[^\]]*\])*)\]\(([^)]+)\)')
+    for img_match in img_pattern.finditer(content):
+        alt_text = img_match.group(1).strip()
+        img_path = img_match.group(2)
+
         is_generic = False
         reason = ""
-        
-        generic_patterns = [
-            "A picture", "A screenshot", "A close up", "A group of", 
-            "image", "Image", "graphic", "Graphic", "figure", "Figure"
-        ]
-        
+
         if not alt_text:
             is_generic = True
             reason = "missing (empty)"
@@ -857,17 +875,18 @@ def fix_mdx_syntax(content: str) -> str:
                     is_generic = True
                     reason = f"generic (starts with \"{pattern}\")"
                     break
-        
-        if is_generic:
-            msg = f"WARNING: Image {img_path} has {reason} alt text. Consider adding a descriptive alt in Word."
-            if msg not in ACCESSIBILITY_WARNINGS:
-                ACCESSIBILITY_WARNINGS.append(msg)
-                print(f"  [A11y] {msg}")
-        
-        return match.group(0)
 
-    # Re-run a scan specifically for warnings (without changing content yet)
-    re.sub(r'\!\[([^\]]*)\]\(([^)]+)\)', check_alt_text, content)
+        if is_generic:
+            # Try to get figure number from the alt text itself
+            fig_match = re.match(r'^(Figure\s+\d+)', alt_text, re.IGNORECASE) if alt_text else None
+            if not fig_match:
+                # Fall back: look at content within ~200 chars after the image for "Figure N"
+                lookahead = content[img_match.end():img_match.end() + 200]
+                fig_match = re.search(r'(Figure\s+\d+)', lookahead, re.IGNORECASE)
+            fig_label = f" [{fig_match.group(1)}]" if fig_match else ""
+            msg = f"[A11y] Image{fig_label} {img_path} has {reason} alt text. Consider adding a descriptive alt in Word."
+            if msg not in WARNINGS:
+                WARNINGS.append(msg)
 
     # Extract Figure N: captions from image alt text and render as visible <figcaption>
     # Keeps alt text intact for accessibility; adds figcaption for sighted readers
@@ -1446,14 +1465,14 @@ def post_process_mdx_files(folder: Path) -> None:
             start = max(0, m.start() - 20)
             end = min(len(content), m.end() + 20)
             snippet = content[start:end].replace('\n', ' ')
-            print(f"  [Ref] WARNING: space before reference in {mdx_file.name}: ...{snippet!r}...")
+            WARNINGS.append(f"[Ref] Space before reference in {mdx_file.name}: ...{snippet!r}...")
 
         # Warn about punctuation immediately before reference superscripts
         for m in re.finditer(r'([.,;:!?])[^\S\n]*<sup>(\d[^<]*)</sup>', content):
             start = max(0, m.start() - 20)
             end = min(len(content), m.end() + 20)
             snippet = content[start:end].replace('\n', ' ')
-            print(f"  [Ref] WARNING: punctuation before reference in {mdx_file.name}: ...{snippet!r}...")
+            WARNINGS.append(f"[Ref] Punctuation before reference in {mdx_file.name}: ...{snippet!r}...")
 
         # Convert existing <sup>number</sup> to reference popups with copy and navigation buttons
         def add_ref_popup(match):
@@ -1813,7 +1832,7 @@ def extract_chart_data_tables(markdown: str) -> str:
         i_citations = _col_index(headers, 'citation', 'ref')
 
         if -1 in (i_group, i_label, i_value, i_threshold):
-            print(f"  [CHART-DATA] WARNING: could not identify required columns in {chart_id} table — skipping")
+            WARNINGS.append(f"[CHART-DATA] Could not identify required columns in {chart_id} table — skipping")
             return match.group(0)
 
         tolerance_bars = []
@@ -1949,12 +1968,8 @@ def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
 
     # Note: index.mdx (homepage) is created by save_mdx_files from pre-H1 content
 
-    if unresolved_titles:
-        print("\n  WARNING – unresolved bare-title links (no matching heading found):")
-        for title in unresolved_titles:
-            print(f"    [!] [{title}]")
-    else:
-        print("  All bare-title links resolved successfully.")
+    for title in unresolved_titles:
+        WARNINGS.append(f"[Links] Unresolved bare-title link: [{title}]")
 
     return pages
 
@@ -1968,18 +1983,18 @@ def main():
     # Check pandoc
     try:
         result = subprocess.run(["pandoc", "--version"], capture_output=True, check=True)
-        print(f"Using pandoc: {result.stdout.decode().split(chr(10))[0]}")
+        _c_ok(f"Using pandoc: {result.stdout.decode().split(chr(10))[0]}")
     except FileNotFoundError:
-        print("ERROR: pandoc not found. Please install pandoc first.")
-        print("  https://pandoc.org/installing.html")
+        _c_error("ERROR: pandoc not found. Please install pandoc first.")
+        _c_error("  https://pandoc.org/installing.html")
         sys.exit(1)
 
     # Check npm
     try:
         result = subprocess.run(["npm", "--version"], capture_output=True, check=True, shell=True)
-        print(f"Using npm: v{result.stdout.decode().strip()}")
+        _c_ok(f"Using npm: v{result.stdout.decode().strip()}")
     except FileNotFoundError:
-        print("ERROR: npm not found. Please install Node.js first.")
+        _c_error("ERROR: npm not found. Please install Node.js first.")
         sys.exit(1)
 
     # Optionally fetch the latest report from SharePoint
@@ -1988,12 +2003,12 @@ def main():
         print("Fetching report from SharePoint...")
         fetch_from_sharepoint()
     else:
-        print("\n[INFO] SHAREPOINT_FETCH=0 — using local files in report/")
+        _c_info("\n[INFO] SHAREPOINT_FETCH=0 — using local files in report/")
 
     # Find Word documents
     docx_files = find_docx_files(INPUT_FOLDER)
     if not docx_files:
-        print(f"\nNo .docx files found in {INPUT_FOLDER}/")
+        _c_warn(f"\nNo .docx files found in {INPUT_FOLDER}/")
         sys.exit(0)
 
     print(f"\nFound {len(docx_files)} Word document(s) in {INPUT_FOLDER}/")
@@ -2009,17 +2024,15 @@ def main():
         process_document(docx_path, OUTPUT_FOLDER)
 
     # Print accessibility summary
-    if ACCESSIBILITY_WARNINGS:
-        print("\n" + "!" * 60)
-        print(f"ACCESSIBILITY WARNING: {len(ACCESSIBILITY_WARNINGS)} issues found")
-        print("!" * 60)
-        for warning in ACCESSIBILITY_WARNINGS:
-            print(f"  - {warning}")
-        print("!" * 60)
-        print("Please address these in the source Word document for better accessibility.")
-        print("!" * 60)
+    if WARNINGS:
+        _c_warn("\n" + "!" * 60)
+        _c_warn(f"{len(WARNINGS)} warning(s) found:")
+        _c_warn("!" * 60)
+        for warning in WARNINGS:
+            _c_warn(f"  - {warning}")
+        _c_warn("!" * 60)
     else:
-        print("\n[OK] No accessibility issues detected in image alt-texts.")
+        _c_ok("\n[OK] No warnings.")
 
     # Copy to Docusaurus
     print("\n" + "-" * 60)
@@ -2039,17 +2052,17 @@ def main():
             shell=True
         )
         if result.returncode != 0:
-            print("\n⚠️  Build completed with errors:")
-            print(result.stderr[-2000:] if len(result.stderr) > 2000 else result.stderr)
-            print("\nYou can still start the dev server to see partial results.")
+            _c_warn("\n⚠️  Build completed with errors:")
+            _c_warn(result.stderr[-2000:] if len(result.stderr) > 2000 else result.stderr)
+            _c_warn("\nYou can still start the dev server to see partial results.")
             response = input("\nContinue to start dev server? (y/n): ").lower()
             if response != 'y':
                 print("Exiting.")
                 sys.exit(1)
         else:
-            print("[OK] Build successful!")
+            _c_ok("[OK] Build successful!")
     except subprocess.TimeoutExpired:
-        print("Build timed out, but continuing...")
+        _c_warn("Build timed out, but continuing...")
 
     # Start Docusaurus server
     print("\n" + "-" * 60)
