@@ -781,6 +781,30 @@ def rewrite_internal_links(content: str, page_index: int, anchor_registry: dict,
     return pattern.sub(replace_link, content)
 
 
+def replace_top_level_headings_placeholder(content: str, pages: list[dict], url_map: dict) -> str:
+    """Replace [top-level headings] with a markdown list of clickable H1 section links.
+
+    Skips the first H1 (homepage, url '/') and any References section.
+    """
+    if '[top-level headings]' not in content:
+        return content
+
+    links = []
+    for i, page in enumerate(pages):
+        if page['level'] != 1:
+            continue
+        url = url_map.get(i, '')
+        if not url or url == '/':
+            continue  # skip homepage
+        title = page['title'].replace('\\', '')
+        if title.lower().startswith('reference'):
+            continue
+        links.append(f'- [{title}]({url})')
+
+    replacement = '\n'.join(links)
+    return content.replace('[top-level headings]', replacement)
+
+
 def preserve_ref_anchors(content: str) -> str:
     """Convert Word _Ref anchors to HTML span elements before fix_mdx_syntax strips them.
 
@@ -959,6 +983,19 @@ def fix_mdx_syntax(content: str) -> str:
         # Note: Removed the ":**" fix as it was incorrectly removing valid closing bold markers
         # The pattern `:**` followed by space is often a legitimate bold closer like "**Title:**"
 
+        # Fix leading whitespace inside bold-italic markers: "*** text***" -> "***text***"
+        # Must run before ** and * fixes to avoid partial matches.
+        # After word char: move space outside
+        text = re.sub(r'(\w)\*\*\*\s+([^*\n]+?\*\*\*)', r'\1 ***\2', text)
+        # After punctuation: ",*** text***" -> ", ***text***" (move space outside)
+        text = re.sub(r'([^\w\s*])(\*\*\*)\s+([^*\n]+?\*\*\*)', r'\1 \2\3', text)
+        # After whitespace or start: remove the leading space
+        text = re.sub(r'\*\*\*\s+([^*\n]+?\*\*\*)', r'***\1', text)
+
+        # Fix trailing whitespace inside bold-italic markers: "***text ***" -> "***text***"
+        text = re.sub(r'\*\*\*([^*\n]+?)\s+\*\*\*(\w)', r'***\1*** \2', text)
+        text = re.sub(r'\*\*\*([^*\n]+?)\s+\*\*\*(?=[^a-zA-Z0-9]|$)', r'***\1***', text)
+
         # Fix leading whitespace inside bold markers: "** Adaptation**" -> "**Adaptation**"
         # Use [^*\n] to avoid matching across lines
         # When preceded by a word character, preserve the space before **
@@ -966,8 +1003,13 @@ def fix_mdx_syntax(content: str) -> str:
         # When preceded by punctuation or start, just remove the leading space
         text = re.sub(r'\*\*\s+([^*\n]+?\*\*)', r'**\1', text)
 
-        # Fix leading whitespace inside italic markers: "* text*" -> "*text*"
+        # Fix leading whitespace inside italic markers.
+        # After a word char: "word* text*" -> "word *text*" (move space outside)
         text = re.sub(r'(\w)(?<!\*)\*\s+([^*\n]+?\*(?!\*))', r'\1 *\2', text)
+        # After punctuation (e.g. comma): ",* text*" -> ", *text*" (move space outside so
+        # the * is preceded by a space and MDX recognises it as an italic opener)
+        text = re.sub(r'([^\w\s*])(\*{1,3})\s+([^*\n]+?\*)', r'\1 \2\3', text)
+        # After whitespace or start of line: "* text*" -> "*text*"
         text = re.sub(r'(?<!\*)\*\s+([^*\n]+?\*(?!\*))', r'*\1', text)
 
         # Fix trailing whitespace inside bold markers: "**text: **" -> "**text:**"
@@ -1207,8 +1249,11 @@ def inject_subheading_reading_times(content: str) -> str:
         heading_text = match.group(2)
         heading_id = slugify(heading_text)
         aria_label = f"{minutes} minute read"
+        # Use a preceding <span id> anchor rather than {#id} syntax: in MDX files
+        # {#...} is treated as a JSX expression and renders as literal text.
         replacement = (
-            f'{prefix} {heading_text} {{#{heading_id}}} '
+            f'<span id="{heading_id}"></span>\n\n'
+            f'{prefix} {heading_text} '
             f'<span className="reading-time" role="note" aria-label="{aria_label}">'
             f'<span aria-hidden="true">{minutes} min</span></span>'
         )
@@ -1277,6 +1322,7 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                 if title_link_registry:
                     resolved_content, unresolved = resolve_bare_title_links(resolved_content, title_link_registry)
                     all_unresolved.extend(unresolved)
+                resolved_content = replace_top_level_headings_placeholder(resolved_content, pages, url_map)
                 # Use the first H1 as the homepage
                 homepage_page = {
                     'title': page['title'],
@@ -1323,6 +1369,7 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
             if title_link_registry:
                 page['content'], unresolved = resolve_bare_title_links(page['content'], title_link_registry)
                 all_unresolved.extend(unresolved)
+            page['content'] = replace_top_level_headings_placeholder(page['content'], pages, url_map)
 
             # Save H1 content as index.mdx in the folder (linked via _category_.json)
             overview_page = page.copy()
@@ -1376,6 +1423,7 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                 if title_link_registry:
                     page['content'], unresolved = resolve_bare_title_links(page['content'], title_link_registry)
                     all_unresolved.extend(unresolved)
+                page['content'] = replace_top_level_headings_placeholder(page['content'], pages, url_map)
 
                 # Set reading time for H2 pages (skip references)
                 if not is_references_page:
