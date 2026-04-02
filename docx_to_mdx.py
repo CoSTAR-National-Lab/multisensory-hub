@@ -622,10 +622,9 @@ def build_page_url_map(pages: list[dict]) -> dict:
                 url_map[i] = '/'
             else:
                 if current_h1_slug:
-                    h2_doc_id = f"{current_h1_slug}-{page['slug']}"
+                    url_map[i] = f'/{current_h1_slug}/{page["slug"]}'
                 else:
-                    h2_doc_id = page['slug']
-                url_map[i] = f'/{current_h1_slug}/{h2_doc_id}'
+                    url_map[i] = f'/{page["slug"]}'
 
     return url_map
 
@@ -1026,15 +1025,19 @@ def create_mdx_content(page: dict, position: int, is_references_page: bool = Fal
 
     # Use the slug as the explicit ID to prevent collisions from numeric filename prefixes
     doc_id = page['slug']
+    # url_slug overrides the URL path when set (H2 pages use short slug for URL,
+    # prefixed slug for unique ID)
+    url_slug = page.get('url_slug')
 
     # Compute reading time (approx 200 words per minute)
     words = len(re.findall(r'\w+', page['content']))
     reading_time = max(1, round(words / 200))
 
     # Frontmatter MUST come first in Docusaurus
+    slug_line = f'\nslug: "{url_slug}"' if url_slug else ''
     frontmatter = f"""---
 title: "{safe_title}"
-id: "{doc_id}"
+id: "{doc_id}"{slug_line}
 sidebar_position: {position}
 custom_edit_url: null
 readingTimeMinutes: {reading_time}
@@ -1183,9 +1186,10 @@ def inject_subheading_reading_times(content: str) -> str:
         minutes = max(1, round(words / 200))
 
         heading_text = match.group(2)
+        heading_id = slugify(heading_text)
         aria_label = f"{minutes} minute read"
         replacement = (
-            f'{prefix} {heading_text} '
+            f'{prefix} {heading_text} {{#{heading_id}}} '
             f'<span className="reading-time" role="note" aria-label="{aria_label}">'
             f'<span aria-hidden="true">{minutes} min</span></span>'
         )
@@ -1343,6 +1347,7 @@ def save_mdx_files(pages: list[dict], output_folder: Path,
                 else:
                     filename = f"{h2_position:02d}-{page['slug']}.mdx"
                     filepath = current_h1_folder / filename
+                    page['url_slug'] = page['slug']  # short slug for URL override
                     page['slug'] = f"{current_h1_slug}-{page['slug']}"
 
                 # Apply cross-document link resolution before creating content
@@ -1434,6 +1439,21 @@ def post_process_mdx_files(folder: Path) -> None:
             content
         )
 
+
+        # Warn about spaces immediately before reference superscripts
+        for m in re.finditer(r'(\S[^\S\n]+)<sup>(\d[^<]*)</sup>', content):
+            # Extract a short snippet for context (up to 60 chars around the match)
+            start = max(0, m.start() - 20)
+            end = min(len(content), m.end() + 20)
+            snippet = content[start:end].replace('\n', ' ')
+            print(f"  [Ref] WARNING: space before reference in {mdx_file.name}: ...{snippet!r}...")
+
+        # Warn about punctuation immediately before reference superscripts
+        for m in re.finditer(r'([.,;:!?])[^\S\n]*<sup>(\d[^<]*)</sup>', content):
+            start = max(0, m.start() - 20)
+            end = min(len(content), m.end() + 20)
+            snippet = content[start:end].replace('\n', ' ')
+            print(f"  [Ref] WARNING: punctuation before reference in {mdx_file.name}: ...{snippet!r}...")
 
         # Convert existing <sup>number</sup> to reference popups with copy and navigation buttons
         def add_ref_popup(match):
