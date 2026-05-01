@@ -24,7 +24,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install Python dependencies
-        run: pip install colorama
+        run: pip install colorama python-docx
 
       - name: Run main pipeline
         run: python ci_build.py

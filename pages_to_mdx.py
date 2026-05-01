@@ -2,7 +2,8 @@
 Standalone throwaway script: convert report/other_pages/pages.docx into
 individual Docusaurus pages (src/pages/<slug>.mdx).
 
-Each Word Title-style heading (= H1 in pandoc output) becomes one page.
+Each Word Title-style paragraph becomes one page. python-docx is used to
+detect Title-styled paragraphs (pandoc loses this style information).
 Images are copied to static/media/subpages/<slug>/.
 CSS is inherited from the site's global custom.css automatically.
 
@@ -15,10 +16,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-DOCX_PATH   = Path("report/other_pages/pages.docx")
-PAGES_OUT   = Path("docusaurus-site/src/pages")
+from docx import Document as DocxDocument
+
+DOCX_PATH    = Path("report/other_pages/pages.docx")
+PAGES_OUT    = Path("docusaurus-site/src/pages")
 STATIC_MEDIA = Path("docusaurus-site/static/media/subpages")
-TMP_MEDIA   = Path("_tmp_subpage_media")
+TMP_MEDIA    = Path("_tmp_subpage_media")
 
 
 # ---------------------------------------------------------------------------
@@ -34,6 +37,13 @@ def slugify(text: str) -> str:
     return text.strip("-")[:50] or "untitled"
 
 
+def get_page_titles(docx_path: Path) -> list[str]:
+    """Use python-docx to find Title-styled paragraphs in order."""
+    doc = DocxDocument(str(docx_path))
+    return [p.text.strip() for p in doc.paragraphs
+            if p.style.name == "Title" and p.text.strip()]
+
+
 def run_pandoc(docx_path: Path, media_dir: Path) -> str:
     media_dir.mkdir(parents=True, exist_ok=True)
     cmd = [
@@ -43,24 +53,40 @@ def run_pandoc(docx_path: Path, media_dir: Path) -> str:
         "--extract-media", str(media_dir),
     ]
     result = subprocess.run(cmd, capture_output=True, check=True)
-    return result.stdout.decode("utf-8")
+    return result.stdout.decode("utf-8").replace("\r\n", "\n")
 
 
-def split_pages(md: str) -> list[tuple[str, str]]:
-    """Split on H1 headings; each becomes (title, body)."""
-    pattern = re.compile(r'^# (.+)$', re.MULTILINE)
-    matches = list(pattern.finditer(md))
-    pages = []
-    for i, m in enumerate(matches):
-        title = m.group(1).strip()
-        # skip headings that are just an image (e.g. # ![alt](path))
-        if title.startswith("!"):
-            continue
-        start = m.end()
-        end = matches[i + 1].start() if i + 1 < len(matches) else len(md)
-        body = md[start:end].strip()
-        pages.append((title, body))
-    return pages
+def split_pages(md: str, titles: list[str]) -> list[tuple[str, str]]:
+    """
+    Split markdown into (title, body) pairs using known Title-style text.
+
+    Pandoc puts the first Title in metadata (invisible in content) and
+    renders subsequent Titles as plain paragraphs in the markdown body.
+    """
+    if not titles:
+        return []
+
+    sections = []
+    remaining = md
+
+    for i, title in enumerate(titles[:-1]):
+        next_title = titles[i + 1]
+        # Subsequent titles appear as a standalone paragraph line
+        pattern = re.compile(
+            r'\n\n' + re.escape(next_title) + r'\n\n',
+            re.MULTILINE,
+        )
+        m = pattern.search(remaining)
+        if m:
+            body = remaining[:m.start()].strip()
+            sections.append((title, body))
+            remaining = remaining[m.end():].strip()
+        else:
+            sections.append((title, remaining.strip()))
+            remaining = ""
+
+    sections.append((titles[-1], remaining.strip()))
+    return sections
 
 
 def fix_image_syntax(body: str) -> str:
@@ -76,7 +102,6 @@ def copy_images_and_rewrite(body: str, slug: str) -> str:
     def replace(m):
         alt = m.group(1)
         src = m.group(2)
-        # pandoc writes paths relative to CWD, e.g. _tmp_subpage_media/media/image1.png
         img_src = Path(src)
         if not img_src.is_absolute():
             img_src = Path.cwd() / img_src
@@ -110,7 +135,12 @@ def main() -> None:
         print(f"ERROR: {DOCX_PATH} not found")
         sys.exit(1)
 
-    # Clean slate for temp media
+    titles = get_page_titles(DOCX_PATH)
+    if not titles:
+        print("No Title-styled paragraphs found in the document.")
+        sys.exit(0)
+    print(f"Found Title pages: {titles}")
+
     if TMP_MEDIA.exists():
         shutil.rmtree(TMP_MEDIA)
 
@@ -121,12 +151,8 @@ def main() -> None:
         print(f"ERROR: pandoc failed:\n{e.stderr.decode()}")
         sys.exit(1)
 
-    pages = split_pages(md)
-    if not pages:
-        print("No H1 headings found — nothing to output.")
-        sys.exit(0)
-
-    print(f"Found {len(pages)} page(s)")
+    pages = split_pages(md, titles)
+    print(f"Generating {len(pages)} page(s)...")
     PAGES_OUT.mkdir(parents=True, exist_ok=True)
 
     for title, body in pages:
@@ -138,7 +164,6 @@ def main() -> None:
         out_path.write_text(content, encoding="utf-8")
         print(f"  -> {out_path}")
 
-    # Clean up temp media now that images are copied
     shutil.rmtree(TMP_MEDIA, ignore_errors=True)
     print("Done.")
 
