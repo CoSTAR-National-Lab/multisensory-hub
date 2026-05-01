@@ -38,7 +38,7 @@ jobs:
           node-version: '20'
 
       - name: Install npm dependencies
-        run: npm install
+        run: npm ci
         working-directory: docusaurus-site
 
       - name: Build Docusaurus
