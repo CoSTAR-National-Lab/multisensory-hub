@@ -1,5 +1,7 @@
 # Multisensory Hub
 
+**Live site:** https://storyfutures.github.io/multisensoryReport/
+
 A build pipeline that converts a structured Word document into an interactive, static Docusaurus site. The `.docx` file is the single source of truth; Python handles all conversion at build time, producing MDX pages with React components that render a fully static site.
 
 ## Tech Stack
