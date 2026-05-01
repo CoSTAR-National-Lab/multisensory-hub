@@ -88,7 +88,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      copyright: `Multisensory Hub Report • Built with Docusaurus`,
+      copyright: `Multisensory Hub Report`,
     },
     docs: {
       sidebar: {

@@ -31,7 +31,8 @@
       "Bash(.venv/Scripts/python.exe -c \"import docx; print\\('ok'\\)\")",
       "Bash(.venv/Scripts/python.exe -m pip list)",
       "Bash(pandoc \"report/other_pages/pages.docx\" -t markdown --wrap=none)",
-      "Bash(pandoc \"report/other_pages/pages.docx\" -t json)"
+      "Bash(pandoc \"report/other_pages/pages.docx\" -t json)",
+      "WebFetch(domain:www.costarnetwork.co.uk)"
     ]
   }
 }
