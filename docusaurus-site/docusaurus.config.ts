@@ -78,7 +78,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'reportSidebar',
           position: 'left',
-          label: 'Report',
+          label: 'Home',
         },
         {
           type: 'search',
@@ -88,7 +88,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      copyright: `Multisensory Hub Report`,
+      copyright: `Multisensory Hub`,
     },
     docs: {
       sidebar: {
