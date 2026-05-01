@@ -14,6 +14,9 @@ const config: Config = {
   url: 'https://storyfutures.github.io',
   baseUrl: '/multisensoryReport/',
 
+  organizationName: 'StoryFutures',
+  projectName: 'multisensoryReport',
+
   trailingSlash: false,
 
   onBrokenLinks: 'warn',
