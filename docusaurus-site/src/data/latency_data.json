@@ -4,11 +4,11 @@
     "xMax": 200,
     "toleranceColour": "#440154FF",
     "imperceptibleColour": "#5DC863FF",
-    "legend": "Key latency tolerances for multisensory experiences. The graph shows approximate tolerated time delays and imperceptible time delays across a range of activities including motion-to-photon latency in gaming remote collaborative performance live music streaming and everyday sound propagation. Error bars show that several studies have been undertaken for a given activity and that their reported time delays do not match exactly."
+    "legend": "Key latency tolerances for multisensory experiences. The graph shows approximate tolerated time delays and imperceptible time delays across a range of activities including motion-to-photon latency in gaming remote collaborative performance live music streaming and everyday sound propagation. Error bars show that several studies have been undertaken for a given activity and that their reported time delays do not match exactly. Note that XR stands for eXtended Reality."
   },
   "toleranceBars": [
     {
-      "label": "Drumming pro drummers feel",
+      "label": "Pro drummers introduce delay\nfor music 'feel'",
       "value": 1.0,
       "errorBar": 0.0,
       "citations": [
@@ -17,7 +17,7 @@
       "group": "Collaborative music"
     },
     {
-      "label": "Play to ear music eg jazz\nrock",
+      "label": "Play to ear music e.g., jazz\nand rock",
       "value": 7.5,
       "errorBar": 2.5,
       "citations": [
@@ -28,7 +28,7 @@
     {
       "label": "Musicians",
       "value": 25.0,
-      "errorBar": 5.0,
+      "errorBar": 0.0,
       "citations": [
         49,
         50
@@ -36,58 +36,30 @@
       "group": "Collaborative music"
     },
     {
-      "label": "Lip sync",
-      "value": 25.0,
-      "errorBar": 5.0,
+      "label": "Motion to Photon",
+      "value": 20.0,
+      "errorBar": 0.0,
       "citations": [
         51,
         52
       ],
-      "group": "Collaborative music"
+      "group": "XR"
     },
     {
-      "label": "Singers",
-      "value": 50.0,
+      "label": "Tactile to visual",
+      "value": 55.0,
       "errorBar": 0.0,
       "citations": [
         53
       ],
-      "group": "Collaborative music"
+      "group": "XR"
     },
     {
-      "label": "Drumming with a virtual\npartner",
-      "value": 160.0,
-      "errorBar": 0.0,
-      "citations": [
-        54
-      ],
-      "group": "Collaborative music"
-    },
-    {
-      "label": "Motion to Photon",
+      "label": "Tactile to audio",
       "value": 25.0,
-      "errorBar": 5.0,
-      "citations": [
-        55
-      ],
-      "group": "XR"
-    },
-    {
-      "label": "Vibrotactile",
-      "value": 50.0,
       "errorBar": 0.0,
       "citations": [
-        56,
-        57
-      ],
-      "group": "XR"
-    },
-    {
-      "label": "Surgery visual delay",
-      "value": 50.0,
-      "errorBar": 0.0,
-      "citations": [
-        58
+        53
       ],
       "group": "XR"
     },
@@ -96,7 +68,7 @@
       "value": 45.0,
       "errorBar": 0.0,
       "citations": [
-        59
+        54
       ],
       "group": "TV"
     },
@@ -105,51 +77,28 @@
       "value": 125.0,
       "errorBar": 0.0,
       "citations": [
-        59
+        54
       ],
       "group": "TV"
-    },
-    {
-      "label": "Mixing desk with live voice",
-      "value": 5.0,
-      "errorBar": 0.0,
-      "citations": [
-        59
-      ],
-      "group": "Live show"
-    },
-    {
-      "label": "Mixing desk",
-      "value": 60.0,
-      "errorBar": 10.0,
-      "citations": [
-        59
-      ],
-      "group": "Live show"
     },
     {
       "label": "Speech over mobile phone",
       "value": 150.0,
       "errorBar": 50.0,
       "citations": [
-        59
+        55
       ],
       "group": "Speech"
     }
   ],
   "imperceptibleBars": [
     {
-      "label": "Augmented visual real visual",
-      "value": 0.0,
+      "label": "Own speech",
+      "value": 1.0,
       "errorBar": 0.0,
       "citations": [
-        60
+        56
       ]
-    },
-    {
-      "label": "Own speech",
-      "value": 0.5,
-      "errorBar": 0.0
     },
     {
       "label": "Speech, person to person, 2m\napart",
@@ -160,11 +109,11 @@
       ]
     },
     {
-      "label": "Speech, person to person, 3m\napart",
-      "value": 25.0,
+      "label": "Speech, person to person,\n10m apart",
+      "value": 30.0,
       "errorBar": 5.0,
       "citations": [
-        51
+        48
       ]
     }
   ]

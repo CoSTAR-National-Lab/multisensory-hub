@@ -25,7 +25,12 @@
       "Bash(git checkout:*)",
       "Bash(pip show:*)",
       "Bash(git branch:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(grep -n \"^# \" report/*.md)",
+      "Bash(.venv/Scripts/python *)",
+      "Bash(.venv/Scripts/python.exe -c \"import docx; print\\('ok'\\)\")",
+      "Bash(.venv/Scripts/python.exe -m pip list)",
+      "Bash(pandoc \"report/other_pages/pages.docx\" -t markdown --wrap=none)"
     ]
   }
 }

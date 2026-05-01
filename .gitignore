@@ -346,5 +346,10 @@ docusaurus-site/.cache-loader/
 docusaurus-site/docs/
 docusaurus-site/src/data/latency_data.json
 
+# Generated subpages (throwaway, rebuilt by pages_to_mdx.py)
+_tmp_subpage_media/
+docusaurus-site/src/pages/*.mdx
+docusaurus-site/static/media/subpages/
+
 # One-time helpers (legacy once Word table is set up)
 report/latency_chart_table.csv

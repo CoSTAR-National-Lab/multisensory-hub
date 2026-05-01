@@ -11,8 +11,8 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://multisensoryhub.local',
-  baseUrl: '/',
+  url: 'https://andytwoods.github.io',
+  baseUrl: '/MultisensoryHub/',
 
   trailingSlash: false,
 
