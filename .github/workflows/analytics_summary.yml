@@ -1,0 +1,34 @@
+name: Analytics Summary Pull
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Run at 02:00 UTC every day
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  pull-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull latest summary
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.ANALYTICS_SUMMARY_TOKEN }}" \
+               https://analytics.storyfutures.io/concept-analytics/summary/latest/ \
+               -o docusaurus-site/static/analytics/public-summary.latest.json
+        # Note: The endpoint URL is a placeholder and should be updated to the real production URL.
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docusaurus-site/static/analytics/public-summary.latest.json
+          if git diff --cached --quiet; then
+            echo "No changes in analytics summary"
+          else
+            git commit -m "docs: update latest analytics summary [skip ci]"
+            git push
+          fi

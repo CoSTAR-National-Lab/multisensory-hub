@@ -107,6 +107,66 @@ Pandoc output contains artifacts that break MDX compilation. The pipeline fixes:
 
 ---
 
+## Python Dependencies
+
+This project uses [uv](https://github.com/astral-sh/uv) for dependency management and workspace orchestration.
+
+### Installation
+
+```bash
+uv sync
+```
+
+### Running the Pipeline
+
+```bash
+uv run python docx_to_mdx.py
+```
+
+### Running Tests
+
+```bash
+# Submodule tests
+uv run pytest multisensoryHubHeatMap/tests/
+```
+
+---
+
+## User Consent and Privacy
+
+The analytics system is designed with a "privacy-first" approach, focusing on aggregate concept engagement rather than individual user tracking.
+
+### User Experience
+
+To preserve the focus and accessibility of the report, the system avoids intrusive pop-ups, modals, or "cookie banners". Instead, it uses a non-disruptive transparency model:
+
+1.  **No Interruption:** Users are not blocked from reading the content by a consent dialogue.
+2.  **Footer Notice:** A static notice is placed in the site's footer (e.g., "Privacy: This site uses anonymous analytics to improve content. No personal data is collected.").
+3.  **One-Click Toggle:** The notice includes a direct link to **[Disable Analytics]**.
+4.  **Immediate Feedback:** If clicked, the link updates to **[Enable Analytics]**, and the tracking script is instantly terminated for the current and all future sessions (via `localStorage`).
+
+### User Transparency
+...
+
+Users are informed of the analytics via a non-intrusive **Analytics Notice** typically located in the site footer. This notice explains:
+- **What is tracked:** Anonymized engagement with specific content blocks (dwell time, clicks).
+- **Why it is tracked:** To understand which concepts are most valuable to the community and improve the report.
+- **Privacy Guarantee:** No IP addresses, names, or personal identifiers are ever stored.
+
+### Consent & Opt-Out
+
+The system operates on an "informed implied consent" model with a clear and functional **Opt-Out** mechanism:
+- **Opt-Out Link:** A "Disable Analytics" link is provided in the footer/accessibility menu.
+- **Mechanism:** Clicking "Disable Analytics" sets a `concept_analytics_optout: 1` key in the browser's `localStorage`.
+- **Enforcement:** The `AnalyticsProvider` checks this key on every page load. If present, the tracking script is completely disabled and no data is sent to the server.
+- **Persistence:** The choice is persisted across browser sessions until the user clears their local storage or clicks "Enable Analytics".
+
+### Data Minimization
+- **No IP Addresses:** Client IP addresses are used only transiently by the server for bot detection and are **never** written to the database.
+- **Data Suppression:** To prevent "fingerprinting" through rare paths, any content block with fewer than 10 unique sessions is automatically suppressed from public aggregate reports.
+
+---
+
 ## Interactive Components
 
 All components are React/TypeScript with CSS Modules. They are injected via MDX imports on every generated page.

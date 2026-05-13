@@ -67,6 +67,7 @@ import CollapsibleSection from '@site/src/components/interactive/CollapsibleSect
 import QuoteBlock from '@site/src/components/interactive/QuoteBlock';
 import LatencyChart from '@site/src/components/interactive/LatencyChart';
 import RefPopup from '@site/src/components/RefPopup';
+import TrackedBlock from '@site/src/components/interactive/TrackedBlock';
 
 """
 
@@ -78,6 +79,7 @@ import InteractiveDemo from '@site/src/components/interactive/InteractiveDemo';
 import CollapsibleSection from '@site/src/components/interactive/CollapsibleSection';
 import QuoteBlock from '@site/src/components/interactive/QuoteBlock';
 import LatencyChart from '@site/src/components/interactive/LatencyChart';
+import TrackedBlock from '@site/src/components/interactive/TrackedBlock';
 
 """
 
@@ -1128,6 +1130,10 @@ readingTimeMinutes: {reading_time}
     # Fix MDX syntax issues in the content
     fixed_content = fix_mdx_syntax(page["content"])
 
+    # Generate stable blockId for the whole page
+    content_hash = hashlib.sha256(fixed_content.encode()).hexdigest()[:8]
+    page_block_id = f"page-{doc_id}-{content_hash}"
+
     # Inject reading times into H3 sub-headings (skip references)
     if not is_references_page:
         fixed_content = inject_subheading_reading_times(fixed_content)
@@ -1135,18 +1141,24 @@ readingTimeMinutes: {reading_time}
     # Handle references page specially
     if is_references_page:
         # Create a clean references page with the ReferenceList component
-        return frontmatter + MDX_IMPORTS_REFERENCES + header_line + """
-<ReferenceList references={references} />
+        return frontmatter + MDX_IMPORTS_REFERENCES + header_line + f"""
+<TrackedBlock blockId="{page_block_id}" topic="references" label="{safe_title}">
+<ReferenceList references={{references}} />
+</TrackedBlock>
 """
 
     # Convert citations to interactive components
     fixed_content, has_citations = convert_citations_in_content(fixed_content)
 
+    # Wrap main content in TrackedBlock
+    topic = doc_id.split("-")[0] # Simple topic extraction
+    tracked_content = f'<TrackedBlock blockId="{page_block_id}" topic="{topic}" label="{safe_title}">\n\n{fixed_content}\n\n</TrackedBlock>'
+
     # Choose imports based on whether page has citations
     imports = MDX_IMPORTS if has_citations else MDX_IMPORTS_SIMPLE
 
     # Correct order: frontmatter, imports, content
-    return frontmatter + imports + header_line + fixed_content
+    return frontmatter + imports + header_line + tracked_content
 
 
 def create_homepage_content(page: dict, is_references_page: bool = False) -> str:
@@ -1172,18 +1184,27 @@ readingTimeMinutes: {reading_time}
     # Fix MDX syntax issues in the content
     fixed_content = fix_mdx_syntax(page["content"])
 
+    # Generate stable blockId for the whole page
+    content_hash = hashlib.sha256(fixed_content.encode()).hexdigest()[:8]
+    page_block_id = f"page-index-{content_hash}"
+
     # Inject reading times into H3 sub-headings (skip references)
     if not is_references_page:
         fixed_content = inject_subheading_reading_times(fixed_content)
 
     if is_references_page:
-        return frontmatter + MDX_IMPORTS_REFERENCES + f"# {title}\n\n" + """
-<ReferenceList references={references} />
+        return frontmatter + MDX_IMPORTS_REFERENCES + f"# {title}\n\n" + f"""
+<TrackedBlock blockId="{page_block_id}" topic="references" label="{safe_title}">
+<ReferenceList references={{references}} />
+</TrackedBlock>
 """
 
     # Convert citations
     fixed_content, has_citations = convert_citations_in_content(fixed_content)
     imports = MDX_IMPORTS if has_citations else MDX_IMPORTS_SIMPLE
+
+    # Wrap main content in TrackedBlock
+    tracked_content = f'<TrackedBlock blockId="{page_block_id}" topic="home" label="{safe_title}">\n\n{fixed_content}\n\n</TrackedBlock>'
 
     # Inject inline reading time annotation if available
     reading_time_display = page.get('reading_time_display')
