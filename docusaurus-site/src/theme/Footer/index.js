@@ -36,11 +36,38 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <p className={styles.notice}>
-          We collect anonymous, aggregate engagement data to understand which
-          topics and sections of this report are useful to visitors. We do not
-          collect names, emails, raw IP addresses, or use third-party advertising
-          analytics.
+          This site collects anonymous, aggregate engagement data to understand
+          which topics and sections are most useful to visitors. No names, emails,
+          or IP addresses are stored. This site is part of the{' '}
+          <a
+            href="https://www.costarnetwork.co.uk"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.link}
+          >
+            CoSTAR Network
+          </a>
+          .
         </p>
+        <div className={styles.policies}>
+          <a
+            href="https://www.costarnetwork.co.uk/cookie-policy-for-costar-network-website"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.link}
+          >
+            Cookie Policy
+          </a>
+          <span className={styles.sep}>·</span>
+          <a
+            href="https://www.costarnetwork.co.uk/costar-national-lab-privacy-policy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.link}
+          >
+            Privacy Policy
+          </a>
+        </div>
         <div className={styles.controls}>
           {optedOut ? (
             <>

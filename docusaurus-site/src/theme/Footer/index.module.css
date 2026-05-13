@@ -12,7 +12,29 @@
 }
 
 .notice {
-  margin: 0 0 0.9rem;
+  margin: 0 0 0.6rem;
+}
+
+.policies {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.8rem;
+}
+
+.sep {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.link {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
 }
 
 .controls {
