@@ -1,0 +1,3 @@
+[submodule "multisensoryHubHeatMap"]
+	path = multisensoryHubHeatMap
+	url = https://github.com/andytwoods/MultisensoryHubHeatMap
