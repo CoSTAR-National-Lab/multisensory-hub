@@ -1,0 +1,894 @@
+# Tracked sub-section blocks for concept_analytics.
+# Fill in block_id, topic, concept, and label for sections you want to track.
+# Entries with block_id: '' are candidates — the pipeline skips them until configured.
+# content_type values: section | case-study | figure | video | interactive | download | glossary
+#
+blocks:
+- block_id: ''
+  heading: Economic value 6 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Social-emotional and cultural value 4 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sensory substitution 7 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case Study: *Steady State* Created by performer-technologist and research
+    lead Zubin Kanga (*Royal Holloway, University of London*), composer Alexander
+    Schubert (*Musikhochschule Hamburg*), brain sensor and neuro-diagnostics company*
+    ANT Neuro*(Netherlands/UK/Germany), brain-computer interaction engineer Serafeim
+    Perdikis (*University of Essex*) and a wider team of artists, ***Steady State***(2024)
+    recasts the recital format as a retro-sci-fi laboratory in which the performer
+    is both subject and instrument.***Steady State*** was created as part of *Cyborg
+    Soloists*, Zubin Kanga''s* UKRI Future Leaders Fellowship* research project. 6
+    min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case Study: Watch-based haptic navigation 4 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Crossmodal illusions 4 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Crossmodal correspondences 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Current, Rising 2 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Latency tolerances 9 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Tolerance of spatial mismatches 4 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Prior experience and the assumption of unity 4 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Perceptual 'filling in' 3 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Multisensory attention 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Holistic experiential integration 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Flicker 3 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Light and dark adaptation 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Visual illusions 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Colour blindness and low vision  2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Lighting and brightness 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Motion sensitivity and flicker 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Cognitive load and simplified layouts 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Abba Voyage 1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: 3D digital signage, Shinjuku train station (Tokyo, Japan)
+    1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Low spatial resolution 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Hearing diversity 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sound overload and sensory sensitivities 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Spatial audio for orientation 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Arcade 1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Active and passive forms of touch 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Temperature 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Localisation 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Social touch 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Current technical challenges 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sensory and physical diversity 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Assistive opportunities 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Water Droplets 3 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: In Pursuit of Repetitive Beats 2 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Jeff Wayne''s The War of the Worlds: The Immersive Experience
+    1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Adaptation 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sensitivity 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Context 2 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Fragrance sensitivities 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Impaired sense of smell 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Jorvik Viking Centre  1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Presence 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Spatial illusions 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Motion sickness and comfort 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: The Matrix in *Shared Reality Cosm*, an experiential media
+    company that opened its first flagship venues in Los Angeles and Dallas in 2023–24,
+    uses giant 87-foot LED domes with spatial audio to deliver what it calls ***Shared
+    Reality*** experiences, blending cinema, live events and immersive environments.
+    *Cosm''s **Shared Reality*** adaptation of*** The Matrix*** premiered June 2025
+    as a collaboration between *Cosm*,* Warner Bros. *and* Little Cinema*. The movie
+    is shown in its original 16:9 frame, while the surrounding dome expands the world
+    outward with, for example, office interiors continuing beyond the screen, bullets
+    fly out of the frame, and during a helicopter rescue the skyline ripples and tilts
+    in sync with the action. 1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Disney HoloTile floor 1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Interpersonal space  1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Peripersonal space  1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Diversity 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Peripersonal space sensitivity 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case Study: Managing the bubble in onboarding 1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Boosting true bodily signals 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Creating illusory bodily signals 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Individual differences 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Data protection 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Masking bulky haptics gear 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Influencing strength 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Proprioceptive diversity 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sensory mismatch 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case Study: Body of Mine 1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Full-body real-time motion capture  1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Physiological data 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Alternate channels 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Brainstorms  1 min'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Why multisensory now? 4 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Inclusion isn't a bolt-on and multisensory isn't automatically inclusive
+    4 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Design lessons you can use immediately 3 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: What next? 1 min
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Economic value
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Social-emotional and cultural value
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sensory substitution
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case Study: *Steady State* Created by performer-technologist and research
+    lead Zubin Kanga (*Royal Holloway, University of London*), composer Alexander
+    Schubert (*Musikhochschule Hamburg*), brain sensor and neuro-diagnostics company*
+    ANT Neuro*(Netherlands/UK/Germany), brain-computer interaction engineer Serafeim
+    Perdikis (*University of Essex*) and a wider team of artists, ***Steady State***(2024)
+    recasts the recital format as a retro-sci-fi laboratory in which the performer
+    is both subject and instrument.***Steady State*** was created as part of *Cyborg
+    Soloists*, Zubin Kanga''s* UKRI Future Leaders Fellowship* research project.'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case Study: Watch-based haptic navigation'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Crossmodal illusions
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Crossmodal correspondences
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Current, Rising'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Latency tolerances
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Tolerance of spatial mismatches
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Prior experience and the assumption of unity
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Perceptual 'filling in'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Multisensory attention
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Holistic experiential integration
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Flicker
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Light and dark adaptation
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Visual illusions
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Colour blindness and low vision
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Lighting and brightness
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Motion sensitivity and flicker
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Cognitive load and simplified layouts
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Abba Voyage'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: 3D digital signage, Shinjuku train station (Tokyo, Japan)'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Low spatial resolution
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Hearing diversity
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sound overload and sensory sensitivities
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Spatial audio for orientation
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Arcade'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Active and passive forms of touch
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Temperature
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Localisation
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Social touch
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Current technical challenges
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sensory and physical diversity
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Assistive opportunities
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Water Droplets'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: In Pursuit of Repetitive Beats'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Jeff Wayne''s The War of the Worlds: The Immersive Experience'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Adaptation
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sensitivity
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Context
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Fragrance sensitivities
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Impaired sense of smell
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Jorvik Viking Centre'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Presence
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Spatial illusions
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Motion sickness and comfort
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: The Matrix in *Shared Reality Cosm*, an experiential media
+    company that opened its first flagship venues in Los Angeles and Dallas in 2023–24,
+    uses giant 87-foot LED domes with spatial audio to deliver what it calls ***Shared
+    Reality*** experiences, blending cinema, live events and immersive environments.
+    *Cosm''s **Shared Reality*** adaptation of*** The Matrix*** premiered June 2025
+    as a collaboration between *Cosm*,* Warner Bros. *and* Little Cinema*. The movie
+    is shown in its original 16:9 frame, while the surrounding dome expands the world
+    outward with, for example, office interiors continuing beyond the screen, bullets
+    fly out of the frame, and during a helicopter rescue the skyline ripples and tilts
+    in sync with the action.'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Disney HoloTile floor'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Interpersonal space
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Peripersonal space
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Diversity
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Peripersonal space sensitivity
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case Study: Managing the bubble in onboarding'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Boosting true bodily signals
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Creating illusory bodily signals
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Individual differences
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Data protection
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Masking bulky haptics gear
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Influencing strength
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Proprioceptive diversity
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Sensory mismatch
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case Study: Body of Mine'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Full-body real-time motion capture
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Physiological data
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Alternate channels
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: 'Case study: Brainstorms'
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Why multisensory now?
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Inclusion isn't a bolt-on and multisensory isn't automatically inclusive
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: Design lessons you can use immediately
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''
+- block_id: ''
+  heading: What next?
+  topic: ''
+  concept: ''
+  content_type: section
+  label: ''

@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "xAxisLabel": "Value (ms)",
+    "xMax": 200,
+    "toleranceColour": "#440154FF",
+    "imperceptibleColour": "#5DC863FF",
+    "legend": "Key latency tolerances for multisensory experiences. The graph shows approximate tolerated time delays and imperceptible time delays across a range of activities including motion-to-photon latency in gaming remote collaborative performance live music streaming and everyday sound propagation. Error bars show that several studies have been undertaken for a given activity and that their reported time delays do not match exactly. Note that XR stands for eXtended Reality."
+  },
+  "toleranceBars": [
+    {
+      "label": "Pro drummers introduce delay\nfor music 'feel'",
+      "value": 1.0,
+      "errorBar": 0.0,
+      "citations": [
+        48
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Play to ear music e.g., jazz\nand rock",
+      "value": 7.5,
+      "errorBar": 2.5,
+      "citations": [
+        48
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Musicians",
+      "value": 25.0,
+      "errorBar": 0.0,
+      "citations": [
+        49,
+        50
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Motion to Photon",
+      "value": 20.0,
+      "errorBar": 0.0,
+      "citations": [
+        51,
+        52
+      ],
+      "group": "XR"
+    },
+    {
+      "label": "Tactile to visual",
+      "value": 55.0,
+      "errorBar": 0.0,
+      "citations": [
+        53
+      ],
+      "group": "XR"
+    },
+    {
+      "label": "Tactile to audio",
+      "value": 25.0,
+      "errorBar": 0.0,
+      "citations": [
+        53
+      ],
+      "group": "XR"
+    },
+    {
+      "label": "Audio ahead of video",
+      "value": 45.0,
+      "errorBar": 0.0,
+      "citations": [
+        54
+      ],
+      "group": "TV"
+    },
+    {
+      "label": "Video ahead of audio",
+      "value": 125.0,
+      "errorBar": 0.0,
+      "citations": [
+        54
+      ],
+      "group": "TV"
+    },
+    {
+      "label": "Speech over mobile phone",
+      "value": 150.0,
+      "errorBar": 50.0,
+      "citations": [
+        55
+      ],
+      "group": "Speech"
+    }
+  ],
+  "imperceptibleBars": [
+    {
+      "label": "Own speech",
+      "value": 1.0,
+      "errorBar": 0.0,
+      "citations": [
+        56
+      ]
+    },
+    {
+      "label": "Speech, person to person, 2m\napart",
+      "value": 6.0,
+      "errorBar": 0.0,
+      "citations": [
+        48
+      ]
+    },
+    {
+      "label": "Speech, person to person,\n10m apart",
+      "value": 30.0,
+      "errorBar": 5.0,
+      "citations": [
+        48
+      ]
+    }
+  ]
+}
