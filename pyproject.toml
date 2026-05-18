@@ -11,6 +11,9 @@ dependencies = [
     "pyyaml>=6.0.1",
 ]
 
+[tool.setuptools]
+packages = []
+
 [tool.uv]
 managed = true
 workspace = { members = ["multisensoryHubHeatMap"] }
