@@ -1,5 +1,7 @@
 import React from 'react';
 import {DocsPreferredVersionContextProvider} from '@docusaurus/plugin-content-docs/client';
+import AnalyticsProvider from '../components/analytics/AnalyticsProvider';
+import ErrorBoundary from '../components/analytics/ErrorBoundary';
 
 export default function Root({children}) {
   return (
@@ -10,7 +12,11 @@ export default function Root({children}) {
       >
         Skip to main content
       </a>
-      {children}
+      <ErrorBoundary>
+        <AnalyticsProvider>
+          {children}
+        </AnalyticsProvider>
+      </ErrorBoundary>
     </DocsPreferredVersionContextProvider>
   );
 }

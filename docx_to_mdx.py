@@ -10,6 +10,7 @@ Pipeline to convert Word documents to MDX pages and serve with Docusaurus.
 7. Builds and serves the site, opening in browser
 """
 
+import hashlib
 import json
 import math
 import os
@@ -85,6 +86,7 @@ import TrackedBlock from '@site/src/components/interactive/TrackedBlock';
 
 # References page imports
 MDX_IMPORTS_REFERENCES = """import ReferenceList from '@site/src/components/interactive/ReferenceList';
+import TrackedBlock from '@site/src/components/interactive/TrackedBlock';
 import { references } from '@site/src/data/references';
 
 """
@@ -1986,6 +1988,246 @@ def extract_chart_data_tables(markdown: str) -> str:
     return marker_pattern.sub(_replace_table, markdown)
 
 
+def sync_tracked_blocks_candidates(output_folder: Path) -> None:
+    """Scan generated MDX files and add newly discovered H3/H4 headings to
+    analytics/tracked-blocks.yml as candidate entries (block_id left blank).
+
+    Existing entries — whether configured or still blank — are preserved.
+    Fill in block_id (and topic/concept/label) to activate tracking for a section.
+    """
+    config_path = Path("analytics") / "tracked-blocks.yml"
+    config_path.parent.mkdir(exist_ok=True)
+
+    import yaml
+
+    existing_blocks: list[dict] = []
+    if config_path.exists():
+        raw = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+        existing_blocks = raw.get("blocks") or []
+
+    def norm(text: str) -> str:
+        text = re.sub(r'<[^>]+>[^<]*</[^>]+>', '', text)  # tags + inner text
+        text = re.sub(r'<[^>]+>', '', text)
+        text = re.sub(r'[*_`\[\]()\\]', '', text)
+        return text.strip().lower()
+
+    known: set[str] = {norm(b["heading"]) for b in existing_blocks if b.get("heading")}
+
+    heading_re = re.compile(r'^(#{3,4})\s+(.+)$', re.MULTILINE)
+    new_entries: list[dict] = []
+
+    def strip_heading(raw: str) -> str:
+        """Remove reading-time spans (and any other HTML) including their text content."""
+        text = re.sub(r'<[^>]+>[^<]*</[^>]+>', '', raw)  # tags + inner text
+        text = re.sub(r'<[^>]+>', '', text)               # any remaining self-closing tags
+        return text.strip()
+
+    for path in sorted(output_folder.rglob("*.mdx")):
+        if 'reference' in path.stem.lower():
+            continue
+        for m in heading_re.finditer(path.read_text(encoding="utf-8")):
+            heading_text = strip_heading(m.group(2))
+            if norm(heading_text) not in known:
+                known.add(norm(heading_text))
+                new_entries.append({
+                    "block_id": "",
+                    "heading": heading_text,
+                    "topic": "",
+                    "concept": "",
+                    "content_type": "section",
+                    "label": "",
+                })
+
+    if not new_entries:
+        return
+
+    all_blocks = existing_blocks + new_entries
+    header = (
+        "# Tracked sub-section blocks for concept_analytics.\n"
+        "# Fill in block_id, topic, concept, and label for sections you want to track.\n"
+        "# Entries with block_id: '' are candidates — the pipeline skips them until configured.\n"
+        "# content_type values: section | case-study | figure | video | interactive | download | glossary\n"
+        "#\n"
+    )
+    config_path.write_text(
+        header + yaml.dump({"blocks": all_blocks}, allow_unicode=True, default_flow_style=False, sort_keys=False),
+        encoding="utf-8",
+    )
+    _c_info(f"[TrackedBlocks] Added {len(new_entries)} new heading candidate(s) to {config_path}")
+    _c_info("[TrackedBlocks]   Fill in block_id to activate tracking for a section.")
+
+
+def inject_tracked_blocks(output_folder: Path) -> None:
+    """Post-process MDX files to inject <TrackedBlock> wrappers from analytics/tracked-blocks.yml.
+
+    Skips silently if the YAML file does not exist (pipeline stays usable without analytics).
+    Warns if a heading cannot be matched.
+    Errors and exits non-zero if duplicate block_ids are found.
+    """
+    config_path = Path("analytics") / "tracked-blocks.yml"
+    if not config_path.exists():
+        _c_info("[TrackedBlocks] No analytics/tracked-blocks.yml — skipping sub-section injection.")
+        return
+
+    import yaml
+
+    raw = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    blocks = raw.get("blocks", [])
+    if not blocks:
+        _c_info("[TrackedBlocks] tracked-blocks.yml has no blocks — nothing to inject.")
+        return
+
+    # Duplicate block_ids are a hard error (ignore blank candidates)
+    seen_ids: set[str] = set()
+    for b in blocks:
+        bid = b.get("block_id", "")
+        if not bid:
+            continue  # candidate entry, not yet configured
+        if bid in seen_ids:
+            _c_error(f"[TrackedBlocks] Duplicate block_id '{bid}' in tracked-blocks.yml — aborting.")
+            sys.exit(1)
+        seen_ids.add(bid)
+
+    _c_info(f"[TrackedBlocks] Injecting {len(blocks)} sub-section tracked block(s)...")
+
+    def norm(text: str) -> str:
+        """Strip HTML tags (including their text content), markdown formatting, and lowercase."""
+        text = re.sub(r'<[^>]+>[^<]*</[^>]+>', '', text)  # tags + inner text
+        text = re.sub(r'<[^>]+>', '', text)
+        text = re.sub(r'[*_`\[\]()\\]', '', text)
+        return text.strip().lower()
+
+    heading_re = re.compile(r'^(#{1,6})\s+(.+)$', re.MULTILINE)
+
+    mdx_files = sorted(output_folder.rglob("*.mdx"))
+    file_contents: dict[Path, str] = {p: p.read_text(encoding="utf-8") for p in mdx_files}
+
+    def build_index(contents: dict[Path, str]) -> dict[str, list[tuple]]:
+        idx: dict[str, list[tuple]] = {}
+        for path, content in contents.items():
+            for m in heading_re.finditer(content):
+                key = norm(m.group(2))
+                idx.setdefault(key, []).append((path, len(m.group(1)), m.start(), m.end()))
+        return idx
+
+    heading_index = build_index(file_contents)
+    modified: set[Path] = set()
+
+    for block in blocks:
+        block_id = block.get("block_id", "")
+        if not block_id:
+            continue  # candidate entry, not yet configured
+        heading_text = block["heading"]
+        topic = block.get("topic", "")
+        concept = block.get("concept", "")
+        content_type = block.get("content_type", "section")
+        label = block.get("label", "")
+
+        key = norm(heading_text)
+        candidates = heading_index.get(key, [])
+
+        if not candidates:
+            WARNINGS.append(
+                f"[TrackedBlocks] No heading match for '{block_id}' "
+                f"(heading: '{heading_text}') — update tracked-blocks.yml if the heading changed"
+            )
+            continue
+
+        if len(candidates) > 1:
+            WARNINGS.append(
+                f"[TrackedBlocks] '{block_id}': multiple heading matches for '{heading_text}' — using first"
+            )
+
+        path, level, h_start, h_end = candidates[0]
+        content = file_contents[path]
+
+        # Block ends at the next heading of the same or higher level (equal or fewer #s)
+        block_end = len(content)
+        for m in heading_re.finditer(content):
+            if m.start() > h_start and len(m.group(1)) <= level:
+                block_end = m.start()
+                break
+
+        attrs = f'blockId="{block_id}"'
+        if topic:        attrs += f' topic="{topic}"'
+        if concept:      attrs += f' concept="{concept}"'
+        if content_type: attrs += f' contentType="{content_type}"'
+        if label:        attrs += f' label="{label}"'
+
+        inner = content[h_start:block_end].rstrip('\n')
+        wrapped = f'<TrackedBlock {attrs}>\n\n{inner}\n\n</TrackedBlock>\n\n'
+
+        new_content = content[:h_start] + wrapped + content[block_end:]
+        file_contents[path] = new_content
+        modified.add(path)
+
+        # Rebuild index for this file so later blocks in the same file resolve correctly
+        for k in list(heading_index.keys()):
+            heading_index[k] = [(p, lv, s, e) for p, lv, s, e in heading_index[k] if p != path]
+            if not heading_index[k]:
+                del heading_index[k]
+        for m in heading_re.finditer(new_content):
+            k = norm(m.group(2))
+            heading_index.setdefault(k, []).append((path, len(m.group(1)), m.start(), m.end()))
+
+    for path in modified:
+        path.write_text(file_contents[path], encoding="utf-8")
+
+    if modified:
+        _c_ok(f"[TrackedBlocks] Injected blocks into {len(modified)} file(s).")
+
+
+def _patch_docusaurus_config(version: str) -> None:
+    config_path = DOCUSAURUS_DIR / "docusaurus.config.ts"
+    if not config_path.exists():
+        _c_warn(f"[Manifest] {config_path} not found — skipping customFields patch.")
+        return
+    content = config_path.read_text(encoding="utf-8")
+    if "analyticsManifestVersion" in content:
+        new_content = re.sub(
+            r"analyticsManifestVersion:\s*'[^']*'",
+            f"analyticsManifestVersion: '{version}'",
+            content,
+        )
+    else:
+        new_content = content.replace(
+            "customFields: {",
+            f"customFields: {{\n    analyticsManifestVersion: '{version}',",
+        )
+    if new_content != content:
+        config_path.write_text(new_content, encoding="utf-8")
+        _c_ok(f"[Manifest] Patched docusaurus.config.ts — analyticsManifestVersion: '{version}'")
+
+
+def generate_analytics_manifest(output_folder: Path) -> None:
+    """Scan all generated MDX files for <TrackedBlock> components, write
+    docusaurus-site/static/manifest.json (served at /manifest.json), and patch
+    docusaurus.config.ts with the content-hash version so the frontend includes
+    it in every event batch.
+
+    Skips silently if manifest_tools cannot be imported (submodule not checked out).
+    """
+    scripts_path = Path(__file__).parent / "multisensoryHubHeatMap" / "scripts"
+    if not scripts_path.exists():
+        _c_info("[Manifest] multisensoryHubHeatMap/scripts not found — skipping manifest generation.")
+        return
+
+    sys.path.insert(0, str(scripts_path))
+    try:
+        import manifest_tools
+    except ImportError as exc:
+        _c_warn(f"[Manifest] Could not import manifest_tools: {exc} — skipping.")
+        return
+    finally:
+        sys.path.pop(0)
+
+    manifest_path = DOCUSAURUS_DIR / "static" / "manifest.json"
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    entries, version = manifest_tools.generate_manifest_json(str(output_folder), str(manifest_path))
+    _c_ok(f"[Manifest] Wrote {len(entries)} block(s) to {manifest_path} (version: {version})")
+    _patch_docusaurus_config(version)
+
+
 def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     """Process a single Word document through the pipeline."""
     print(f"\nProcessing: {docx_path}")
@@ -2035,6 +2277,12 @@ def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     _, unresolved_titles = save_mdx_files(pages, output_folder, anchor_registry, url_map, title_link_registry)
 
     # Note: index.mdx (homepage) is created by save_mdx_files from pre-H1 content
+
+    print("  Syncing tracked-block candidates from headings...")
+    sync_tracked_blocks_candidates(output_folder)
+
+    print("  Injecting sub-section tracked blocks...")
+    inject_tracked_blocks(output_folder)
 
     for title in unresolved_titles:
         WARNINGS.append(f"[Links] Unresolved bare-title link: [{title}]")
@@ -2090,6 +2338,10 @@ def main():
     # Process each document
     for docx_path in docx_files:
         process_document(docx_path, OUTPUT_FOLDER)
+
+    print("\n" + "-" * 60)
+    print("Generating analytics manifest...")
+    generate_analytics_manifest(OUTPUT_FOLDER)
 
     # Print accessibility summary
     if WARNINGS:

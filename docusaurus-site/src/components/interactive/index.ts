@@ -5,3 +5,4 @@ export { default as DataTable } from './DataTable';
 export { default as InteractiveDemo } from './InteractiveDemo';
 export { default as QuoteBlock } from './QuoteBlock';
 export { default as ScrollProgress } from './ScrollProgress';
+export { default as TrackedBlock } from './TrackedBlock';

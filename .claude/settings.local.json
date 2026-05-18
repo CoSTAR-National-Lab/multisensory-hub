@@ -32,7 +32,20 @@
       "Bash(.venv/Scripts/python.exe -m pip list)",
       "Bash(pandoc \"report/other_pages/pages.docx\" -t markdown --wrap=none)",
       "Bash(pandoc \"report/other_pages/pages.docx\" -t json)",
-      "WebFetch(domain:www.costarnetwork.co.uk)"
+      "WebFetch(domain:www.costarnetwork.co.uk)",
+      "Bash(git submodule *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\andyt\\\\PycharmProjects\\\\MultisensoryHub\\\\multisensoryHubHeatMap\" -Recurse | Select-Object FullName | ForEach-Object { $_.FullName.Replace\\(\"C:\\\\Users\\\\andyt\\\\PycharmProjects\\\\MultisensoryHub\\\\multisensoryHubHeatMap\\\\\", \"\"\\) } | Sort-Object)",
+      "Bash(git push *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\andyt\\\\PycharmProjects\\\\MultisensoryHub\\\\docusaurus-site\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(uv run *)",
+      "Bash(Get-ChildItem -Recurse \"C:\\\\Users\\\\andyt\\\\PycharmProjects\\\\MultisensoryHub\\\\docusaurus-site\\\\src\" -Name)",
+      "Bash(Get-ChildItem -Recurse -Force)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\andyt\\\\PycharmProjects\\\\MultisensoryHub\\\\multisensoryHubHeatMap\" | Select-Object Name, @{Name='Type';Expression={if\\($_.PSIsContainer\\){'Directory'}else{'File'}}})"
     ]
   }
 }

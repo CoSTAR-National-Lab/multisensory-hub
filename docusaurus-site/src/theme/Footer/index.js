@@ -8,17 +8,10 @@ function readOptOut() {
 }
 
 export default function Footer() {
-  // Initialise as false; real value set client-side in useEffect (SSR safety).
   const [optedOut, setOptedOut] = useState(false);
   const [justConfirmed, setJustConfirmed] = useState(false);
 
-  useEffect(() => {
-    // Honour Global Privacy Control automatically.
-    if (navigator.globalPrivacyControl === true) {
-      try { localStorage.setItem(OPTOUT_KEY, '1'); } catch {}
-    }
-    setOptedOut(readOptOut());
-  }, []);
+  useEffect(() => { setOptedOut(readOptOut()); }, []);
 
   function handleOptOut() {
     try { localStorage.setItem(OPTOUT_KEY, '1'); } catch {}
@@ -35,59 +28,27 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
-        <p className={styles.notice}>
-          This site collects anonymous, aggregate engagement data to understand
-          which topics and sections are most useful to visitors. No names, emails,
-          or IP addresses are stored. This site is part of the{' '}
-          <a
-            href="https://www.costarnetwork.co.uk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.link}
-          >
-            CoSTAR Network
-          </a>
-          .
-        </p>
-        <div className={styles.policies}>
-          <a
-            href="https://www.costarnetwork.co.uk/cookie-policy-for-costar-network-website"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.link}
-          >
-            Cookie Policy
-          </a>
-          <span className={styles.sep}>·</span>
-          <a
-            href="https://www.costarnetwork.co.uk/costar-national-lab-privacy-policy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.link}
-          >
-            Privacy Policy
-          </a>
-        </div>
-        <div className={styles.controls}>
-          {optedOut ? (
-            <>
-              <span className={styles.status}>Analytics opt-out is active.</span>
-              <button className={styles.btn} onClick={handleOptIn}>
-                Opt back in
-              </button>
-            </>
-          ) : (
-            <>
-              <button className={styles.btn} onClick={handleOptOut}>
-                Opt out of analytics
-              </button>
-              {justConfirmed && (
-                <span className={styles.confirmed}>Opted out.</span>
-              )}
-            </>
-          )}
-        </div>
-        <div className={styles.copyright}>Multisensory Hub</div>
+        <span className={styles.notice}>
+          Anonymous engagement data is collected to understand which sections are most useful.
+          No personal data is stored. Part of the{' '}
+          <a href="https://www.costarnetwork.co.uk" target="_blank" rel="noopener noreferrer" className={styles.link}>CoSTAR Network</a>.
+        </span>
+        <span className={styles.sep}>·</span>
+        <a href="https://www.costarnetwork.co.uk/cookie-policy-for-costar-network-website" target="_blank" rel="noopener noreferrer" className={styles.link}>Cookies</a>
+        <span className={styles.sep}>·</span>
+        <a href="https://www.costarnetwork.co.uk/costar-national-lab-privacy-policy" target="_blank" rel="noopener noreferrer" className={styles.link}>Privacy</a>
+        <span className={styles.sep}>·</span>
+        {optedOut ? (
+          <>
+            <span className={styles.status}>Analytics off.</span>
+            <button className={styles.btn} onClick={handleOptIn}>Opt in</button>
+          </>
+        ) : (
+          <>
+            <button className={styles.btn} onClick={handleOptOut}>Opt out</button>
+            {justConfirmed && <span className={styles.confirmed}>Opted out.</span>}
+          </>
+        )}
       </div>
     </footer>
   );
