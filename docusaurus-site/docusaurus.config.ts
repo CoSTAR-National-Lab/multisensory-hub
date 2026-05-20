@@ -20,8 +20,9 @@ const config: Config = {
   trailingSlash: false,
 
   customFields: {
+    analyticsReportName: 'Multisensory Hub_April',
     // Injected by docx_to_mdx.py on each pipeline run — do not edit manually.
-    analyticsManifestVersion: '3989039f2029',
+    analyticsManifestVersion: '6c23701286e5',
   },
 
   onBrokenLinks: 'warn',

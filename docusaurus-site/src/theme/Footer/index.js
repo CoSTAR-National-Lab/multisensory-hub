@@ -29,7 +29,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <span className={styles.notice}>
-          Anonymous engagement data is collected to understand which sections are most useful.
+          Anonymous engagement data is collected to understand which sections are most useful, which will be used to focus future efforts at expanding the hub.
           No personal data is stored. Part of the{' '}
           <a href="https://www.costarnetwork.co.uk" target="_blank" rel="noopener noreferrer" className={styles.link}>CoSTAR Network</a>.
         </span>

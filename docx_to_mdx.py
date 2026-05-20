@@ -1988,12 +1988,61 @@ def extract_chart_data_tables(markdown: str) -> str:
     return marker_pattern.sub(_replace_table, markdown)
 
 
+_TRACKED_BLOCK_TOPIC_RULES: list[tuple[list[str], str]] = [
+    (["economic value", "social-emotional", "cultural value"], "value"),
+    (["sensory substitution", "crossmodal", "multisensory attention",
+      "holistic experiential", "latency tolerance", "tolerance of spatial",
+      "prior experience", "perceptual", "filling in", "steady state",
+      "watch-based haptic", "current, rising"], "multisensory-experience"),
+    (["flicker", "light and dark", "visual illusion", "colour blindness",
+      "low vision", "lighting and brightness", "motion sensitivity",
+      "cognitive load", "low spatial resolution", "abba voyage",
+      "shinjuku", "3d digital signage"], "vision"),
+    (["hearing diversity", "sound overload", "spatial audio",
+      "in pursuit of repetitive beats", "jeff wayne", "arcade"], "hearing"),
+    (["active and passive", "temperature", "localisation", "social touch",
+      "water droplets", "sensory and physical diversity", "assistive"], "touch"),
+    (["fragrance", "impaired sense of smell", "jorvik"], "smell"),
+    (["presence", "spatial illusion", "motion sickness", "the matrix",
+      "disney holotile", "shared reality", "cosm"], "space"),
+    (["interpersonal space", "peripersonal space", "peripersonal space sensitivity",
+      "managing the bubble"], "personal-space"),
+    (["bodily signal", "individual differences", "data protection",
+      "brainstorms"], "interoception"),
+    (["masking bulky", "influencing strength", "proprioceptive diversity",
+      "sensory mismatch", "body of mine"], "proprioception"),
+    (["full-body real-time", "motion capture", "physiological data",
+      "alternate channels"], "interactivity"),
+    # Ambiguous single-word headings — ordered by most specific chapter context
+    (["current technical challenges"], "touch"),
+    (["context"], "smell"),
+    (["adaptation", "sensitivity"], "smell"),
+    (["diversity"], "personal-space"),
+    (["inclusion", "why multisensory", "design lessons", "what next"], "multisensory-experience"),
+]
+
+
+def _infer_topic(heading_lower: str) -> str:
+    for keywords, topic in _TRACKED_BLOCK_TOPIC_RULES:
+        if any(kw in heading_lower for kw in keywords):
+            return topic
+    return "multisensory-experience"
+
+
+def _slugify_heading(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"[^\w\s-]", "", text)
+    text = re.sub(r"[\s_]+", "-", text)
+    text = re.sub(r"-+", "-", text)
+    return text.strip("-")[:80]
+
+
 def sync_tracked_blocks_candidates(output_folder: Path) -> None:
     """Scan generated MDX files and add newly discovered H3/H4 headings to
-    analytics/tracked-blocks.yml as candidate entries (block_id left blank).
+    analytics/tracked-blocks.yml. New entries are auto-populated with a
+    slugified block_id and inferred topic/concept so they are tracked immediately.
 
-    Existing entries — whether configured or still blank — are preserved.
-    Fill in block_id (and topic/concept/label) to activate tracking for a section.
+    Existing entries with a manually set block_id are never overwritten.
     """
     config_path = Path("analytics") / "tracked-blocks.yml"
     config_path.parent.mkdir(exist_ok=True)
@@ -2005,21 +2054,63 @@ def sync_tracked_blocks_candidates(output_folder: Path) -> None:
         raw = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
         existing_blocks = raw.get("blocks") or []
 
+    _read_time_re = re.compile(r'\s+\d+\s+min\s*$')
+
+    # Drop legacy blank entries whose heading has a plain-text read-time suffix
+    # (e.g. "Economic value 6 min"). These were generated before read times moved
+    # into <span> elements and can never match current MDX headings.
+    before = len(existing_blocks)
+    existing_blocks = [
+        b for b in existing_blocks
+        if b.get("block_id") or not _read_time_re.search(b.get("heading", ""))
+    ]
+    purged = before - len(existing_blocks)
+
+    # Auto-populate any existing blank entries before scanning for new ones
+    used_ids: set[str] = {b["block_id"] for b in existing_blocks if b.get("block_id")}
+    populated = 0
+    for block in existing_blocks:
+        if block.get("block_id"):
+            continue
+        heading_clean = _read_time_re.sub("", block.get("heading", "")).strip()
+        if not heading_clean:
+            continue
+        base_slug = _slugify_heading(heading_clean)
+        slug = base_slug
+        counter = 2
+        while slug in used_ids:
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        used_ids.add(slug)
+        topic = _infer_topic(heading_clean.lower())
+        block["block_id"] = slug
+        block["label"] = heading_clean
+        block["topic"] = topic
+        block["concept"] = topic
+        populated += 1
+
     def norm(text: str) -> str:
-        text = re.sub(r'<[^>]+>[^<]*</[^>]+>', '', text)  # tags + inner text
+        text = re.sub(r'<[^>]+>[^<]*</[^>]+>', '', text)
         text = re.sub(r'<[^>]+>', '', text)
         text = re.sub(r'[*_`\[\]()\\]', '', text)
         return text.strip().lower()
 
-    known: set[str] = {norm(b["heading"]) for b in existing_blocks if b.get("heading")}
+    # Build known set from existing headings. Also register the read-time-stripped
+    # form so a clean MDX heading is never added as a duplicate of a legacy entry.
+    known: set[str] = set()
+    for b in existing_blocks:
+        h = b.get("heading", "")
+        if not h:
+            continue
+        known.add(norm(h))
+        known.add(norm(_read_time_re.sub("", h).strip()))
 
     heading_re = re.compile(r'^(#{3,4})\s+(.+)$', re.MULTILINE)
     new_entries: list[dict] = []
 
     def strip_heading(raw: str) -> str:
-        """Remove reading-time spans (and any other HTML) including their text content."""
-        text = re.sub(r'<[^>]+>[^<]*</[^>]+>', '', raw)  # tags + inner text
-        text = re.sub(r'<[^>]+>', '', text)               # any remaining self-closing tags
+        text = re.sub(r'<[^>]+>[^<]*</[^>]+>', '', raw)
+        text = re.sub(r'<[^>]+>', '', text)
         return text.strip()
 
     for path in sorted(output_folder.rglob("*.mdx")):
@@ -2029,23 +2120,30 @@ def sync_tracked_blocks_candidates(output_folder: Path) -> None:
             heading_text = strip_heading(m.group(2))
             if norm(heading_text) not in known:
                 known.add(norm(heading_text))
+                topic = _infer_topic(heading_text.lower())
+                base_slug = _slugify_heading(heading_text)
+                slug = base_slug
+                counter = 2
+                while slug in used_ids:
+                    slug = f"{base_slug}-{counter}"
+                    counter += 1
+                used_ids.add(slug)
                 new_entries.append({
-                    "block_id": "",
+                    "block_id": slug,
                     "heading": heading_text,
-                    "topic": "",
-                    "concept": "",
+                    "topic": topic,
+                    "concept": topic,
                     "content_type": "section",
-                    "label": "",
+                    "label": heading_text,
                 })
 
-    if not new_entries:
+    if not new_entries and not populated and not purged:
         return
 
     all_blocks = existing_blocks + new_entries
     header = (
         "# Tracked sub-section blocks for concept_analytics.\n"
-        "# Fill in block_id, topic, concept, and label for sections you want to track.\n"
-        "# Entries with block_id: '' are candidates — the pipeline skips them until configured.\n"
+        "# block_id and topic are auto-assigned; override manually if needed.\n"
         "# content_type values: section | case-study | figure | video | interactive | download | glossary\n"
         "#\n"
     )
@@ -2053,8 +2151,12 @@ def sync_tracked_blocks_candidates(output_folder: Path) -> None:
         header + yaml.dump({"blocks": all_blocks}, allow_unicode=True, default_flow_style=False, sort_keys=False),
         encoding="utf-8",
     )
-    _c_info(f"[TrackedBlocks] Added {len(new_entries)} new heading candidate(s) to {config_path}")
-    _c_info("[TrackedBlocks]   Fill in block_id to activate tracking for a section.")
+    if purged:
+        _c_info(f"[TrackedBlocks] Purged {purged} legacy plain-text read-time heading(s) from tracked-blocks.yml.")
+    if populated:
+        _c_info(f"[TrackedBlocks] Auto-populated {populated} existing blank candidate(s).")
+    if new_entries:
+        _c_info(f"[TrackedBlocks] Added {len(new_entries)} new heading(s) — already auto-populated.")
 
 
 def inject_tracked_blocks(output_folder: Path) -> None:
@@ -2177,33 +2279,49 @@ def inject_tracked_blocks(output_folder: Path) -> None:
         _c_ok(f"[TrackedBlocks] Injected blocks into {len(modified)} file(s).")
 
 
-def _patch_docusaurus_config(version: str) -> None:
+def _patch_docusaurus_config(version: str, report_name: str = "") -> None:
     config_path = DOCUSAURUS_DIR / "docusaurus.config.ts"
     if not config_path.exists():
         _c_warn(f"[Manifest] {config_path} not found — skipping customFields patch.")
         return
     content = config_path.read_text(encoding="utf-8")
-    if "analyticsManifestVersion" in content:
+    new_content = content
+
+    if "analyticsManifestVersion" in new_content:
         new_content = re.sub(
             r"analyticsManifestVersion:\s*'[^']*'",
             f"analyticsManifestVersion: '{version}'",
-            content,
+            new_content,
         )
     else:
-        new_content = content.replace(
+        new_content = new_content.replace(
             "customFields: {",
             f"customFields: {{\n    analyticsManifestVersion: '{version}',",
         )
+
+    if report_name:
+        if "analyticsReportName" in new_content:
+            new_content = re.sub(
+                r"analyticsReportName:\s*'[^']*'",
+                f"analyticsReportName: '{report_name}'",
+                new_content,
+            )
+        else:
+            new_content = new_content.replace(
+                "customFields: {",
+                f"customFields: {{\n    analyticsReportName: '{report_name}',",
+            )
+
     if new_content != content:
         config_path.write_text(new_content, encoding="utf-8")
-        _c_ok(f"[Manifest] Patched docusaurus.config.ts — analyticsManifestVersion: '{version}'")
+        _c_ok(f"[Manifest] Patched docusaurus.config.ts — version: '{version}', report: '{report_name}'")
 
 
-def generate_analytics_manifest(output_folder: Path) -> None:
+def generate_analytics_manifest(output_folder: Path, report_name: str = "") -> None:
     """Scan all generated MDX files for <TrackedBlock> components, write
     docusaurus-site/static/manifest.json (served at /manifest.json), and patch
-    docusaurus.config.ts with the content-hash version so the frontend includes
-    it in every event batch.
+    docusaurus.config.ts with the content-hash version and report_name so the
+    frontend includes them in every event batch.
 
     Skips silently if manifest_tools cannot be imported (submodule not checked out).
     """
@@ -2223,9 +2341,11 @@ def generate_analytics_manifest(output_folder: Path) -> None:
 
     manifest_path = DOCUSAURUS_DIR / "static" / "manifest.json"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    entries, version = manifest_tools.generate_manifest_json(str(output_folder), str(manifest_path))
-    _c_ok(f"[Manifest] Wrote {len(entries)} block(s) to {manifest_path} (version: {version})")
-    _patch_docusaurus_config(version)
+    entries, version = manifest_tools.generate_manifest_json(
+        str(output_folder), str(manifest_path), report_name=report_name
+    )
+    _c_ok(f"[Manifest] Wrote {len(entries)} block(s) to {manifest_path} (version: {version}, report: '{report_name}')")
+    _patch_docusaurus_config(version, report_name)
 
 
 def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
@@ -2341,7 +2461,8 @@ def main():
 
     print("\n" + "-" * 60)
     print("Generating analytics manifest...")
-    generate_analytics_manifest(OUTPUT_FOLDER)
+    report_name = docx_files[0].stem if docx_files else ""
+    generate_analytics_manifest(OUTPUT_FOLDER, report_name=report_name)
 
     # Print accessibility summary
     if WARNINGS:

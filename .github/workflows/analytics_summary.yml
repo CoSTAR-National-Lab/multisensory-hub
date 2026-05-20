@@ -1,9 +1,9 @@
 name: Analytics Summary Pull
 
 on:
-  schedule:
-    - cron: '0 2 * * *' # Run at 02:00 UTC every day
-  workflow_dispatch: # Allow manual trigger
+  # schedule:
+  #   - cron: '0 2 * * *' # Disabled — endpoint not yet active
+  workflow_dispatch: # Manual trigger only
 
 jobs:
   pull-summary:
@@ -17,9 +17,8 @@ jobs:
       - name: Pull latest summary
         run: |
           curl -H "Authorization: Bearer ${{ secrets.ANALYTICS_SUMMARY_TOKEN }}" \
-               https://analytics.storyfutures.io/concept-analytics/summary/latest/ \
+               https://costartools.uk/concept-analytics/summary/latest/ \
                -o docusaurus-site/static/analytics/public-summary.latest.json
-        # Note: The endpoint URL is a placeholder and should be updated to the real production URL.
 
       - name: Commit and push if changed
         run: |

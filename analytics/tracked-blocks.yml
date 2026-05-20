@@ -1,0 +1,463 @@
+# Tracked sub-section blocks for concept_analytics.
+# block_id and topic are auto-assigned; override manually if needed.
+# content_type values: section | case-study | figure | video | interactive | download | glossary
+#
+blocks:
+- block_id: economic-value
+  heading: Economic value
+  topic: value
+  concept: value
+  content_type: section
+  label: Economic value
+- block_id: social-emotional-and-cultural-value
+  heading: Social-emotional and cultural value
+  topic: value
+  concept: value
+  content_type: section
+  label: Social-emotional and cultural value
+- block_id: sensory-substitution
+  heading: Sensory substitution
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Sensory substitution
+- block_id: case-study-steady-state-created-by-performer-technologist-and-research-lead-zubi
+  heading: 'Case Study: *Steady State* Created by performer-technologist and research
+    lead Zubin Kanga (*Royal Holloway, University of London*), composer Alexander
+    Schubert (*Musikhochschule Hamburg*), brain sensor and neuro-diagnostics company*
+    ANT Neuro*(Netherlands/UK/Germany), brain-computer interaction engineer Serafeim
+    Perdikis (*University of Essex*) and a wider team of artists, ***Steady State***(2024)
+    recasts the recital format as a retro-sci-fi laboratory in which the performer
+    is both subject and instrument.***Steady State*** was created as part of *Cyborg
+    Soloists*, Zubin Kanga''s* UKRI Future Leaders Fellowship* research project.'
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: 'Case Study: *Steady State* Created by performer-technologist and research
+    lead Zubin Kanga (*Royal Holloway, University of London*), composer Alexander
+    Schubert (*Musikhochschule Hamburg*), brain sensor and neuro-diagnostics company*
+    ANT Neuro*(Netherlands/UK/Germany), brain-computer interaction engineer Serafeim
+    Perdikis (*University of Essex*) and a wider team of artists, ***Steady State***(2024)
+    recasts the recital format as a retro-sci-fi laboratory in which the performer
+    is both subject and instrument.***Steady State*** was created as part of *Cyborg
+    Soloists*, Zubin Kanga''s* UKRI Future Leaders Fellowship* research project.'
+- block_id: case-study-watch-based-haptic-navigation
+  heading: 'Case Study: Watch-based haptic navigation'
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: 'Case Study: Watch-based haptic navigation'
+- block_id: crossmodal-illusions
+  heading: Crossmodal illusions
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Crossmodal illusions
+- block_id: crossmodal-correspondences
+  heading: Crossmodal correspondences
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Crossmodal correspondences
+- block_id: case-study-current-rising
+  heading: 'Case study: Current, Rising'
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: 'Case study: Current, Rising'
+- block_id: latency-tolerances
+  heading: Latency tolerances
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Latency tolerances
+- block_id: tolerance-of-spatial-mismatches
+  heading: Tolerance of spatial mismatches
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Tolerance of spatial mismatches
+- block_id: prior-experience-and-the-assumption-of-unity
+  heading: Prior experience and the assumption of unity
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Prior experience and the assumption of unity
+- block_id: perceptual-filling-in
+  heading: Perceptual 'filling in'
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Perceptual 'filling in'
+- block_id: multisensory-attention
+  heading: Multisensory attention
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Multisensory attention
+- block_id: holistic-experiential-integration
+  heading: Holistic experiential integration
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Holistic experiential integration
+- block_id: flicker
+  heading: Flicker
+  topic: vision
+  concept: vision
+  content_type: section
+  label: Flicker
+- block_id: light-and-dark-adaptation
+  heading: Light and dark adaptation
+  topic: vision
+  concept: vision
+  content_type: section
+  label: Light and dark adaptation
+- block_id: visual-illusions
+  heading: Visual illusions
+  topic: vision
+  concept: vision
+  content_type: section
+  label: Visual illusions
+- block_id: colour-blindness-and-low-vision
+  heading: Colour blindness and low vision
+  topic: vision
+  concept: vision
+  content_type: section
+  label: Colour blindness and low vision
+- block_id: lighting-and-brightness
+  heading: Lighting and brightness
+  topic: vision
+  concept: vision
+  content_type: section
+  label: Lighting and brightness
+- block_id: motion-sensitivity-and-flicker
+  heading: Motion sensitivity and flicker
+  topic: vision
+  concept: vision
+  content_type: section
+  label: Motion sensitivity and flicker
+- block_id: cognitive-load-and-simplified-layouts
+  heading: Cognitive load and simplified layouts
+  topic: vision
+  concept: vision
+  content_type: section
+  label: Cognitive load and simplified layouts
+- block_id: case-study-abba-voyage
+  heading: 'Case study: Abba Voyage'
+  topic: vision
+  concept: vision
+  content_type: section
+  label: 'Case study: Abba Voyage'
+- block_id: case-study-3d-digital-signage-shinjuku-train-station-tokyo-japan
+  heading: 'Case study: 3D digital signage, Shinjuku train station (Tokyo, Japan)'
+  topic: vision
+  concept: vision
+  content_type: section
+  label: 'Case study: 3D digital signage, Shinjuku train station (Tokyo, Japan)'
+- block_id: low-spatial-resolution
+  heading: Low spatial resolution
+  topic: vision
+  concept: vision
+  content_type: section
+  label: Low spatial resolution
+- block_id: hearing-diversity
+  heading: Hearing diversity
+  topic: hearing
+  concept: hearing
+  content_type: section
+  label: Hearing diversity
+- block_id: sound-overload-and-sensory-sensitivities
+  heading: Sound overload and sensory sensitivities
+  topic: hearing
+  concept: hearing
+  content_type: section
+  label: Sound overload and sensory sensitivities
+- block_id: spatial-audio-for-orientation
+  heading: Spatial audio for orientation
+  topic: hearing
+  concept: hearing
+  content_type: section
+  label: Spatial audio for orientation
+- block_id: case-study-arcade
+  heading: 'Case study: Arcade'
+  topic: hearing
+  concept: hearing
+  content_type: section
+  label: 'Case study: Arcade'
+- block_id: active-and-passive-forms-of-touch
+  heading: Active and passive forms of touch
+  topic: touch
+  concept: touch
+  content_type: section
+  label: Active and passive forms of touch
+- block_id: temperature
+  heading: Temperature
+  topic: touch
+  concept: touch
+  content_type: section
+  label: Temperature
+- block_id: localisation
+  heading: Localisation
+  topic: touch
+  concept: touch
+  content_type: section
+  label: Localisation
+- block_id: social-touch
+  heading: Social touch
+  topic: touch
+  concept: touch
+  content_type: section
+  label: Social touch
+- block_id: current-technical-challenges
+  heading: Current technical challenges
+  topic: touch
+  concept: touch
+  content_type: section
+  label: Current technical challenges
+- block_id: sensory-and-physical-diversity
+  heading: Sensory and physical diversity
+  topic: touch
+  concept: touch
+  content_type: section
+  label: Sensory and physical diversity
+- block_id: assistive-opportunities
+  heading: Assistive opportunities
+  topic: touch
+  concept: touch
+  content_type: section
+  label: Assistive opportunities
+- block_id: case-study-water-droplets
+  heading: 'Case study: Water Droplets'
+  topic: touch
+  concept: touch
+  content_type: section
+  label: 'Case study: Water Droplets'
+- block_id: case-study-in-pursuit-of-repetitive-beats
+  heading: 'Case study: In Pursuit of Repetitive Beats'
+  topic: hearing
+  concept: hearing
+  content_type: section
+  label: 'Case study: In Pursuit of Repetitive Beats'
+- block_id: case-study-jeff-waynes-the-war-of-the-worlds-the-immersive-experience
+  heading: 'Case study: Jeff Wayne''s The War of the Worlds: The Immersive Experience'
+  topic: hearing
+  concept: hearing
+  content_type: section
+  label: 'Case study: Jeff Wayne''s The War of the Worlds: The Immersive Experience'
+- block_id: adaptation
+  heading: Adaptation
+  topic: smell
+  concept: smell
+  content_type: section
+  label: Adaptation
+- block_id: sensitivity
+  heading: Sensitivity
+  topic: smell
+  concept: smell
+  content_type: section
+  label: Sensitivity
+- block_id: context
+  heading: Context
+  topic: smell
+  concept: smell
+  content_type: section
+  label: Context
+- block_id: fragrance-sensitivities
+  heading: Fragrance sensitivities
+  topic: smell
+  concept: smell
+  content_type: section
+  label: Fragrance sensitivities
+- block_id: impaired-sense-of-smell
+  heading: Impaired sense of smell
+  topic: smell
+  concept: smell
+  content_type: section
+  label: Impaired sense of smell
+- block_id: case-study-jorvik-viking-centre
+  heading: 'Case study: Jorvik Viking Centre'
+  topic: smell
+  concept: smell
+  content_type: section
+  label: 'Case study: Jorvik Viking Centre'
+- block_id: presence
+  heading: Presence
+  topic: space
+  concept: space
+  content_type: section
+  label: Presence
+- block_id: spatial-illusions
+  heading: Spatial illusions
+  topic: space
+  concept: space
+  content_type: section
+  label: Spatial illusions
+- block_id: motion-sickness-and-comfort
+  heading: Motion sickness and comfort
+  topic: space
+  concept: space
+  content_type: section
+  label: Motion sickness and comfort
+- block_id: case-study-the-matrix-in-shared-reality-cosm-an-experiential-media-company-that-
+  heading: 'Case study: The Matrix in *Shared Reality Cosm*, an experiential media
+    company that opened its first flagship venues in Los Angeles and Dallas in 2023–24,
+    uses giant 87-foot LED domes with spatial audio to deliver what it calls ***Shared
+    Reality*** experiences, blending cinema, live events and immersive environments.
+    *Cosm''s **Shared Reality*** adaptation of*** The Matrix*** premiered June 2025
+    as a collaboration between *Cosm*,* Warner Bros. *and* Little Cinema*. The movie
+    is shown in its original 16:9 frame, while the surrounding dome expands the world
+    outward with, for example, office interiors continuing beyond the screen, bullets
+    fly out of the frame, and during a helicopter rescue the skyline ripples and tilts
+    in sync with the action.'
+  topic: hearing
+  concept: hearing
+  content_type: section
+  label: 'Case study: The Matrix in *Shared Reality Cosm*, an experiential media company
+    that opened its first flagship venues in Los Angeles and Dallas in 2023–24, uses
+    giant 87-foot LED domes with spatial audio to deliver what it calls ***Shared
+    Reality*** experiences, blending cinema, live events and immersive environments.
+    *Cosm''s **Shared Reality*** adaptation of*** The Matrix*** premiered June 2025
+    as a collaboration between *Cosm*,* Warner Bros. *and* Little Cinema*. The movie
+    is shown in its original 16:9 frame, while the surrounding dome expands the world
+    outward with, for example, office interiors continuing beyond the screen, bullets
+    fly out of the frame, and during a helicopter rescue the skyline ripples and tilts
+    in sync with the action.'
+- block_id: case-study-disney-holotile-floor
+  heading: 'Case study: Disney HoloTile floor'
+  topic: space
+  concept: space
+  content_type: section
+  label: 'Case study: Disney HoloTile floor'
+- block_id: interpersonal-space
+  heading: Interpersonal space
+  topic: personal-space
+  concept: personal-space
+  content_type: section
+  label: Interpersonal space
+- block_id: peripersonal-space
+  heading: Peripersonal space
+  topic: personal-space
+  concept: personal-space
+  content_type: section
+  label: Peripersonal space
+- block_id: diversity
+  heading: Diversity
+  topic: personal-space
+  concept: personal-space
+  content_type: section
+  label: Diversity
+- block_id: peripersonal-space-sensitivity
+  heading: Peripersonal space sensitivity
+  topic: personal-space
+  concept: personal-space
+  content_type: section
+  label: Peripersonal space sensitivity
+- block_id: case-study-managing-the-bubble-in-onboarding
+  heading: 'Case Study: Managing the bubble in onboarding'
+  topic: personal-space
+  concept: personal-space
+  content_type: section
+  label: 'Case Study: Managing the bubble in onboarding'
+- block_id: boosting-true-bodily-signals
+  heading: Boosting true bodily signals
+  topic: interoception
+  concept: interoception
+  content_type: section
+  label: Boosting true bodily signals
+- block_id: creating-illusory-bodily-signals
+  heading: Creating illusory bodily signals
+  topic: interoception
+  concept: interoception
+  content_type: section
+  label: Creating illusory bodily signals
+- block_id: individual-differences
+  heading: Individual differences
+  topic: interoception
+  concept: interoception
+  content_type: section
+  label: Individual differences
+- block_id: data-protection
+  heading: Data protection
+  topic: interoception
+  concept: interoception
+  content_type: section
+  label: Data protection
+- block_id: masking-bulky-haptics-gear
+  heading: Masking bulky haptics gear
+  topic: proprioception
+  concept: proprioception
+  content_type: section
+  label: Masking bulky haptics gear
+- block_id: influencing-strength
+  heading: Influencing strength
+  topic: proprioception
+  concept: proprioception
+  content_type: section
+  label: Influencing strength
+- block_id: proprioceptive-diversity
+  heading: Proprioceptive diversity
+  topic: proprioception
+  concept: proprioception
+  content_type: section
+  label: Proprioceptive diversity
+- block_id: sensory-mismatch
+  heading: Sensory mismatch
+  topic: proprioception
+  concept: proprioception
+  content_type: section
+  label: Sensory mismatch
+- block_id: case-study-body-of-mine
+  heading: 'Case Study: Body of Mine'
+  topic: proprioception
+  concept: proprioception
+  content_type: section
+  label: 'Case Study: Body of Mine'
+- block_id: full-body-real-time-motion-capture
+  heading: Full-body real-time motion capture
+  topic: interactivity
+  concept: interactivity
+  content_type: section
+  label: Full-body real-time motion capture
+- block_id: physiological-data
+  heading: Physiological data
+  topic: interactivity
+  concept: interactivity
+  content_type: section
+  label: Physiological data
+- block_id: alternate-channels
+  heading: Alternate channels
+  topic: interactivity
+  concept: interactivity
+  content_type: section
+  label: Alternate channels
+- block_id: case-study-brainstorms
+  heading: 'Case study: Brainstorms'
+  topic: interoception
+  concept: interoception
+  content_type: section
+  label: 'Case study: Brainstorms'
+- block_id: why-multisensory-now
+  heading: Why multisensory now?
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Why multisensory now?
+- block_id: inclusion-isnt-a-bolt-on-and-multisensory-isnt-automatically-inclusive
+  heading: Inclusion isn't a bolt-on and multisensory isn't automatically inclusive
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Inclusion isn't a bolt-on and multisensory isn't automatically inclusive
+- block_id: design-lessons-you-can-use-immediately
+  heading: Design lessons you can use immediately
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Design lessons you can use immediately
+- block_id: what-next
+  heading: What next?
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: What next?
