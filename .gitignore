@@ -352,3 +352,4 @@ docusaurus-site/static/media/subpages/
 
 # One-time helpers (legacy once Word table is set up)
 report/latency_chart_table.csv
+/nul
