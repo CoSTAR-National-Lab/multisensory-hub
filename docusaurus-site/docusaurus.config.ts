@@ -11,11 +11,11 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://storyfutures.github.io',
-  baseUrl: '/multisensoryReport/',
+  url: 'https://costar-national-lab.github.io',
+  baseUrl: '/multisensory-hub/',
 
-  organizationName: 'StoryFutures',
-  projectName: 'multisensoryReport',
+  organizationName: 'costar-national-lab',
+  projectName: 'multisensory-hub',
 
   trailingSlash: false,
 
