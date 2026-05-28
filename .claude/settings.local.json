@@ -47,7 +47,8 @@
       "Bash(Sort-Object)",
       "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\andyt\\\\PycharmProjects\\\\MultisensoryHub\\\\multisensoryHubHeatMap\" | Select-Object Name, @{Name='Type';Expression={if\\($_.PSIsContainer\\){'Directory'}else{'File'}}})",
       "Bash(git *)",
-      "Bash(xargs grep -l \"creative-opportunities-boosting\")"
+      "Bash(xargs grep -l \"creative-opportunities-boosting\")",
+      "Bash(Remove-Item *)"
     ]
   }
 }

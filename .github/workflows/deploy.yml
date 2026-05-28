@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [master, subpages]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -28,9 +28,6 @@ jobs:
 
       - name: Run main pipeline
         run: python ci_build.py
-
-      - name: Run subpages pipeline
-        run: python pages_to_mdx.py
 
       - name: Set up Node
         uses: actions/setup-node@v4

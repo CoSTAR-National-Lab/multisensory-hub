@@ -939,6 +939,13 @@ def fix_mdx_syntax(content: str) -> str:
         flags=re.MULTILINE
     )
 
+    # Fix email addresses in angle brackets: <user@example.com> -> [user@example.com](mailto:...)
+    content = re.sub(
+        r'<([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})>',
+        lambda m: f'[{m.group(1)}](mailto:{m.group(1)})',
+        content
+    )
+
     # Fix URLs in angle brackets - convert <https://...> to just the URL without brackets
     content = re.sub(r'<(https?://[^>]+)>', r'\1', content)
 
@@ -1518,6 +1525,16 @@ def post_process_mdx_files(folder: Path) -> None:
 
         # Remove any remaining Word anchors
         content = re.sub(r'\[\]\{#[^}]+\}', '', content)
+
+        # Fix mixed markdown/JSX link pattern: <a href="URL">[text</a>](#anchor)
+        # MDX sees [text</a>] as a link label containing a JSX tag, which is invalid.
+        # The ] after </a> is part of the markdown link syntax, so we must include it.
+        # → <a href="URL">text</a>
+        content = re.sub(
+            r'(<a\b[^>]*>)\[([^\]<\n]*)</a>\]\([^)]*\)',
+            r'\1\2</a>',
+            content
+        )
 
         # Replace latency chart embed marker (primary — set in Word doc)
         # Matches both inline code `[CHART: latency-tolerance]` (Pandoc Code style)
