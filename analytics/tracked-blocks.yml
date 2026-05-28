@@ -21,26 +21,12 @@ blocks:
   concept: multisensory-experience
   content_type: section
   label: Sensory substitution
-- block_id: case-study-steady-state-created-by-performer-technologist-and-research-lead-zubi
-  heading: 'Case Study: *Steady State* Created by performer-technologist and research
-    lead Zubin Kanga (*Royal Holloway, University of London*), composer Alexander
-    Schubert (*Musikhochschule Hamburg*), brain sensor and neuro-diagnostics company*
-    ANT Neuro*(Netherlands/UK/Germany), brain-computer interaction engineer Serafeim
-    Perdikis (*University of Essex*) and a wider team of artists, ***Steady State***(2024)
-    recasts the recital format as a retro-sci-fi laboratory in which the performer
-    is both subject and instrument.***Steady State*** was created as part of *Cyborg
-    Soloists*, Zubin Kanga''s* UKRI Future Leaders Fellowship* research project.'
+- block_id: case-study-steady-state
+  heading: 'Case Study: *Steady State*'
   topic: multisensory-experience
   concept: multisensory-experience
-  content_type: section
-  label: 'Case Study: *Steady State* Created by performer-technologist and research
-    lead Zubin Kanga (*Royal Holloway, University of London*), composer Alexander
-    Schubert (*Musikhochschule Hamburg*), brain sensor and neuro-diagnostics company*
-    ANT Neuro*(Netherlands/UK/Germany), brain-computer interaction engineer Serafeim
-    Perdikis (*University of Essex*) and a wider team of artists, ***Steady State***(2024)
-    recasts the recital format as a retro-sci-fi laboratory in which the performer
-    is both subject and instrument.***Steady State*** was created as part of *Cyborg
-    Soloists*, Zubin Kanga''s* UKRI Future Leaders Fellowship* research project.'
+  content_type: case-study
+  label: 'Case Study: Steady State'
 - block_id: case-study-watch-based-haptic-navigation
   heading: 'Case Study: Watch-based haptic navigation'
   topic: multisensory-experience

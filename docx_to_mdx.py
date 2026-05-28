@@ -217,7 +217,9 @@ def convert_docx_to_md(docx_path: Path, extract_media_to: Path = None) -> str:
         cmd.extend(["--extract-media", str(extract_media_to)])
 
     result = subprocess.run(cmd, capture_output=True, check=True)
-    return result.stdout.decode("utf-8")
+    # Normalise CRLF → LF; pandoc on Windows emits \r\n which breaks multiline
+    # regex heading detection and causes heading text to merge with next paragraph.
+    return result.stdout.decode("utf-8").replace('\r\n', '\n').replace('\r', '\n')
 
 
 def slugify(text: str) -> str:
