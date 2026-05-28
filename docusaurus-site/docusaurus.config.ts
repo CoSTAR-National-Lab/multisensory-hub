@@ -11,8 +11,8 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://costar-national-lab.github.io',
-  baseUrl: '/multisensory-hub/',
+  url: 'https://multisensory.costarnetwork.co.uk',
+  baseUrl: '/',
 
   organizationName: 'costar-national-lab',
   projectName: 'multisensory-hub',
