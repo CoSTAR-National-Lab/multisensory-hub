@@ -60,19 +60,33 @@ def add_dot_grid(img: Image.Image) -> None:
                     px[x + dx, y + dy] = (min(r + 16, 255), min(g + 16, 255), min(b + 26, 255))
 
 
+def centered(draw: ImageDraw.ImageDraw, y: int, text: str,
+             font: ImageFont.FreeTypeFont, fill) -> None:
+    """Draw text horizontally centered on the canvas at vertical position y."""
+    w = draw.textlength(text, font=font)
+    draw.text(((W - w) / 2, y), text, font=font, fill=fill)
+
+
 def main() -> None:
     img = diagonal_gradient()
     add_dot_grid(img)
     draw = ImageDraw.Draw(img)
 
-    # Left accent bar beside the title block.
-    draw.rectangle([MARGIN, 250, MARGIN + 6, 400], fill=ACCENT)
-    text_x = MARGIN + 34
+    # Everything is centered and kept within a safe zone so platforms that
+    # crop toward a square (Miro, iMessage, WhatsApp) don't clip the content.
+    f_eyebrow = ImageFont.truetype(BOLD, 22)
+    f_title = ImageFont.truetype(BOLD, 88)
+    f_tag = ImageFont.truetype(REG, 36)
+    f_url = ImageFont.truetype(BOLD, 26)
 
-    draw.text((text_x, 252), EYEBROW, font=ImageFont.truetype(BOLD, 22), fill=ACCENT)
-    draw.text((text_x, 286), TITLE, font=ImageFont.truetype(BOLD, 92), fill=WHITE)
-    draw.text((text_x, 398), TAGLINE, font=ImageFont.truetype(REG, 38), fill=MUTED)
-    draw.text((MARGIN, H - MARGIN - 6), URL, font=ImageFont.truetype(BOLD, 26), fill=ACCENT)
+    centered(draw, 218, EYEBROW, f_eyebrow, ACCENT)
+    centered(draw, 256, TITLE, f_title, WHITE)
+
+    # Short accent underline, centered beneath the title.
+    draw.rectangle([(W - 90) / 2, 372, (W + 90) / 2, 378], fill=ACCENT)
+
+    centered(draw, 398, TAGLINE, f_tag, MUTED)
+    centered(draw, H - MARGIN - 6, URL, f_url, ACCENT)
 
     img.save(OUT, "JPEG", quality=92, progressive=True)
     print(f"wrote {OUT} ({img.size[0]}x{img.size[1]})")
