@@ -48,7 +48,14 @@
       "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\andyt\\\\PycharmProjects\\\\MultisensoryHub\\\\multisensoryHubHeatMap\" | Select-Object Name, @{Name='Type';Expression={if\\($_.PSIsContainer\\){'Directory'}else{'File'}}})",
       "Bash(git *)",
       "Bash(xargs grep -l \"creative-opportunities-boosting\")",
-      "Bash(Remove-Item *)"
+      "Bash(Remove-Item *)",
+      "Bash(md5 social-card.jpg docusaurus-social-card.jpg)",
+      "Bash(node -e \"require.resolve\\('sharp'\\); console.log\\('sharp OK'\\)\")",
+      "Bash(node -e \"require.resolve\\('puppeteer'\\); console.log\\('puppeteer OK'\\)\")",
+      "Bash(python3 -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
+      "Bash(node -v)",
+      "Bash(python3 scripts/make_social_card.py)",
+      "Bash(open *)"
     ]
   }
 }
