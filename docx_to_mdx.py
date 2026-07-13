@@ -1161,9 +1161,22 @@ readingTimeMinutes: {reading_time}
     # Convert citations to interactive components
     fixed_content, has_citations = convert_citations_in_content(fixed_content)
 
-    # Wrap main content in TrackedBlock
+    # Wrap only the intro — content up to the first sub-heading — in the
+    # page-root TrackedBlock, not the whole page. Wrapping the entire page
+    # made the root block's DOM height scale with page length, so on pages
+    # with a large intro image the reader's viewport could never cover 15%
+    # of the block's own height while scrolling past it, and the chapter
+    # root under-recorded sessions even though the reader plainly visited it.
     topic = doc_id.split("-")[0] # Simple topic extraction
-    tracked_content = f'<TrackedBlock blockId="{page_block_id}" topic="{topic}" label="{safe_title}">\n\n{fixed_content}\n\n</TrackedBlock>'
+    first_heading = re.search(r'^#{1,6}\s+.+$', fixed_content, re.MULTILINE)
+    if first_heading:
+        intro, rest = fixed_content[:first_heading.start()], fixed_content[first_heading.start():]
+    else:
+        intro, rest = fixed_content, ""
+    tracked_content = (
+        f'<TrackedBlock blockId="{page_block_id}" topic="{topic}" label="{safe_title}">\n\n'
+        f'{intro}\n\n</TrackedBlock>\n\n{rest}'
+    )
 
     # Choose imports based on whether page has citations
     imports = MDX_IMPORTS if has_citations else MDX_IMPORTS_SIMPLE
@@ -1214,8 +1227,17 @@ readingTimeMinutes: {reading_time}
     fixed_content, has_citations = convert_citations_in_content(fixed_content)
     imports = MDX_IMPORTS if has_citations else MDX_IMPORTS_SIMPLE
 
-    # Wrap main content in TrackedBlock
-    tracked_content = f'<TrackedBlock blockId="{page_block_id}" topic="home" label="{safe_title}">\n\n{fixed_content}\n\n</TrackedBlock>'
+    # Wrap only the intro (see create_page_content for why the whole page
+    # is no longer wrapped) in the page-root TrackedBlock.
+    first_heading = re.search(r'^#{1,6}\s+.+$', fixed_content, re.MULTILINE)
+    if first_heading:
+        intro, rest = fixed_content[:first_heading.start()], fixed_content[first_heading.start():]
+    else:
+        intro, rest = fixed_content, ""
+    tracked_content = (
+        f'<TrackedBlock blockId="{page_block_id}" topic="home" label="{safe_title}">\n\n'
+        f'{intro}\n\n</TrackedBlock>\n\n{rest}'
+    )
 
     # Inject inline reading time annotation if available
     reading_time_display = page.get('reading_time_display')
