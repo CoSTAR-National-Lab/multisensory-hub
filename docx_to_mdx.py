@@ -2305,6 +2305,19 @@ def inject_tracked_blocks(output_folder: Path) -> None:
                 block_end = m.start()
                 break
 
+        # If the next section's <TrackedBlock> was already injected (blocks are
+        # processed in yml order, not document order), its opening tag sits
+        # between here and the next heading — retract the boundary so it stays
+        # outside this block instead of being swallowed into it.
+        while True:
+            seg = content[h_start:block_end].rstrip()
+            nl = seg.rfind('\n')
+            last_line = seg[nl + 1:].strip()
+            if re.fullmatch(r'<TrackedBlock\b[^>]*>', last_line):
+                block_end = h_start + (nl + 1 if nl != -1 else 0)
+            else:
+                break
+
         attrs = f'blockId="{block_id}"'
         if topic:        attrs += f' topic="{topic}"'
         if concept:      attrs += f' concept="{concept}"'
