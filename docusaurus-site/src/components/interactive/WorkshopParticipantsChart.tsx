@@ -233,9 +233,17 @@ function PiePanel({ panel, baseDelay }: PiePanelProps) {
 
 // ── Main chart ────────────────────────────────────────────────────────────────
 
+const TAB_LABELS: Record<string, string> = {
+  roles: 'Roles',
+  sectors: 'Sectors',
+  experience: 'Experience',
+};
+
 function WorkshopParticipantsChartInner() {
   const wrapperRef = useRef<HTMLElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [animKey, setAnimKey] = useState(0);
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
     const el = wrapperRef.current;
@@ -260,13 +268,19 @@ function WorkshopParticipantsChartInner() {
     'var(--wpc-experience-fill)',
   ];
 
-  // Animation flows top panel → bottom panel
-  let cumulative = 0;
-  const panelEntries = panels.map((panel, i) => {
-    const delay = cumulative;
-    cumulative += panel.bars.length * STAGGER;
-    return { panel, delay, panelClass: panelStyles[i % panelStyles.length], fill: panelFills[i % panelFills.length] };
-  });
+  const handleTabKey = (e: React.KeyboardEvent) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const next = e.key === 'ArrowRight'
+      ? (active + 1) % panels.length
+      : (active - 1 + panels.length) % panels.length;
+    setActive(next);
+    tabRefs.current[next]?.focus();
+  };
+
+  const panel      = panels[active];
+  const panelClass = panelStyles[active % panelStyles.length];
+  const fill       = panelFills[active % panelFills.length];
 
   return (
     <figure className={styles.chartWrapper} ref={wrapperRef}
@@ -281,15 +295,35 @@ function WorkshopParticipantsChartInner() {
         ))}
       </div>
 
-      <div key={animKey}>
-        {panelEntries.map(({ panel, delay, panelClass, fill }) => (
-          <div key={panel.id} className={`${styles.panel} ${panelClass}`}>
-            <div className={styles.panelTitle}>{panel.title}</div>
-            {panel.type === 'pie'
-              ? <PiePanel panel={panel} baseDelay={delay} />
-              : <Panel panel={panel} colour={fill} baseDelay={delay} />}
-          </div>
+      {/* Tab bar — one panel shown at a time */}
+      <div className={styles.tabs} role="tablist" aria-label="Participant breakdowns"
+        onKeyDown={handleTabKey}>
+        {panels.map((p, i) => (
+          <button
+            key={p.id}
+            ref={el => { tabRefs.current[i] = el; }}
+            role="tab"
+            id={`wpc-tab-${p.id}`}
+            aria-selected={i === active}
+            aria-controls={`wpc-panel-${p.id}`}
+            tabIndex={i === active ? 0 : -1}
+            className={`${styles.tab} ${i === active ? styles.tabActive : ''}`}
+            onClick={() => setActive(i)}
+          >
+            {TAB_LABELS[p.id] ?? p.title}
+          </button>
         ))}
+      </div>
+
+      {/* Remount on tab switch or scroll-into-view so the animation replays */}
+      <div key={`${animKey}-${panel.id}`}
+        role="tabpanel" id={`wpc-panel-${panel.id}`}
+        aria-labelledby={`wpc-tab-${panel.id}`}
+        className={`${styles.panel} ${panelClass}`}>
+        <div className={styles.panelTitle}>{panel.title}</div>
+        {panel.type === 'pie'
+          ? <PiePanel panel={panel} baseDelay={0} />
+          : <Panel panel={panel} colour={fill} baseDelay={0} />}
       </div>
 
       {caption && <figcaption>{caption}</figcaption>}
