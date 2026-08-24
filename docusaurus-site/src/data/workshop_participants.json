@@ -1,0 +1,50 @@
+{
+  "stats": [
+    { "value": "6", "label": "workshops" },
+    { "value": "124", "label": "attendees" },
+    { "value": "75", "label": "survey responses" }
+  ],
+  "caption": "Who attended the CoSTAR Multisensory Tour – post-workshop survey of attendees at six workshops (Wakefield, Edinburgh, Belfast, two London sessions and one online; 124 attendees, 75 survey responses). The role and sector questions came near the end of the survey, so their n is slightly lower (68–69). Sector percentages are multi-select, so they sum to more than 100%. No commissioners/funders or venue managers answered the role question.",
+  "panels": [
+    {
+      "id": "roles",
+      "title": "Role (single choice, n = 68)",
+      "bars": [
+        { "label": "Artist / creative practitioner", "count": 27, "percent": 40 },
+        { "label": "Other", "count": 11, "percent": 16 },
+        { "label": "Producer / project manager", "count": 10, "percent": 15 },
+        { "label": "Designer (UX, spatial, interaction, etc.)", "count": 7, "percent": 10 },
+        { "label": "Technologist / developer / engineer", "count": 7, "percent": 10 },
+        { "label": "Researcher / academic", "count": 5, "percent": 7 },
+        { "label": "Student", "count": 1, "percent": 1 }
+      ]
+    },
+    {
+      "id": "sectors",
+      "title": "Sectors they work in (multi-select, n = 68)",
+      "multiSelect": true,
+      "bars": [
+        { "label": "XR / immersive / virtual production", "count": 42, "percent": 62 },
+        { "label": "Exhibitions / museums / heritage", "count": 29, "percent": 43 },
+        { "label": "Live performance / theatre / dance", "count": 27, "percent": 40 },
+        { "label": "Installation / public art", "count": 27, "percent": 40 },
+        { "label": "Film / screen", "count": 23, "percent": 34 },
+        { "label": "Games / interactive entertainment", "count": 19, "percent": 28 },
+        { "label": "Health / wellbeing", "count": 19, "percent": 28 },
+        { "label": "Education", "count": 17, "percent": 25 },
+        { "label": "Themed entertainment / visitor attractions", "count": 14, "percent": 21 }
+      ]
+    },
+    {
+      "id": "experience",
+      "title": "Experience with multisensory work (single choice, n = 69)",
+      "type": "pie",
+      "bars": [
+        { "label": "Novice", "count": 12, "percent": 17 },
+        { "label": "Emerging", "count": 26, "percent": 38 },
+        { "label": "Established", "count": 26, "percent": 38 },
+        { "label": "Expert", "count": 5, "percent": 7 }
+      ]
+    }
+  ]
+}

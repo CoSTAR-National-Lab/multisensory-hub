@@ -67,6 +67,7 @@ import InteractiveDemo from '@site/src/components/interactive/InteractiveDemo';
 import CollapsibleSection from '@site/src/components/interactive/CollapsibleSection';
 import QuoteBlock from '@site/src/components/interactive/QuoteBlock';
 import LatencyChart from '@site/src/components/interactive/LatencyChart';
+import WorkshopParticipantsChart from '@site/src/components/interactive/WorkshopParticipantsChart';
 import RefPopup from '@site/src/components/RefPopup';
 import TrackedBlock from '@site/src/components/interactive/TrackedBlock';
 
@@ -80,6 +81,7 @@ import InteractiveDemo from '@site/src/components/interactive/InteractiveDemo';
 import CollapsibleSection from '@site/src/components/interactive/CollapsibleSection';
 import QuoteBlock from '@site/src/components/interactive/QuoteBlock';
 import LatencyChart from '@site/src/components/interactive/LatencyChart';
+import WorkshopParticipantsChart from '@site/src/components/interactive/WorkshopParticipantsChart';
 import TrackedBlock from '@site/src/components/interactive/TrackedBlock';
 
 """
@@ -1569,6 +1571,16 @@ def post_process_mdx_files(folder: Path) -> None:
             content
         )
 
+        # Replace workshop-participants chart embed marker (set in Word doc).
+        # Unlike the latency marker (regenerated in clean form by
+        # extract_chart_data_tables), this one arrives straight from Pandoc,
+        # so also match backslash-escaped brackets and inline-code form.
+        content = re.sub(
+            r'`?\\?\[CHART:\s*workshop-participants\\?\]`?',
+            '\n\n<WorkshopParticipantsChart />\n\n',
+            content
+        )
+
 
         # Warn about spaces immediately before reference superscripts
         for m in re.finditer(r'(\S[^\S\n]+)<sup>(\d[^<]*)</sup>', content):
@@ -2021,10 +2033,12 @@ def extract_chart_data_tables(markdown: str) -> str:
 
         return f'\n\n[CHART: {chart_id}]\n\n'
 
-    # First, strip any legacy \[CHART: id\] or [CHART: id] embed markers that were
+    # First, strip legacy \[CHART: latency-tolerance\] embed markers that were
     # manually added to Word in a previous pass — the pipeline now generates them
     # automatically from [CHART-DATA: id], so keeping both would create duplicates.
-    markdown = re.sub(r'\\?\[CHART(?!-DATA):\s*[^\]\\\n]+\\?\]', '', markdown)
+    # Only the latency id is stripped: other [CHART: id] markers (e.g.
+    # workshop-participants) are deliberate manual embeds handled later.
+    markdown = re.sub(r'\\?\[CHART:\s*latency-tolerance\\?\]', '', markdown)
 
     return marker_pattern.sub(_replace_table, markdown)
 
