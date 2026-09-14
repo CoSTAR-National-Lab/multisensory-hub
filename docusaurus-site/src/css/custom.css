@@ -219,6 +219,13 @@ body {
   font-weight: 600;
 }
 
+/* Dark mode: the light-cyan gradient above puts cyan text on a cyan tint.
+   Use a translucent tint of the primary colour with light text instead. */
+[data-theme='dark'] .menu__link--active {
+  background: linear-gradient(135deg, rgba(0, 171, 214, 0.22), transparent);
+  color: var(--ifm-color-primary-lightest);
+}
+
 .menu__list-item-collapsible {
   border-radius: 8px;
 }
