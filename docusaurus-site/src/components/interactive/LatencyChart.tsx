@@ -21,13 +21,16 @@ interface LatencyData {
     xMax: number;
     toleranceColour: string;
     imperceptibleColour: string;
+    referenceColour?: string;
     legend?: string;
   };
   toleranceBars: BarEntry[];
   imperceptibleBars: BarEntry[];
+  /** Physical reference values (e.g. sound-travel times) — not perceptual limits. */
+  referenceBars?: BarEntry[];
 }
 
-const { meta, toleranceBars, imperceptibleBars } = rawData as unknown as LatencyData;
+const { meta, toleranceBars, imperceptibleBars, referenceBars = [] } = rawData as unknown as LatencyData;
 
 // ── SVG layout constants ───────────────────────────────────────────────────────
 
@@ -59,8 +62,9 @@ function barsForGroup(bars: BarEntry[], group: string): BarEntry[] {
   return [...bars.filter(b => b.group === group)].sort((a, b) => a.value - b.value);
 }
 
-function rowHeight(_label: string): number {
-  return BAR_H + ROW_PAD * 2;
+function rowHeight(label: string): number {
+  const lines = label.split('\n').length;
+  return Math.max(BAR_H, lines * LINE_H) + ROW_PAD * 2;
 }
 
 // ── Citation portal popup ─────────────────────────────────────────────────────
@@ -206,19 +210,22 @@ interface YLabelProps {
 }
 
 function YLabel({ label, x, yCenter, citations, onCitationClick }: YLabelProps) {
-  const singleLine = label.split('\n').join(' ');
+  const lines  = label.split('\n');
+  const firstY = yCenter - ((lines.length - 1) * LINE_H) / 2;
   const citStr = citations && citations.length > 0 ? citations.join(',') : null;
 
   return (
     <g>
-      <text textAnchor="end" x={x} y={yCenter} dominantBaseline="middle"
+      <text textAnchor="end" x={x} y={firstY} dominantBaseline="middle"
         fontSize="0.625em" fontFamily={FONT}
         fill="currentColor" className={styles.dimText}>
-        {singleLine}
+        {lines.map((line, i) => (
+          <tspan key={i} x={x} dy={i === 0 ? 0 : LINE_H}>{line}</tspan>
+        ))}
       </text>
       {citStr && (
         <text
-          textAnchor="end" x={X_START - 2} y={yCenter - 9}
+          textAnchor="end" x={X_START - 2} y={firstY - 9}
           fontSize="0.5em" fontFamily={FONT}
           fill="var(--ifm-color-primary)"
           className={styles.citationSup}
@@ -397,10 +404,13 @@ function LatencyChartInner() {
     return { group, bars, delay };
   });
   const imperceptibleDelay = cumulative;
+  const referenceDelay     = imperceptibleDelay + imperceptibleBars.length * STAGGER;
+  const hasReference       = referenceBars.length > 0;
 
   // Use CSS variables so dark-mode overrides apply
   const toleranceFill     = 'var(--latency-tolerance-fill)';
   const imperceptibleFill = 'var(--latency-imperceptible-fill)';
+  const referenceFill     = 'var(--latency-reference-fill)';
 
   // Pair groups into 2-column rows
   const pairs: [typeof groupEntries[0], typeof groupEntries[0] | null][] = [];
@@ -420,6 +430,12 @@ function LatencyChartInner() {
           <span className={styles.legendSwatch} style={{ background: imperceptibleFill }} />
           Not noticeable
         </span>
+        {hasReference && (
+          <span>
+            <span className={styles.legendSwatch} style={{ background: referenceFill }} />
+            For comparison (physical delay, not a perceptual limit)
+          </span>
+        )}
       </div>
 
       {/* 2-column tolerance panels */}
@@ -448,11 +464,25 @@ function LatencyChartInner() {
         <Panel
           bars={imperceptibleBars}
           colour={imperceptibleFill}
-          showXAxis
+          showXAxis={!hasReference}
           baseDelay={imperceptibleDelay}
           onCitationClick={handleCitationClick}
         />
       </div>
+
+      {/* Full-width reference panel — physical delays shown for comparison */}
+      {hasReference && (
+        <div key={`ref-${animKey}`} className={styles.referencePanel}>
+          <div className={styles.panelTitle}>For comparison (not a perceptual limit)</div>
+          <Panel
+            bars={referenceBars}
+            colour={referenceFill}
+            showXAxis
+            baseDelay={referenceDelay}
+            onCitationClick={handleCitationClick}
+          />
+        </div>
+      )}
 
       {meta.legend && (
         <figcaption>{meta.legend}</figcaption>

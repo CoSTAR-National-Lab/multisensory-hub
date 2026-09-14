@@ -1,8 +1,19 @@
 {
-  "version": "a75c9f4bf61e",
-  "report_name": "Multisensory Hub_May",
-  "generated_at": "2026-05-28T14:16:35.304527+00:00",
+  "version": "45669b3b4f92",
+  "report_name": "Multisensory Hub_Aug",
+  "generated_at": "2026-09-14T13:01:39.909219+00:00",
   "blocks": [
+    {
+      "block_id": "who-is-this-report-for",
+      "topic": "multisensory-experience",
+      "concept": "multisensory-experience",
+      "content_type": "section",
+      "label": "Who is this report for?",
+      "page_path": "/",
+      "display_order": 0,
+      "content_hash": "c78416011045e46b",
+      "position_hash": "04f06204078f8cbc"
+    },
     {
       "block_id": "why-multisensory-now",
       "topic": "multisensory-experience",
@@ -10,9 +21,9 @@
       "content_type": "section",
       "label": "Why multisensory now?",
       "page_path": "/",
-      "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
-      "position_hash": "04f06204078f8cbc"
+      "display_order": 1,
+      "content_hash": "ce9e722ff3141a5f",
+      "position_hash": "d1fba1867f2b56b3"
     },
     {
       "block_id": "inclusion-isnt-a-bolt-on-and-multisensory-isnt-automatically-inclusive",
@@ -21,9 +32,9 @@
       "content_type": "section",
       "label": "Inclusion isn",
       "page_path": "/",
-      "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
-      "position_hash": "d1fba1867f2b56b3"
+      "display_order": 2,
+      "content_hash": "208dd8b3375e9cea",
+      "position_hash": "4ec4e48c4d2b9bd0"
     },
     {
       "block_id": "design-lessons-you-can-use-immediately",
@@ -32,9 +43,9 @@
       "content_type": "section",
       "label": "Design lessons you can use immediately",
       "page_path": "/",
-      "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
-      "position_hash": "4ec4e48c4d2b9bd0"
+      "display_order": 3,
+      "content_hash": "2a4383fcdfdc9d9b",
+      "position_hash": "3ad972dd657fe95f"
     },
     {
       "block_id": "what-next",
@@ -43,52 +54,52 @@
       "content_type": "section",
       "label": "What next?",
       "page_path": "/",
-      "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
-      "position_hash": "3ad972dd657fe95f"
+      "display_order": 4,
+      "content_hash": "23ade87cf8ef5b49",
+      "position_hash": "3bfddc8e74384dd2"
     },
     {
-      "block_id": "page-h1-01-about-page-overview-e5fab29b",
+      "block_id": "page-h1-01-about-page-overview-02ff07ff",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "About page",
       "page_path": "/01-about-page",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "02ff07ffb46ca3da",
       "position_hash": "62eeb2975115300b"
     },
     {
-      "block_id": "page-audience-trends-towards-multisensory-trends-by-age-5c50d3c5",
+      "block_id": "page-audience-trends-towards-multisensory-trends-by-age-d33bf5b4",
       "topic": "audience",
       "concept": "",
       "content_type": "",
       "label": "Trends by age",
       "page_path": "/02-audience-trends-towards-multisensory/01-trends-by-age",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "d33bf5b4a98d4eab",
       "position_hash": "1c326e5f56c15a45"
     },
     {
-      "block_id": "page-audience-trends-towards-multisensory-trends-by-location-eb94f48d",
+      "block_id": "page-audience-trends-towards-multisensory-trends-by-location-2d7eb291",
       "topic": "audience",
       "concept": "",
       "content_type": "",
       "label": "Trends by location",
       "page_path": "/02-audience-trends-towards-multisensory/02-trends-by-location",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "2d7eb291e2672677",
       "position_hash": "612fa0029d3ddcfc"
     },
     {
-      "block_id": "page-audience-trends-towards-multisensory-trends-by-personality-42f145ca",
+      "block_id": "page-audience-trends-towards-multisensory-trends-by-personality-e8652643",
       "topic": "audience",
       "concept": "",
       "content_type": "",
       "label": "Trends by\u00a0personality",
       "page_path": "/02-audience-trends-towards-multisensory/03-trends-by-personality",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "e8652643c5925f6c",
       "position_hash": "1a6ae56b64b8eec3"
     },
     {
@@ -99,18 +110,18 @@
       "label": "Audience trends towards multisensory",
       "page_path": "/02-audience-trends-towards-multisensory",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "5eddd8ca396681c5",
       "position_hash": "35a494c324562070"
     },
     {
-      "block_id": "page-h1-03-multisensory-value-overview-b2f1ce0c",
+      "block_id": "page-h1-03-multisensory-value-overview-6b81a9f7",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "Multisensory Value",
       "page_path": "/03-multisensory-value",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "4083d34ed80a2a7b",
       "position_hash": "ed1d074077327fb1"
     },
     {
@@ -121,7 +132,7 @@
       "label": "Economic value",
       "page_path": "/03-multisensory-value",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "148b2bb5eb6b4b88",
       "position_hash": "4f99a9ed482636e9"
     },
     {
@@ -132,18 +143,18 @@
       "label": "Social-emotional and cultural value",
       "page_path": "/03-multisensory-value",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "2494217c27d49e47",
       "position_hash": "b2c42902578a4d12"
     },
     {
-      "block_id": "page-multisensory-experience-creative-opportunities-playing-with-expectation-a93a9877",
+      "block_id": "page-multisensory-experience-creative-opportunities-playing-with-expectation-cd694941",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
       "label": "Creative opportunities: Playing with expectation",
       "page_path": "/04-multisensory-experience/01-creative-opportunities-playing-with-expectation",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "44c410b4928aa263",
       "position_hash": "0852384261103612"
     },
     {
@@ -154,19 +165,8 @@
       "label": "Sensory substitution",
       "page_path": "/04-multisensory-experience/01-creative-opportunities-playing-with-expectation",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "3c16370b8cf5e619",
       "position_hash": "0208c247dc95edd4"
-    },
-    {
-      "block_id": "case-study-steady-state-created-by-performer-technologist-and-research-lead-zubi",
-      "topic": "multisensory-experience",
-      "concept": "multisensory-experience",
-      "content_type": "section",
-      "label": "Case Study: *Steady State* Created by performer-technologist and research lead Zubin Kanga (*Royal Holloway, University of London*), composer Alexander Schubert (*Musikhochschule Hamburg*), brain sensor and neuro-diagnostics company* ANT Neuro*(Netherlands/UK/Germany), brain-computer interaction engineer Serafeim Perdikis (*University of Essex*) and a wider team of artists, ***Steady State***(2024) recasts the recital format as a retro-sci-fi laboratory in which the performer is both subject and instrument.***Steady State*** was created as part of *Cyborg Soloists*, Zubin Kanga",
-      "page_path": "/04-multisensory-experience/01-creative-opportunities-playing-with-expectation",
-      "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
-      "position_hash": "7f4fdf525593c276"
     },
     {
       "block_id": "case-study-watch-based-haptic-navigation",
@@ -175,9 +175,9 @@
       "content_type": "section",
       "label": "Case Study: Watch-based haptic navigation",
       "page_path": "/04-multisensory-experience/01-creative-opportunities-playing-with-expectation",
-      "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
-      "position_hash": "e6fce0dc9530aabd"
+      "display_order": 2,
+      "content_hash": "7609324a42a6dc0a",
+      "position_hash": "7f4fdf525593c276"
     },
     {
       "block_id": "crossmodal-illusions",
@@ -186,9 +186,9 @@
       "content_type": "section",
       "label": "Crossmodal illusions",
       "page_path": "/04-multisensory-experience/01-creative-opportunities-playing-with-expectation",
-      "display_order": 4,
-      "content_hash": "e3b0c44298fc1c14",
-      "position_hash": "7d52d26a9f29bf1c"
+      "display_order": 3,
+      "content_hash": "9eef5e26b21df74e",
+      "position_hash": "e6fce0dc9530aabd"
     },
     {
       "block_id": "crossmodal-correspondences",
@@ -197,19 +197,19 @@
       "content_type": "section",
       "label": "Crossmodal correspondences",
       "page_path": "/04-multisensory-experience/01-creative-opportunities-playing-with-expectation",
-      "display_order": 5,
-      "content_hash": "e3b0c44298fc1c14",
-      "position_hash": "24d2eddfa4845975"
+      "display_order": 4,
+      "content_hash": "a9f63c4080de590e",
+      "position_hash": "7d52d26a9f29bf1c"
     },
     {
-      "block_id": "page-multisensory-experience-creative-opportunities-boosting-presence-c32f246d",
+      "block_id": "page-multisensory-experience-creative-opportunities-boosting-presence-61e066f2",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
       "label": "Creative opportunities: Boosting presence",
       "page_path": "/04-multisensory-experience/02-creative-opportunities-boosting-presence",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "3022807e8ba663f6",
       "position_hash": "d453cab2e141208f"
     },
     {
@@ -220,18 +220,18 @@
       "label": "Case study: Current, Rising",
       "page_path": "/04-multisensory-experience/02-creative-opportunities-boosting-presence",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "f5a4f5a87494ef37",
       "position_hash": "fb0ae001b90cc563"
     },
     {
-      "block_id": "page-multisensory-experience-practical-insights-459fab5c",
+      "block_id": "page-multisensory-experience-practical-insights-960c331a",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
       "label": "Practical insights",
       "page_path": "/04-multisensory-experience/03-practical-insights",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "6a2d9d6115b49848",
       "position_hash": "00d7a7bf3010a77a"
     },
     {
@@ -242,7 +242,7 @@
       "label": "Latency tolerances",
       "page_path": "/04-multisensory-experience/03-practical-insights",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "edd10a20f88ef7af",
       "position_hash": "57af834dd36171b1"
     },
     {
@@ -253,7 +253,7 @@
       "label": "Tolerance of spatial mismatches",
       "page_path": "/04-multisensory-experience/03-practical-insights",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "d484497216f2971b",
       "position_hash": "cc3cc67d99239ea5"
     },
     {
@@ -264,7 +264,7 @@
       "label": "Prior experience and the assumption of unity",
       "page_path": "/04-multisensory-experience/03-practical-insights",
       "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "eeb11bbe22887827",
       "position_hash": "859bf72e51e4ee41"
     },
     {
@@ -275,7 +275,7 @@
       "label": "Perceptual ",
       "page_path": "/04-multisensory-experience/03-practical-insights",
       "display_order": 4,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "dc0b774f889f8af6",
       "position_hash": "7d2e722bf2127f68"
     },
     {
@@ -286,7 +286,7 @@
       "label": "Multisensory attention",
       "page_path": "/04-multisensory-experience/03-practical-insights",
       "display_order": 5,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "fce4314eebaf1826",
       "position_hash": "42ec7ad8e33e784a"
     },
     {
@@ -297,29 +297,29 @@
       "label": "Holistic experiential integration",
       "page_path": "/04-multisensory-experience/03-practical-insights",
       "display_order": 6,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "a450ebee222ae4c9",
       "position_hash": "bc5cc260477f0bac"
     },
     {
-      "block_id": "page-h1-04-multisensory-experience-overview-a068c8a0",
+      "block_id": "page-h1-04-multisensory-experience-overview-557b08db",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "Multisensory experience",
       "page_path": "/04-multisensory-experience",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "557b08db19687829",
       "position_hash": "030a9f052003cd7a"
     },
     {
-      "block_id": "page-in-focus-vision-practical-insights-1-0541f264",
+      "block_id": "page-in-focus-vision-practical-insights-1-a0b3f6c3",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Practical insights",
       "page_path": "/05-in-focus-vision/01-practical-insights-1",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "1cbb7ea3a41167ff",
       "position_hash": "6e60c450121f29e6"
     },
     {
@@ -330,7 +330,7 @@
       "label": "Flicker",
       "page_path": "/05-in-focus-vision/01-practical-insights-1",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "555aba9ffb798d93",
       "position_hash": "07d7cf2f72000fe3"
     },
     {
@@ -341,7 +341,7 @@
       "label": "Light and dark adaptation",
       "page_path": "/05-in-focus-vision/01-practical-insights-1",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "0a65d750f009177b",
       "position_hash": "897d51c1edafdd2e"
     },
     {
@@ -352,18 +352,18 @@
       "label": "Visual illusions",
       "page_path": "/05-in-focus-vision/01-practical-insights-1",
       "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "cb4f5b422fd2a5d1",
       "position_hash": "148a743c3628625f"
     },
     {
-      "block_id": "page-in-focus-vision-inclusion-considerations-d05d1076",
+      "block_id": "page-in-focus-vision-inclusion-considerations-98d71da8",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Inclusion considerations",
       "page_path": "/05-in-focus-vision/02-inclusion-considerations",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "96816743be101ee5",
       "position_hash": "36669b845a3e2411"
     },
     {
@@ -374,7 +374,7 @@
       "label": "Colour blindness and low vision",
       "page_path": "/05-in-focus-vision/02-inclusion-considerations",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "66757d8ba84c89c9",
       "position_hash": "e37dee4fc05dfe8f"
     },
     {
@@ -385,7 +385,7 @@
       "label": "Lighting and brightness",
       "page_path": "/05-in-focus-vision/02-inclusion-considerations",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "187c482ad9259fe8",
       "position_hash": "b165fb081f3574da"
     },
     {
@@ -396,7 +396,7 @@
       "label": "Motion sensitivity and flicker",
       "page_path": "/05-in-focus-vision/02-inclusion-considerations",
       "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "f146e6729f601daa",
       "position_hash": "f701158291f43524"
     },
     {
@@ -407,18 +407,18 @@
       "label": "Cognitive load and simplified layouts",
       "page_path": "/05-in-focus-vision/02-inclusion-considerations",
       "display_order": 4,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "336b650e25bd3c62",
       "position_hash": "60834e9208aaa723"
     },
     {
-      "block_id": "page-h1-05-in-focus-vision-overview-39b7527e",
+      "block_id": "page-h1-05-in-focus-vision-overview-7edde6b1",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Vision",
       "page_path": "/05-in-focus-vision",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "84d27bad3a1f01ff",
       "position_hash": "b61f419ccc6b0f22"
     },
     {
@@ -429,7 +429,7 @@
       "label": "Case study: Abba Voyage",
       "page_path": "/05-in-focus-vision",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "c97e7a9eadff4805",
       "position_hash": "1fe049421459f9f8"
     },
     {
@@ -440,7 +440,7 @@
       "label": "Case study: 3D digital signage, Shinjuku train station (Tokyo, Japan)",
       "page_path": "/05-in-focus-vision",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "645eca20a9df32a7",
       "position_hash": "90be1b7d1f9e583f"
     },
     {
@@ -451,7 +451,7 @@
       "label": "Practical insights",
       "page_path": "/06-in-focus-hearing/01-practical-insights-2",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "01222056ee908325",
       "position_hash": "63a62a9e0b7e64a3"
     },
     {
@@ -462,7 +462,7 @@
       "label": "Low spatial resolution",
       "page_path": "/06-in-focus-hearing/01-practical-insights-2",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "1ca0d805710c7140",
       "position_hash": "8bad24d1d4d94d8f"
     },
     {
@@ -473,7 +473,7 @@
       "label": "Inclusion considerations",
       "page_path": "/06-in-focus-hearing/02-inclusion-considerations-1",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "dd7754b3b1da58c8",
       "position_hash": "209d432d7f9be719"
     },
     {
@@ -484,7 +484,7 @@
       "label": "Hearing diversity",
       "page_path": "/06-in-focus-hearing/02-inclusion-considerations-1",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "2a0a3add353f2c1d",
       "position_hash": "3d3bcd640446f9e1"
     },
     {
@@ -495,7 +495,7 @@
       "label": "Sound overload and sensory sensitivities",
       "page_path": "/06-in-focus-hearing/02-inclusion-considerations-1",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "3fa6798961e011ae",
       "position_hash": "2383dd6e16bbefb5"
     },
     {
@@ -506,18 +506,18 @@
       "label": "Spatial audio for orientation",
       "page_path": "/06-in-focus-hearing/02-inclusion-considerations-1",
       "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "c0436cd0ba735aca",
       "position_hash": "5ba9a166e53f85d6"
     },
     {
-      "block_id": "page-h1-06-in-focus-hearing-overview-6c5784d3",
+      "block_id": "page-h1-06-in-focus-hearing-overview-94e95303",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Hearing",
       "page_path": "/06-in-focus-hearing",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "14f00eace8afc748",
       "position_hash": "92cc3182f4c7d57f"
     },
     {
@@ -528,18 +528,18 @@
       "label": "Case study: Arcade",
       "page_path": "/06-in-focus-hearing",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "4d3183e8bf1d4867",
       "position_hash": "623b0374b90df45e"
     },
     {
-      "block_id": "page-in-focus-touch-practical-insights-3-4f8e3f89",
+      "block_id": "page-in-focus-touch-practical-insights-3-1256ff8c",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Practical insights",
       "page_path": "/07-in-focus-touch/01-practical-insights-3",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "947f89a7ece17622",
       "position_hash": "d5bb20a87ed52c56"
     },
     {
@@ -550,7 +550,7 @@
       "label": "Active and passive forms of touch",
       "page_path": "/07-in-focus-touch/01-practical-insights-3",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "16422c54779377a0",
       "position_hash": "2c3485e9d1dbca3d"
     },
     {
@@ -561,7 +561,7 @@
       "label": "Temperature",
       "page_path": "/07-in-focus-touch/01-practical-insights-3",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "5ea84835681b5a16",
       "position_hash": "c5ac38bc9ccd94d5"
     },
     {
@@ -572,7 +572,7 @@
       "label": "Localisation",
       "page_path": "/07-in-focus-touch/01-practical-insights-3",
       "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "95d18f551c3ba659",
       "position_hash": "a32ffe56ec24983d"
     },
     {
@@ -583,18 +583,18 @@
       "label": "Social touch",
       "page_path": "/07-in-focus-touch/01-practical-insights-3",
       "display_order": 4,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "b49ea71e9a3a5547",
       "position_hash": "40cc397bdf7b0cc6"
     },
     {
-      "block_id": "page-in-focus-touch-inclusion-considerations-2-e965003b",
+      "block_id": "page-in-focus-touch-inclusion-considerations-2-d0913977",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Inclusion considerations",
       "page_path": "/07-in-focus-touch/02-inclusion-considerations-2",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "8ffa2238d9984849",
       "position_hash": "416d50cb8ec32a5b"
     },
     {
@@ -605,7 +605,7 @@
       "label": "Sensory and physical diversity",
       "page_path": "/07-in-focus-touch/02-inclusion-considerations-2",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "ddd9bb799ccb4f0c",
       "position_hash": "0dc2a3e04f1a9f52"
     },
     {
@@ -616,18 +616,18 @@
       "label": "Assistive opportunities",
       "page_path": "/07-in-focus-touch/02-inclusion-considerations-2",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "3eaa310192f81877",
       "position_hash": "1fb0a797f4050a18"
     },
     {
-      "block_id": "page-h1-07-in-focus-touch-overview-17bb9849",
+      "block_id": "page-h1-07-in-focus-touch-overview-07abc8be",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Touch",
       "page_path": "/07-in-focus-touch",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "2403bebd433ea498",
       "position_hash": "7dda9622cef4180d"
     },
     {
@@ -638,7 +638,7 @@
       "label": "Case study: Water Droplets",
       "page_path": "/07-in-focus-touch",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "279854e2236b3bd9",
       "position_hash": "645a10bd644ba03f"
     },
     {
@@ -649,7 +649,7 @@
       "label": "Case study: In Pursuit of Repetitive Beats",
       "page_path": "/07-in-focus-touch",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "3fc22cd77aeb7001",
       "position_hash": "5c4900fb758d9ed7"
     },
     {
@@ -660,18 +660,18 @@
       "label": "Case study: Jeff Wayne",
       "page_path": "/07-in-focus-touch",
       "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "14bccba575db48c6",
       "position_hash": "9a894ad6283e7ddb"
     },
     {
-      "block_id": "page-in-focus-smell-practical-insights-4-0aa2895c",
+      "block_id": "page-in-focus-smell-practical-insights-4-7eb38b27",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Practical insights",
       "page_path": "/08-in-focus-smell/01-practical-insights-4",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "05d7e2cd8b1bd0a2",
       "position_hash": "d1d71b54a93ca994"
     },
     {
@@ -682,7 +682,7 @@
       "label": "Adaptation",
       "page_path": "/08-in-focus-smell/01-practical-insights-4",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "7597b405e9f84e44",
       "position_hash": "fa27fa9d5b5f35d1"
     },
     {
@@ -693,7 +693,7 @@
       "label": "Sensitivity",
       "page_path": "/08-in-focus-smell/01-practical-insights-4",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "fd70a35baaa603d6",
       "position_hash": "00fed17e38b01825"
     },
     {
@@ -704,7 +704,7 @@
       "label": "Context",
       "page_path": "/08-in-focus-smell/01-practical-insights-4",
       "display_order": 3,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "80fc3cde3c3bf906",
       "position_hash": "4201b9f6204d48a1"
     },
     {
@@ -715,18 +715,18 @@
       "label": "Current technical challenges",
       "page_path": "/08-in-focus-smell/01-practical-insights-4",
       "display_order": 4,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "677e2bf2b13e01a4",
       "position_hash": "a8e5af2a7ad3e156"
     },
     {
-      "block_id": "page-in-focus-smell-inclusion-considerations-3-f4d3f0b2",
+      "block_id": "page-in-focus-smell-inclusion-considerations-3-c5045609",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Inclusion considerations",
       "page_path": "/08-in-focus-smell/02-inclusion-considerations-3",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "3d26f9dd6e150daa",
       "position_hash": "2756f03b606bb684"
     },
     {
@@ -737,7 +737,7 @@
       "label": "Fragrance sensitivities",
       "page_path": "/08-in-focus-smell/02-inclusion-considerations-3",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "ea1f8c329226410d",
       "position_hash": "5ad00e24a1a32581"
     },
     {
@@ -748,18 +748,18 @@
       "label": "Impaired sense of smell",
       "page_path": "/08-in-focus-smell/02-inclusion-considerations-3",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "b5309e7cc53f911c",
       "position_hash": "87cd0a7de5738d10"
     },
     {
-      "block_id": "page-h1-08-in-focus-smell-overview-fef3429c",
+      "block_id": "page-h1-08-in-focus-smell-overview-b651e8db",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Smell",
       "page_path": "/08-in-focus-smell",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "6d39aeddabe566f1",
       "position_hash": "d8c4e174f47f8f57"
     },
     {
@@ -770,18 +770,18 @@
       "label": "Case study: Jorvik Viking Centre",
       "page_path": "/08-in-focus-smell",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "a1117569fbd95013",
       "position_hash": "4eff5777eba8ef28"
     },
     {
-      "block_id": "page-in-focus-sense-of-space-practical-insights-5-0151d9dc",
+      "block_id": "page-in-focus-sense-of-space-practical-insights-5-65624699",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Practical insights",
       "page_path": "/09-in-focus-sense-of-space/01-practical-insights-5",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "bb2178d69ea0c1e0",
       "position_hash": "e96ee56b77038df4"
     },
     {
@@ -792,7 +792,7 @@
       "label": "Presence",
       "page_path": "/09-in-focus-sense-of-space/01-practical-insights-5",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "06fdba75cd9e74ce",
       "position_hash": "a5f54bb0cc97c8ca"
     },
     {
@@ -803,18 +803,18 @@
       "label": "Spatial illusions",
       "page_path": "/09-in-focus-sense-of-space/01-practical-insights-5",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "ac7b8b5e36f27fdf",
       "position_hash": "7e16b941f5eb0d3e"
     },
     {
-      "block_id": "page-in-focus-sense-of-space-inclusion-considerations-4-950d962b",
+      "block_id": "page-in-focus-sense-of-space-inclusion-considerations-4-663b02c8",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Inclusion considerations",
       "page_path": "/09-in-focus-sense-of-space/02-inclusion-considerations-4",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "ccd0ce78eb786b4f",
       "position_hash": "dcae7a36a6748150"
     },
     {
@@ -825,29 +825,29 @@
       "label": "Motion sickness and comfort",
       "page_path": "/09-in-focus-sense-of-space/02-inclusion-considerations-4",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "1e80ac86d2604bb2",
       "position_hash": "e8488020be525207"
     },
     {
-      "block_id": "page-h1-09-in-focus-sense-of-space-overview-d6768594",
+      "block_id": "page-h1-09-in-focus-sense-of-space-overview-f2ac70d3",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Sense of space",
       "page_path": "/09-in-focus-sense-of-space",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "15fe96f884c61bfe",
       "position_hash": "f07e99146f270a12"
     },
     {
-      "block_id": "case-study-the-matrix-in-shared-reality-cosm-an-experiential-media-company-that-",
+      "block_id": "case-study-the-matrix-in-shared-reality-cosm-an-experiential-media-company-that--2",
       "topic": "hearing",
       "concept": "hearing",
       "content_type": "section",
-      "label": "Case study: The Matrix in *Shared Reality Cosm*, an experiential media company that opened its first flagship venues in Los Angeles and Dallas in 2023\u201324, uses giant 87-foot LED domes with spatial audio to deliver what it calls ***Shared Reality*** experiences, blending cinema, live events and immersive environments. *Cosm",
+      "label": "Case study: The Matrix in *Shared Reality Cosm*, an experiential media company that opened its first flagship venues in Los Angeles and Dallas in 2024, uses giant 87-foot LED domes with spatial audio to deliver what it calls ***Shared Reality*** experiences, blending cinema, live events and immersive environments. *Cosm",
       "page_path": "/09-in-focus-sense-of-space",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "683260c7be9c6b05",
       "position_hash": "8d072ee481c5594f"
     },
     {
@@ -858,18 +858,18 @@
       "label": "Case study: Disney HoloTile floor",
       "page_path": "/09-in-focus-sense-of-space",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "55480178ea80a347",
       "position_hash": "cc2a6b200056ea17"
     },
     {
-      "block_id": "page-in-focus-personal-and-peripersonal-space-practical-insights-6-80f26797",
+      "block_id": "page-in-focus-personal-and-peripersonal-space-practical-insights-6-d11056c1",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Practical Insights",
       "page_path": "/10-in-focus-personal-and-peripersonal-space/01-practical-insights-6",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "49999969ee865bbc",
       "position_hash": "6841996b1e431648"
     },
     {
@@ -880,7 +880,7 @@
       "label": "Interpersonal space",
       "page_path": "/10-in-focus-personal-and-peripersonal-space/01-practical-insights-6",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "42773d32816afde6",
       "position_hash": "09947ea1b4d9766e"
     },
     {
@@ -891,18 +891,18 @@
       "label": "Peripersonal space",
       "page_path": "/10-in-focus-personal-and-peripersonal-space/01-practical-insights-6",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "d91ad37910e9278d",
       "position_hash": "47299dbd2d819374"
     },
     {
-      "block_id": "page-in-focus-personal-and-peripersonal-space-inclusion-considerations-5-77f42b06",
+      "block_id": "page-in-focus-personal-and-peripersonal-space-inclusion-considerations-5-49a25f2d",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Inclusion considerations",
       "page_path": "/10-in-focus-personal-and-peripersonal-space/02-inclusion-considerations-5",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "a65360a44113cd87",
       "position_hash": "8199c50e273771ac"
     },
     {
@@ -913,7 +913,7 @@
       "label": "Diversity",
       "page_path": "/10-in-focus-personal-and-peripersonal-space/02-inclusion-considerations-5",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "fe27978579567ce9",
       "position_hash": "e285ac9e98d59e44"
     },
     {
@@ -924,18 +924,18 @@
       "label": "Peripersonal space sensitivity",
       "page_path": "/10-in-focus-personal-and-peripersonal-space/02-inclusion-considerations-5",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "fd629e2427c62df2",
       "position_hash": "5b9c06b8cbd16368"
     },
     {
-      "block_id": "page-h1-10-in-focus-personal-and-peripersonal-space-overview-6c994d98",
+      "block_id": "page-h1-10-in-focus-personal-and-peripersonal-space-overview-52deebe7",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Personal and peripersonal space",
       "page_path": "/10-in-focus-personal-and-peripersonal-space",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "1e1558d90649deff",
       "position_hash": "b4d9280228abc523"
     },
     {
@@ -946,18 +946,18 @@
       "label": "Case Study: Managing the bubble in onboarding",
       "page_path": "/10-in-focus-personal-and-peripersonal-space",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "c5f75a444246a325",
       "position_hash": "404b1d15096486d3"
     },
     {
-      "block_id": "page-in-focus-interoception-practical-insights-7-0c879020",
+      "block_id": "page-in-focus-interoception-practical-insights-7-13a9ffc9",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Practical insights",
       "page_path": "/11-in-focus-interoception/01-practical-insights-7",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "9dc006ece7d8a027",
       "position_hash": "c6d004f49a900ad5"
     },
     {
@@ -968,7 +968,7 @@
       "label": "Boosting true bodily signals",
       "page_path": "/11-in-focus-interoception/01-practical-insights-7",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "ef9a26698b75aa83",
       "position_hash": "c4ce6201ef0271f2"
     },
     {
@@ -979,7 +979,7 @@
       "label": "Creating illusory bodily signals",
       "page_path": "/11-in-focus-interoception/01-practical-insights-7",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "a4dc47839483bff5",
       "position_hash": "348bbf80b22a3906"
     },
     {
@@ -990,7 +990,7 @@
       "label": "Inclusion considerations",
       "page_path": "/11-in-focus-interoception/02-inclusion-considerations-6",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "c043cbb6fd042d8e",
       "position_hash": "9aa84f1a9fe00c5d"
     },
     {
@@ -1001,7 +1001,7 @@
       "label": "Individual differences",
       "page_path": "/11-in-focus-interoception/02-inclusion-considerations-6",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "d0f07ad883ed8e50",
       "position_hash": "e7debf3b611ea1e5"
     },
     {
@@ -1012,29 +1012,29 @@
       "label": "Data protection",
       "page_path": "/11-in-focus-interoception/02-inclusion-considerations-6",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "dc754cd58505db6c",
       "position_hash": "ba6793d48d23fa7f"
     },
     {
-      "block_id": "page-h1-11-in-focus-interoception-overview-fde89f0d",
+      "block_id": "page-h1-11-in-focus-interoception-overview-403974ee",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Interoception",
       "page_path": "/11-in-focus-interoception",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "403974ee02c3aaf2",
       "position_hash": "87b4ea6f551a7427"
     },
     {
-      "block_id": "page-in-focus-proprioception-and-body-map-practical-insights-8-33125f70",
+      "block_id": "page-in-focus-proprioception-and-body-map-practical-insights-8-317a3022",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Practical Insights",
       "page_path": "/12-in-focus-proprioception-and-body-map/01-practical-insights-8",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "e0bc447948313016",
       "position_hash": "350bc4a3ae6c95d0"
     },
     {
@@ -1045,7 +1045,7 @@
       "label": "Masking bulky haptics gear",
       "page_path": "/12-in-focus-proprioception-and-body-map/01-practical-insights-8",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "5899dd54a5722b2b",
       "position_hash": "2a40e09d5a74e153"
     },
     {
@@ -1056,29 +1056,29 @@
       "label": "Influencing strength",
       "page_path": "/12-in-focus-proprioception-and-body-map/01-practical-insights-8",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "a21d1685331839dd",
       "position_hash": "fd0ee6071960f140"
     },
     {
-      "block_id": "page-in-focus-proprioception-and-body-map-technical-challenges-f66e6a0f",
+      "block_id": "page-in-focus-proprioception-and-body-map-technical-challenges-4379dfec",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Technical challenges",
       "page_path": "/12-in-focus-proprioception-and-body-map/02-technical-challenges",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "4379dfecf12091f8",
       "position_hash": "7bc2fcfa1bfe1d0e"
     },
     {
-      "block_id": "page-in-focus-proprioception-and-body-map-inclusion-considerations-7-a1d0f2e5",
+      "block_id": "page-in-focus-proprioception-and-body-map-inclusion-considerations-7-384865c1",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Inclusion considerations",
       "page_path": "/12-in-focus-proprioception-and-body-map/03-inclusion-considerations-7",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "df728ffcac27f3f5",
       "position_hash": "b70cb79bfc23f847"
     },
     {
@@ -1089,7 +1089,7 @@
       "label": "Proprioceptive diversity",
       "page_path": "/12-in-focus-proprioception-and-body-map/03-inclusion-considerations-7",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "038bab53629bb4a5",
       "position_hash": "4377076d3e28ff2b"
     },
     {
@@ -1100,18 +1100,18 @@
       "label": "Sensory mismatch",
       "page_path": "/12-in-focus-proprioception-and-body-map/03-inclusion-considerations-7",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "954fa45ba212456a",
       "position_hash": "163811b981af717a"
     },
     {
-      "block_id": "page-h1-12-in-focus-proprioception-and-body-map-overview-757ec4d3",
+      "block_id": "page-h1-12-in-focus-proprioception-and-body-map-overview-cd815694",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Proprioception and body map",
       "page_path": "/12-in-focus-proprioception-and-body-map",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "2b842f3cd095be9d",
       "position_hash": "6e2b853ea8c0e7bd"
     },
     {
@@ -1122,7 +1122,7 @@
       "label": "Case Study: Body of Mine",
       "page_path": "/12-in-focus-proprioception-and-body-map",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "e39b1ab65bd8878e",
       "position_hash": "3e2a22f553b79976"
     },
     {
@@ -1133,7 +1133,7 @@
       "label": "Practical insights",
       "page_path": "/13-in-focus-interactivity/01-practical-insights-9",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "85f1a78963a0671f",
       "position_hash": "ccb76142a2c1b80d"
     },
     {
@@ -1144,7 +1144,7 @@
       "label": "Full-body real-time motion capture",
       "page_path": "/13-in-focus-interactivity/01-practical-insights-9",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "5cb650b47ea31c5b",
       "position_hash": "b2a1c5481028e6a6"
     },
     {
@@ -1155,7 +1155,7 @@
       "label": "Physiological data",
       "page_path": "/13-in-focus-interactivity/01-practical-insights-9",
       "display_order": 2,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "ac10f03466bb0b07",
       "position_hash": "244de32be40b8170"
     },
     {
@@ -1166,7 +1166,7 @@
       "label": "Inclusion considerations",
       "page_path": "/13-in-focus-interactivity/02-inclusion-considerations-8",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "098f24f6d1a7b389",
       "position_hash": "9bb3d585d11cc95f"
     },
     {
@@ -1177,18 +1177,18 @@
       "label": "Alternate channels",
       "page_path": "/13-in-focus-interactivity/02-inclusion-considerations-8",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "e68176feb07c2f5b",
       "position_hash": "b8a0f403aaca9813"
     },
     {
-      "block_id": "page-h1-13-in-focus-interactivity-overview-0e68d963",
+      "block_id": "page-h1-13-in-focus-interactivity-overview-cd3bc178",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Interactivity",
       "page_path": "/13-in-focus-interactivity",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "7cde89692bee2426",
       "position_hash": "92fef7364b494d7b"
     },
     {
@@ -1199,18 +1199,18 @@
       "label": "Case study: Brainstorms",
       "page_path": "/13-in-focus-interactivity",
       "display_order": 1,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "d975b5493c63d17b",
       "position_hash": "32c683814d73b7a4"
     },
     {
-      "block_id": "page-h1-14-references-overview-2477af11",
+      "block_id": "page-h1-14-references-overview-7a915268",
       "topic": "references",
       "concept": "",
       "content_type": "",
       "label": "References",
       "page_path": "/14-references",
       "display_order": 0,
-      "content_hash": "e3b0c44298fc1c14",
+      "content_hash": "4f198d55fbecd6c7",
       "position_hash": "b09e0555291621b1"
     }
   ]

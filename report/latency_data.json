@@ -4,34 +4,54 @@
     "xMax": 200,
     "toleranceColour": "#440154FF",
     "imperceptibleColour": "#5DC863FF",
-    "legend": "Key latency tolerances for multisensory experiences. The graph shows approximate tolerated time delays and imperceptible time delays across a range of activities including motion-to-photon latency in gaming remote collaborative performance live music streaming and everyday sound propagation. Error bars show that several studies have been undertaken for a given activity and that their reported time delays do not match exactly. Note that XR stands for eXtended Reality."
+    "referenceColour": "#8A8A8AFF",
+    "legend": "Key latency tolerances for multisensory experiences. \"Acceptable\" bars show delays that studies or standards report as acceptable for a given activity; \"Not noticeable\" bars show delays reported as below detection; \"For comparison\" bars show how long sound takes to travel everyday distances through air – these are physics, not perceptual limits. Error bars show the range reported across studies, instruments or participants. The 20 ms motion-to-photon figure is an industry design target rather than a measured threshold. XR stands for eXtended Reality."
   },
   "toleranceBars": [
     {
-      "label": "Pro drummers introduce delay\nfor music 'feel'",
-      "value": 1.0,
-      "errorBar": 0.0,
-      "citations": [
-        48
-      ],
-      "group": "Collaborative music"
-    },
-    {
-      "label": "Play to ear music e.g., jazz\nand rock",
+      "label": "Rhythm-section groups playing by ear\n(jazz, rock)",
       "value": 7.5,
       "errorBar": 2.5,
       "citations": [
-        48
+        49
       ],
       "group": "Collaborative music"
     },
     {
-      "label": "Motion to Photon",
+      "label": "Orchestra following a conductor",
+      "value": 40.0,
+      "errorBar": 0.0,
+      "citations": [
+        49
+      ],
+      "group": "Collaborative music"
+    },
+    {
+      "label": "Own voice via in-ear monitors",
+      "value": 8.0,
+      "errorBar": 2.0,
+      "citations": [
+        49,
+        55
+      ],
+      "group": "Live sound monitoring"
+    },
+    {
+      "label": "Stage wedge monitors (varies by\ninstrument)",
+      "value": 22.0,
+      "errorBar": 20.0,
+      "citations": [
+        55
+      ],
+      "group": "Live sound monitoring"
+    },
+    {
+      "label": "Motion to photon (industry design\ntarget)",
       "value": 20.0,
       "errorBar": 0.0,
       "citations": [
-        49,
-        50
+        50,
+        51
       ],
       "group": "XR"
     },
@@ -40,7 +60,7 @@
       "value": 55.0,
       "errorBar": 0.0,
       "citations": [
-        51
+        52
       ],
       "group": "XR"
     },
@@ -49,25 +69,25 @@
       "value": 25.0,
       "errorBar": 0.0,
       "citations": [
-        51
+        52
       ],
       "group": "XR"
     },
     {
       "label": "Audio ahead of video",
-      "value": 45.0,
+      "value": 90.0,
       "errorBar": 0.0,
       "citations": [
-        52
+        53
       ],
       "group": "TV"
     },
     {
       "label": "Video ahead of audio",
-      "value": 125.0,
+      "value": 185.0,
       "errorBar": 0.0,
       "citations": [
-        52
+        53
       ],
       "group": "TV"
     },
@@ -76,34 +96,63 @@
       "value": 150.0,
       "errorBar": 50.0,
       "citations": [
-        53
+        54
       ],
       "group": "Speech"
     }
   ],
   "imperceptibleBars": [
     {
-      "label": "Own speech",
-      "value": 1.0,
-      "errorBar": 0.0,
+      "label": "Own voice via in-ear monitors",
+      "value": 1.5,
+      "errorBar": 0.5,
       "citations": [
-        54
+        49,
+        55
       ]
     },
     {
-      "label": "Speech, person to person, 2m\napart",
+      "label": "Head-tracking lag in XR (detection\nthreshold varies 3–17 ms)",
+      "value": 10.0,
+      "errorBar": 7.0,
+      "citations": [
+        50
+      ]
+    },
+    {
+      "label": "Broadcast sync, audio ahead of video",
+      "value": 45.0,
+      "errorBar": 0.0,
+      "citations": [
+        53
+      ]
+    },
+    {
+      "label": "Broadcast sync, video ahead of audio",
+      "value": 125.0,
+      "errorBar": 0.0,
+      "citations": [
+        53
+      ]
+    }
+  ],
+  "referenceBars": [
+    {
+      "label": "Sound travelling 2 m through air",
       "value": 6.0,
-      "errorBar": 0.0,
-      "citations": [
-        48
-      ]
+      "errorBar": 0.0
     },
     {
-      "label": "Speech, person to person,\n10m apart",
-      "value": 30.0,
-      "errorBar": 5.0,
+      "label": "Sound travelling 10 m through air",
+      "value": 29.0,
+      "errorBar": 0.0
+    },
+    {
+      "label": "Front to back of a 12 m orchestra\nstage",
+      "value": 35.0,
+      "errorBar": 0.0,
       "citations": [
-        48
+        49
       ]
     }
   ]

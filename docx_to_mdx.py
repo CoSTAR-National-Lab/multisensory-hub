@@ -54,8 +54,8 @@ SHAREPOINT_FETCH     = os.environ.get("SHAREPOINT_FETCH", "0") != "0"
 SHAREPOINT_CLIENT_ID = os.environ.get("SHAREPOINT_CLIENT_ID", "04b07795-8542-4462-a58f-a12c68021efc")
 SHAREPOINT_TENANT_ID = os.environ.get("SHAREPOINT_TENANT_ID", "rhul.ac.uk")
 # Drive item ID from the SharePoint URL (the d=w<id> parameter, without the leading 'w')
-SHAREPOINT_ITEM_ID   = os.environ.get("SHAREPOINT_ITEM_ID", "33cce5b6dafa485eac746bc64f20aed8")
-SHAREPOINT_DEST_NAME = os.environ.get("SHAREPOINT_DEST_NAME", "Multisensory_Hub_April.docx")
+SHAREPOINT_ITEM_ID   = os.environ.get("SHAREPOINT_ITEM_ID", "f7d2fd27f1f9437dbbf554f9a72ca37a")
+SHAREPOINT_DEST_NAME = os.environ.get("SHAREPOINT_DEST_NAME", "Multisensory Hub_Aug.docx")
 # Token cache file so you only log in once
 TOKEN_CACHE_PATH = Path(".sharepoint_token_cache.json")
 
@@ -96,6 +96,40 @@ import { references } from '@site/src/data/references';
 
 # Global list to collect all pipeline warnings (shown en masse at the end)
 WARNINGS = []
+
+
+def _quick_xor_hash(path: Path) -> str:
+    """Compute the OneDrive/SharePoint quickXorHash of a local file (base64).
+
+    Graph API reports this hash for every SharePoint file, so comparing it
+    against the local copy tells us whether a download is needed at all.
+    Algorithm: each input byte is rotated left by (index * 11) mod 160 and
+    XORed into a 160-bit accumulator; the file length is then XORed into the
+    accumulator's last 8 bytes (little-endian).
+    """
+    import base64
+
+    folded = bytearray(160)  # XOR-fold of the file by position mod 160
+    size = 0
+    with path.open("rb") as fh:
+        while True:
+            chunk = fh.read(160 * 8192)
+            if not chunk:
+                break
+            for i, b in enumerate(chunk, start=size):
+                folded[i % 160] ^= b
+            size += len(chunk)
+
+    mask = (1 << 160) - 1
+    acc = 0
+    for pos, b in enumerate(folded):
+        if b:
+            s = (pos * 11) % 160
+            acc ^= ((b << s) & mask) | (b >> (160 - s))
+    data = bytearray(acc.to_bytes(20, "little"))
+    for i, length_byte in enumerate(size.to_bytes(8, "little")):
+        data[12 + i] ^= length_byte
+    return base64.b64encode(bytes(data)).decode()
 
 
 def fetch_from_sharepoint() -> bool:
@@ -158,45 +192,61 @@ def fetch_from_sharepoint() -> bool:
         return False
 
     token = result["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    dest = INPUT_FOLDER / SHAREPOINT_DEST_NAME
 
     # ------------------------------------------------------------------
-    # Download the file via Graph API
+    # Locate the item, compare its quickXorHash with the local copy, and
+    # only download if the remote content differs.
     # ------------------------------------------------------------------
-    url = f"https://graph.microsoft.com/v1.0/me/drive/items/{SHAREPOINT_ITEM_ID}/content"
-    print(f"  [SharePoint] Downloading item {SHAREPOINT_ITEM_ID}...")
-    resp = http_requests.get(url, headers={"Authorization": f"Bearer {token}"}, timeout=60)
+    # /me/drive works when the file is in the user's OneDrive; the shares
+    # endpoint (encoded sharing URL, u! prefix) covers SharePoint site drives.
+    import base64
+    sharing_url = (
+        "https://rhul.sharepoint.com/:w:/r/sites/StoryFutures/Shared%20Documents/"
+        "CoSTAR/R%26D/Users/Projects/Multisensory%20Pillar/3%20Multisensory%20Hub/"
+        "Multisensory%20Hub_Aug.docx"
+    )
+    share_id = "u!" + base64.urlsafe_b64encode(sharing_url.encode()).rstrip(b"=").decode()
+    item_urls = [
+        f"https://graph.microsoft.com/v1.0/me/drive/items/{SHAREPOINT_ITEM_ID}",
+        f"https://graph.microsoft.com/v1.0/shares/{share_id}/driveItem",
+    ]
 
-    if resp.status_code == 200:
-        dest = INPUT_FOLDER / SHAREPOINT_DEST_NAME
-        INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
-        dest.write_bytes(resp.content)
-        _c_ok(f"  [SharePoint] Saved {len(resp.content) // 1024} KB → {dest}")
-        return True
-
-    # If /me/drive doesn't work the file may be on a SharePoint site drive;
-    # fall back to the shares/driveItem endpoint using the encoded sharing URL.
-    if resp.status_code in (400, 403, 404):
-        _c_warn(f"  [SharePoint] /me/drive returned {resp.status_code}, trying shares endpoint...")
-        import base64
-        sharing_url = (
-            "https://rhul.sharepoint.com/:w:/r/sites/StoryFutures/Shared%20Documents/"
-            "CoSTAR/R%26D/Users/Multisensory%20Pillar/"
-            "Multisensory%20Hub_April.docx"
+    last_error = None
+    for item_url in item_urls:
+        meta = http_requests.get(
+            item_url + "?$select=name,size,lastModifiedDateTime,file",
+            headers=headers, timeout=30,
         )
-        # Graph API encodes the URL as unpadded base64 with u! prefix
-        encoded = base64.urlsafe_b64encode(sharing_url.encode()).rstrip(b"=").decode()
-        share_id = "u!" + encoded
-        url2 = f"https://graph.microsoft.com/v1.0/shares/{share_id}/driveItem/content"
-        resp2 = http_requests.get(url2, headers={"Authorization": f"Bearer {token}"}, timeout=60)
-        if resp2.status_code == 200:
-            dest = INPUT_FOLDER / SHAREPOINT_DEST_NAME
-            INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
-            dest.write_bytes(resp2.content)
-            _c_ok(f"  [SharePoint] Saved {len(resp2.content) // 1024} KB → {dest}")
-            return True
-        _c_error(f"  [SharePoint] shares endpoint returned {resp2.status_code}: {resp2.text[:200]}")
+        if meta.status_code != 200:
+            last_error = f"{meta.status_code}: {meta.text[:200]}"
+            _c_warn(f"  [SharePoint] Metadata lookup failed ({meta.status_code}), trying next endpoint...")
+            continue
 
-    _c_error(f"  [SharePoint] Download failed ({resp.status_code}): {resp.text[:200]}")
+        info = meta.json()
+        remote_hash = ((info.get("file") or {}).get("hashes") or {}).get("quickXorHash")
+        modified = info.get("lastModifiedDateTime", "unknown")
+
+        if remote_hash and dest.exists():
+            if _quick_xor_hash(dest) == remote_hash:
+                _c_ok(f"  [SharePoint] {dest.name} is up to date "
+                      f"(hash match, remote modified {modified}) — skipping download")
+                return True
+            _c_info(f"  [SharePoint] Remote file differs from local copy (remote modified {modified})")
+
+        print(f"  [SharePoint] Downloading {info.get('name', SHAREPOINT_DEST_NAME)} "
+              f"({info.get('size', 0) // 1024} KB)...")
+        resp = http_requests.get(item_url + "/content", headers=headers, timeout=60)
+        if resp.status_code == 200:
+            INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(resp.content)
+            _c_ok(f"  [SharePoint] Saved {len(resp.content) // 1024} KB → {dest}")
+            return True
+        last_error = f"{resp.status_code}: {resp.text[:200]}"
+        _c_warn(f"  [SharePoint] Download failed ({resp.status_code}), trying next endpoint...")
+
+    _c_error(f"  [SharePoint] Could not fetch the report ({last_error})")
     return False
 
 
@@ -1881,6 +1931,11 @@ def extract_chart_data_tables(markdown: str) -> str:
     Table columns expected (order-independent, case-insensitive):
       Group | Label | Value (ms) | Error (ms) | Threshold | Citations
 
+    Threshold values: "Acceptable" (or anything else) → tolerance bars grouped
+    by Group; "Not noticeable" → imperceptible bars; "Reference" /
+    "For comparison" → reference bars (e.g. physical sound-travel times that
+    are not perceptual limits, drawn in a separate grey panel).
+
     Mendeley/Pandoc superscripts in the Citations cell (e.g. ^46^ or ^46,47^)
     are parsed into a list of integer reference numbers.
     """
@@ -1917,7 +1972,7 @@ def extract_chart_data_tables(markdown: str) -> str:
                     return headers.index(h)
         return -1
 
-    def _wrap_label(text: str, width: int = 28) -> str:
+    def _wrap_label(text: str, width: int = 38) -> str:
         """Auto-wrap long label text at word boundaries, matching R str_wrap behaviour."""
         words = text.split()
         lines, current, current_len = [], [], 0
@@ -1960,6 +2015,7 @@ def extract_chart_data_tables(markdown: str) -> str:
 
         tolerance_bars = []
         imperceptible_bars = []
+        reference_bars = []
         legend_text = None
 
         for row in rows[1:]:
@@ -2003,12 +2059,14 @@ def extract_chart_data_tables(markdown: str) -> str:
 
             if threshold.lower() == 'not noticeable':
                 imperceptible_bars.append(entry)
+            elif threshold.lower() in ('reference', 'for comparison', 'comparison'):
+                reference_bars.append(entry)
             else:
                 entry['group'] = group
                 tolerance_bars.append(entry)
 
         # Compute shared xMax (rounded up to nearest 25)
-        all_vals = [b['value'] + b['errorBar'] for b in tolerance_bars + imperceptible_bars]
+        all_vals = [b['value'] + b['errorBar'] for b in tolerance_bars + imperceptible_bars + reference_bars]
         raw_max  = max(all_vals) if all_vals else 275
         x_max    = int(math.ceil(raw_max / 25) * 25)
 
@@ -2017,6 +2075,7 @@ def extract_chart_data_tables(markdown: str) -> str:
             'xMax':                x_max,
             'toleranceColour':     '#440154FF',
             'imperceptibleColour': '#5DC863FF',
+            'referenceColour':     '#8A8A8AFF',
         }
         if legend_text:
             meta_block['legend'] = legend_text
@@ -2025,11 +2084,12 @@ def extract_chart_data_tables(markdown: str) -> str:
             'meta':             meta_block,
             'toleranceBars':    tolerance_bars,
             'imperceptibleBars': imperceptible_bars,
+            'referenceBars':     reference_bars,
         }
 
         out_path = INPUT_FOLDER / 'latency_data.json'
         out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
-        print(f"  [CHART-DATA] Wrote {out_path} ({len(tolerance_bars)} tolerance bars, {len(imperceptible_bars)} imperceptible bars)")
+        print(f"  [CHART-DATA] Wrote {out_path} ({len(tolerance_bars)} tolerance bars, {len(imperceptible_bars)} imperceptible bars, {len(reference_bars)} reference bars)")
 
         return f'\n\n[CHART: {chart_id}]\n\n'
 
