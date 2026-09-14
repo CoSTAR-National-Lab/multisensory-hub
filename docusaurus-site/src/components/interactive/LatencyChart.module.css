@@ -1,23 +1,27 @@
 /* Colour tokens — override per theme/contrast */
 .chartWrapper {
-  --latency-tolerance-fill: #440154FF;
-  --latency-imperceptible-fill: #5DC863FF;
+  --latency-tolerance-fill: #0051d9;
+  --latency-imperceptible-fill: #ff9701;
+  --latency-reference-fill: #8a8a8a;
   margin: 1.5rem 0;
 }
 
 [data-theme='dark'] .chartWrapper {
-  --latency-tolerance-fill: #b06fd8;
-  --latency-imperceptible-fill: #5DC863FF;
+  --latency-tolerance-fill: #5c90f6;
+  --latency-imperceptible-fill: #ff9701;
+  --latency-reference-fill: #a3a3a3;
 }
 
 html[data-accessibility-contrast='high'] .chartWrapper {
-  --latency-tolerance-fill: #5a0080;
-  --latency-imperceptible-fill: #1a6e1e;
+  --latency-tolerance-fill: #002d7a;
+  --latency-imperceptible-fill: #8a5200;
+  --latency-reference-fill: #3d3d3d;
 }
 
 html[data-accessibility-contrast='high'][data-theme='dark'] .chartWrapper {
-  --latency-tolerance-fill: #d9a0f0;
-  --latency-imperceptible-fill: #7de881;
+  --latency-tolerance-fill: #a5c4fa;
+  --latency-imperceptible-fill: #ffd699;
+  --latency-reference-fill: #d6d6d6;
 }
 
 /* Muted text — opacity removed in high-contrast mode */
@@ -87,6 +91,19 @@ html[data-accessibility-contrast='high'] .dimText {
 [data-theme='dark'] .imperceptiblePanel {
   border-color: rgba(93, 200, 99, 0.25);
   background: rgba(93, 200, 99, 0.06);
+}
+
+.referencePanel {
+  margin-top: 1rem;
+  border: 1px dashed rgba(128, 128, 128, 0.45);
+  border-radius: 6px;
+  padding: 0.6rem 0.5rem 0.4rem;
+  background: rgba(128, 128, 128, 0.06);
+}
+
+[data-theme='dark'] .referencePanel {
+  border-color: rgba(200, 200, 200, 0.3);
+  background: rgba(200, 200, 200, 0.05);
 }
 
 .panelTitle {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './index.module.css';
 
 const OPTOUT_KEY = 'concept_analytics_optout';
@@ -28,6 +29,16 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
+        <a
+          href="https://www.costarnetwork.co.uk"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.logoWrap}
+          aria-label="CoSTAR Network"
+        >
+          <img src={useBaseUrl('/img/costar-logo.svg')} alt="CoSTAR" className={`${styles.logo} ${styles.logoLight}`} />
+          <img src={useBaseUrl('/img/costar-logo-white.svg')} alt="" aria-hidden="true" className={`${styles.logo} ${styles.logoDark}`} />
+        </a>
         <span className={styles.notice}>
           Anonymous engagement data is collected to understand which sections are most useful, which will be used to focus future efforts at expanding the hub.
           No personal data is stored. Part of the{' '}

@@ -9,8 +9,8 @@ interface ChartProps {
 }
 
 const defaultColors = [
-  '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e',
-  '#f97316', '#eab308', '#22c55e', '#14b8a6',
+  '#0051d9', '#ff9701', '#00abd6', '#ef0059',
+  '#003898', '#ff5700', '#5c90f6', '#ffb84d',
 ];
 
 export default function Chart({

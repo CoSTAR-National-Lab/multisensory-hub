@@ -20,17 +20,36 @@ URL = "multisensory.costarnetwork.co.uk"
 W, H = 1200, 630
 MARGIN = 90
 
-# --- brand palette (from src/css/custom.css) ---------------------------------
-TOP = (55, 48, 163)       # #3730a3  primary-darkest
-BOTTOM = (79, 70, 229)    # #4f46e5  primary-darker
-ACCENT = (165, 180, 252)  # #a5b4fc  primary-lighter
+# --- brand palette (CoSTAR, from src/css/custom.css) --------------------------
+TOP = (0, 56, 152)        # #003898  primary-darkest
+BOTTOM = (0, 81, 217)     # #0051d9  primary
+ACCENT = (0, 171, 214)    # #00abd6  costar-cyan
 WHITE = (255, 255, 255)
-MUTED = (199, 210, 254)   # #c7d2fe  primary-lightest
+MUTED = (168, 212, 240)   # light blue
+
+# CoSTAR logo-ray colours, used for the accent strip under the title
+RAYS = [(0, 171, 214), (0, 81, 217), (239, 0, 89), (255, 87, 0), (255, 151, 1)]
 
 OUT = Path(__file__).resolve().parents[1] / "static" / "img" / "social-card.jpg"
 
-BOLD = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
-REG = "/System/Library/Fonts/Supplemental/Arial.ttf"
+
+def _first_existing(*paths: str) -> str:
+    for p in paths:
+        if Path(p).exists():
+            return p
+    raise FileNotFoundError(f"none of these fonts exist: {paths}")
+
+
+BOLD = _first_existing(
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",   # macOS
+    r"C:\Windows\Fonts\arialbd.ttf",                       # Windows
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",  # Linux
+)
+REG = _first_existing(
+    "/System/Library/Fonts/Supplemental/Arial.ttf",
+    r"C:\Windows\Fonts\arial.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+)
 
 
 def diagonal_gradient() -> Image.Image:
@@ -82,8 +101,15 @@ def main() -> None:
     centered(draw, 218, EYEBROW, f_eyebrow, ACCENT)
     centered(draw, 256, TITLE, f_title, WHITE)
 
-    # Short accent underline, centered beneath the title.
-    draw.rectangle([(W - 90) / 2, 372, (W + 90) / 2, 378], fill=ACCENT)
+    # Five-segment ray strip (CoSTAR logo colours), centered beneath the title.
+    # Set on a white bar so the blue ray doesn't vanish into the blue gradient.
+    seg, gap = 26, 6
+    strip_w = 5 * seg + 4 * gap
+    x0 = (W - strip_w) / 2
+    draw.rectangle([x0 - gap, 369, x0 + strip_w + gap, 381], fill=WHITE)
+    for i, colour in enumerate(RAYS):
+        x = x0 + i * (seg + gap)
+        draw.rectangle([x, 372, x + seg, 378], fill=colour)
 
     centered(draw, 398, TAGLINE, f_tag, MUTED)
     centered(draw, H - MARGIN - 6, URL, f_url, ACCENT)

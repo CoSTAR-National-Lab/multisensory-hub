@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Multisensory Hub',
   tagline: 'Exploring the science of multisensory experiences',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
 
   future: {
     v4: true,
@@ -20,9 +20,9 @@ const config: Config = {
   trailingSlash: false,
 
   customFields: {
-    analyticsReportName: 'Multisensory Hub_May',
+    analyticsReportName: 'Multisensory Hub_Aug',
     // Injected by docx_to_mdx.py on each pipeline run — do not edit manually.
-    analyticsManifestVersion: 'a75c9f4bf61e',
+    analyticsManifestVersion: '5f1394a99e33',
   },
 
   onBrokenLinks: 'warn',
@@ -78,20 +78,22 @@ const config: Config = {
     },
     navbar: {
       title: 'Multisensory Hub',
+      logo: {
+        alt: 'CoSTAR',
+        src: 'img/costar-logo.svg',
+        srcDark: 'img/costar-logo-white.svg',
+        width: 122,
+        height: 30,
+      },
       hideOnScroll: false,
       items: [
-        {
-          type: 'docSidebar',
-          sidebarId: 'reportSidebar',
-          position: 'left',
-          label: 'Home',
-        },
         {
           type: 'search',
           position: 'right',
         },
       ],
     },
+    // NB: the footer is swizzled (src/theme/Footer) — this config block is unused.
     footer: {
       style: 'dark',
       copyright: `Multisensory Hub`,

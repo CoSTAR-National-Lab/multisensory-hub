@@ -1,44 +1,44 @@
 /* Colour tokens — viridis family, matching LatencyChart; override per theme/contrast.
    Pie slices use a viridis ordinal ramp (novice → expert), monotonic in lightness. */
 .chartWrapper {
-  --wpc-roles-fill: #440154FF;
-  --wpc-sectors-fill: #21908CFF;
-  --wpc-experience-fill: #5DC863FF;
-  --wpc-pie-1: #440154;
-  --wpc-pie-2: #31688E;
-  --wpc-pie-3: #35B779;
-  --wpc-pie-4: #FDE725;
+  --wpc-roles-fill: #0051d9;
+  --wpc-sectors-fill: #00abd6;
+  --wpc-experience-fill: #ef0059;
+  --wpc-pie-1: #0051d9;
+  --wpc-pie-2: #00abd6;
+  --wpc-pie-3: #ef0059;
+  --wpc-pie-4: #ff9701;
   margin: 1.5rem 0;
 }
 
 [data-theme='dark'] .chartWrapper {
-  --wpc-roles-fill: #b06fd8;
-  --wpc-sectors-fill: #3ecfc4;
-  --wpc-experience-fill: #5DC863FF;
-  --wpc-pie-1: #7c3fae;
-  --wpc-pie-2: #3ba3c9;
-  --wpc-pie-3: #5DC863;
-  --wpc-pie-4: #FDE725;
+  --wpc-roles-fill: #5c90f6;
+  --wpc-sectors-fill: #55d1f2;
+  --wpc-experience-fill: #ef0059;
+  --wpc-pie-1: #5c90f6;
+  --wpc-pie-2: #55d1f2;
+  --wpc-pie-3: #ff5c94;
+  --wpc-pie-4: #ff9701;
 }
 
 html[data-accessibility-contrast='high'] .chartWrapper {
-  --wpc-roles-fill: #5a0080;
-  --wpc-sectors-fill: #0e5a56;
-  --wpc-experience-fill: #1a6e1e;
-  --wpc-pie-1: #3b0055;
-  --wpc-pie-2: #1f4f6e;
-  --wpc-pie-3: #1a6e1e;
-  --wpc-pie-4: #8a7500;
+  --wpc-roles-fill: #002d7a;
+  --wpc-sectors-fill: #006b86;
+  --wpc-experience-fill: #a30040;
+  --wpc-pie-1: #002d7a;
+  --wpc-pie-2: #006b86;
+  --wpc-pie-3: #a30040;
+  --wpc-pie-4: #8a5200;
 }
 
 html[data-accessibility-contrast='high'][data-theme='dark'] .chartWrapper {
-  --wpc-roles-fill: #d9a0f0;
-  --wpc-sectors-fill: #7ee8df;
-  --wpc-experience-fill: #7de881;
-  --wpc-pie-1: #d9a0f0;
+  --wpc-roles-fill: #a5c4fa;
+  --wpc-sectors-fill: #a5e2f3;
+  --wpc-experience-fill: #ffa8c4;
+  --wpc-pie-1: #a5c4fa;
   --wpc-pie-2: #8fd4ea;
-  --wpc-pie-3: #7de881;
-  --wpc-pie-4: #fdf06b;
+  --wpc-pie-3: #ffa8c4;
+  --wpc-pie-4: #ffd699;
 }
 
 /* Muted text — opacity removed in high-contrast mode */
@@ -106,23 +106,23 @@ html[data-accessibility-contrast='high'] .dimText {
 }
 
 .panelRoles {
-  border: 1px solid rgba(68, 1, 84, 0.3);
-  background: rgba(68, 1, 84, 0.1);
+  border: 1px solid rgba(0, 81, 217, 0.3);
+  background: rgba(0, 81, 217, 0.1);
 }
 
 .panelSectors {
-  border: 1px solid rgba(33, 144, 140, 0.3);
-  background: rgba(33, 144, 140, 0.08);
+  border: 1px solid rgba(0, 171, 214, 0.3);
+  background: rgba(0, 171, 214, 0.08);
 }
 
 .panelExperience {
-  border: 1px solid rgba(93, 200, 99, 0.3);
-  background: rgba(93, 200, 99, 0.07);
+  border: 1px solid rgba(239, 0, 89, 0.3);
+  background: rgba(239, 0, 89, 0.07);
 }
 
 [data-theme='dark'] .panelRoles {
-  border-color: rgba(176, 111, 216, 0.35);
-  background: rgba(176, 111, 216, 0.13);
+  border-color: rgba(92, 144, 246, 0.35);
+  background: rgba(92, 144, 246, 0.13);
 }
 
 [data-theme='dark'] .panelSectors {
@@ -131,8 +131,8 @@ html[data-accessibility-contrast='high'] .dimText {
 }
 
 [data-theme='dark'] .panelExperience {
-  border-color: rgba(93, 200, 99, 0.25);
-  background: rgba(93, 200, 99, 0.06);
+  border-color: rgba(239, 0, 89, 0.25);
+  background: rgba(239, 0, 89, 0.06);
 }
 
 .panelTitle {

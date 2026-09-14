@@ -1,6 +1,6 @@
 /* Dark mode (default) */
 .footer {
-  background: linear-gradient(135deg, #1e1e23 0%, #2d2d35 100%);
+  background: linear-gradient(135deg, #001a4a 0%, #003898 100%);
   color: rgba(255, 255, 255, 0.5);
   padding: 0.55rem 1.5rem;
   font-size: 0.78rem;
@@ -31,6 +31,36 @@
   --footer-btn-hover-color:    rgba(0, 0, 0, 0.85);
   --footer-status:             rgba(0, 0, 0, 0.35);
   --footer-confirmed:          #059669;
+}
+
+.logoWrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 18px;
+  width: auto;
+}
+
+/* Theme-swap: white wordmark by default (dark footer), dark wordmark in light mode.
+   Keep display rules on the variant classes only - a display on .logo would tie
+   with these in specificity and win or lose on minified source order. */
+.logoLight {
+  display: none;
+}
+
+[data-theme='light'] .logoLight {
+  display: block;
+}
+
+.logoDark {
+  display: block;
+}
+
+[data-theme='light'] .logoDark {
+  display: none;
 }
 
 .inner {
