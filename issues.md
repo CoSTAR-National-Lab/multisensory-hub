@@ -77,16 +77,16 @@ Andy reports these implemented in the working doc on 2026-09-14 ("most" of them 
 
 ## Verify against the original source (numbers we could not confirm)
 
-- [ ] VML `goosebumps` 65/64/53 generational split – check the Age of Re-enchantment PDF; credit "Wunderman Thompson Intelligence (now VML)"
-- [ ] Gaming leisure-time shares (`22%` / 19% / 18%) – looks like Deloitte Digital Media Trends, not the VML report – verify which report contains it
-- [ ] AC/DC quote (`felt the time`) – verify against Fink, *The Youngs* (2013); also uses em-dashes (house style is en-dashes)
-- [ ] Cinema `37% cinemagoers` / 42% – BFI tracker gives 31% → 41% for all adults, a different metric – re-derive from the BFI report
-- [ ] Hollow-face `1.3m` viewing distance – plausible but unconfirmed; hedge to "roughly 1–1.5 m under binocular viewing" if the source doesn't state it
+- [x] VML `goosebumps` 65/64/53 generational split – CONFIRMED 2026-09-15 against the PDF (~/Downloads/The-age-of-re-enchantment-2.06.23.pdf, "By the numbers" p.21): Gen Z 65%, Millennials 64%, Gen X 53%, Boomers+ 36%; generations defined as 18–29 / 30–44 / 45–59 / 60+. Only fix: credit the report as "Wunderman Thompson Intelligence (now VML)" – the PDF cover says "A report by Wunderman Thompson Intelligence"
+- [x] Gaming leisure-time shares (`22%` / 19% / 18%) – NOT in the VML report (checked the PDF). Source is Newzoo (2023), *How different generations engage with video games today* (Gamer insight report): Gen Alpha 22%, Gen Z 19%, Millennials 18% of weekly *entertainment* time. Action: add a Newzoo reference and re-point the citation from ^1^; say "entertainment time" not "leisure time"
+- [ ] AC/DC quote (`felt the time`) – could not verify online 2026-09-15 (not indexed by web search, Google Books or Open Library full-text). Check the physical/ebook copy of Fink; if the sentence isn't verbatim, drop the quotation marks and paraphrase. Either way change the em-dashes to en-dashes
+- [x] Cinema `37% cinemagoers` / 42% – CONFIRMED 2026-09-15 in the BFI report (ref 6, *Watching films in the UK*, Feb 2023, chart "Age profile % of cinema-goers"): 16–34s were 37% of cinema-goers in Wave I and 42% in Wave III, vs 30% of the population. Two fixes: Wave I fieldwork was Aug–Sep 2019 (boost Feb 2020), so say "in 2019" not "2020"; and the sentence currently cites ^5^ (NRG) – re-point to ^6^ (BFI)
+- [x] Hollow-face `1.3m` viewing distance – MISREAD 2026-09-15: in Koessler & Hill 2015 the 1.3 m is the mask's height above the floor, not a viewing distance. Their measured flipping distances were ~1.5 m with two eyes (1468–1523 mm) and ~1.1–1.2 m with one eye. Reword: "when viewed from roughly 1.5 m and beyond with both eyes (closer with one eye covered)^87^"
 
 ## Typos
 
 - [x] `45 and over represented` – fixed 2026-08-24
-- [ ] `Ware of the Worlds` → "War of the Worlds"
+- [x] `Ware of the Worlds` → "War of the Worlds"
 
 ---
 
