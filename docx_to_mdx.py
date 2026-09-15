@@ -55,7 +55,7 @@ SHAREPOINT_CLIENT_ID = os.environ.get("SHAREPOINT_CLIENT_ID", "04b07795-8542-446
 SHAREPOINT_TENANT_ID = os.environ.get("SHAREPOINT_TENANT_ID", "rhul.ac.uk")
 # Drive item ID from the SharePoint URL (the d=w<id> parameter, without the leading 'w')
 SHAREPOINT_ITEM_ID   = os.environ.get("SHAREPOINT_ITEM_ID", "f7d2fd27f1f9437dbbf554f9a72ca37a")
-SHAREPOINT_DEST_NAME = os.environ.get("SHAREPOINT_DEST_NAME", "Multisensory Hub_Aug.docx")
+SHAREPOINT_DEST_NAME = os.environ.get("SHAREPOINT_DEST_NAME", "Multisensory Hub_Sept.docx")  # fallback only; the remote name is used
 # Token cache file so you only log in once
 TOKEN_CACHE_PATH = Path(".sharepoint_token_cache.json")
 
@@ -193,10 +193,12 @@ def fetch_from_sharepoint() -> bool:
 
     token = result["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
-    dest = INPUT_FOLDER / SHAREPOINT_DEST_NAME
+    # The local filename follows whatever the file is called on SharePoint
+    # (it has been renamed May -> Aug -> Sept); any other .docx left in
+    # report/ is a stale copy and is removed after a successful download.
 
     # ------------------------------------------------------------------
-    # Locate the item, compare its quickXorHash with the local copy, and
+    # Locate the item, compare its quickXorHash with the local copies, and
     # only download if the remote content differs.
     # ------------------------------------------------------------------
     # /me/drive works when the file is in the user's OneDrive; the shares
@@ -205,7 +207,7 @@ def fetch_from_sharepoint() -> bool:
     sharing_url = (
         "https://rhul.sharepoint.com/:w:/r/sites/StoryFutures/Shared%20Documents/"
         "CoSTAR/R%26D/Users/Projects/Multisensory%20Pillar/3%20Multisensory%20Hub/"
-        "Multisensory%20Hub_Aug.docx"
+        "Multisensory%20Hub_Sept.docx"
     )
     share_id = "u!" + base64.urlsafe_b64encode(sharing_url.encode()).rstrip(b"=").decode()
     item_urls = [
@@ -227,13 +229,21 @@ def fetch_from_sharepoint() -> bool:
         info = meta.json()
         remote_hash = ((info.get("file") or {}).get("hashes") or {}).get("quickXorHash")
         modified = info.get("lastModifiedDateTime", "unknown")
+        dest = INPUT_FOLDER / info.get("name", SHAREPOINT_DEST_NAME)
+        local_docx = find_docx_files(INPUT_FOLDER) if INPUT_FOLDER.exists() else []
 
-        if remote_hash and dest.exists():
-            if _quick_xor_hash(dest) == remote_hash:
+        if remote_hash:
+            same = [f for f in local_docx if _quick_xor_hash(f) == remote_hash]
+            if same:
+                local = same[0]
+                if local.name != dest.name:
+                    local.rename(dest)
+                    _c_info(f"  [SharePoint] Renamed {local.name} -> {dest.name} to match SharePoint")
                 _c_ok(f"  [SharePoint] {dest.name} is up to date "
                       f"(hash match, remote modified {modified}) — skipping download")
                 return True
-            _c_info(f"  [SharePoint] Remote file differs from local copy (remote modified {modified})")
+            if local_docx:
+                _c_info(f"  [SharePoint] Remote file differs from local copy (remote modified {modified})")
 
         print(f"  [SharePoint] Downloading {info.get('name', SHAREPOINT_DEST_NAME)} "
               f"({info.get('size', 0) // 1024} KB)...")
@@ -242,6 +252,10 @@ def fetch_from_sharepoint() -> bool:
             INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
             dest.write_bytes(resp.content)
             _c_ok(f"  [SharePoint] Saved {len(resp.content) // 1024} KB → {dest}")
+            for stale in local_docx:
+                if stale.resolve() != dest.resolve():
+                    stale.unlink()
+                    _c_info(f"  [SharePoint] Removed stale copy {stale.name}")
             return True
         last_error = f"{resp.status_code}: {resp.text[:200]}"
         _c_warn(f"  [SharePoint] Download failed ({resp.status_code}), trying next endpoint...")

@@ -96,7 +96,8 @@ Method used on 2026-08-24; repeat for future report revisions (this is also
 logged as a standing step in Claude's project memory).
 
 1. **Extract the text.** The Word doc is the single source of truth. Convert
-   with `pandoc "report/Multisensory Hub_Aug.docx" -t markdown --wrap=none -o <scratch>/report.md`.
+   with `pandoc "report/<the one .docx in report/>" -t markdown --wrap=none -o <scratch>/report.md`
+   (the file is renamed each revision: May, Aug, Sept...).
    Work from the extraction; cite locations by section name (line numbers
    change every save).
 
