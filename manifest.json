@@ -1,7 +1,7 @@
 {
-  "version": "827b6cf2ccc6",
+  "version": "23a8718eedc3",
   "report_name": "Multisensory Hub_Aug",
-  "generated_at": "2026-09-15T06:50:12.644901+00:00",
+  "generated_at": "2026-09-15T06:56:59.561115+00:00",
   "blocks": [
     {
       "block_id": "page-h1-01-about-page-overview-02ff07ff",
@@ -70,7 +70,7 @@
       "position_hash": "ed1d074077327fb1"
     },
     {
-      "block_id": "page-multisensory-experience-creative-opportunities-playing-with-expectation-2109006e",
+      "block_id": "page-multisensory-experience-creative-opportunities-playing-with-expectation-4104c474",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
@@ -81,7 +81,7 @@
       "position_hash": "0852384261103612"
     },
     {
-      "block_id": "page-multisensory-experience-creative-opportunities-boosting-presence-236942a5",
+      "block_id": "page-multisensory-experience-creative-opportunities-boosting-presence-268dcf5f",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
