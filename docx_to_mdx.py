@@ -2005,11 +2005,15 @@ def _normalise_pasted_chart_tables(markdown: str) -> str:
             pos = close.end()
             continue
         head = '\n'.join(lines[:i]).rstrip('\n')
-        has_open = re.search(r'\\?\[CHART-DATA:\s*[^\]\\\n]+?\\?\]`?\s*$', head)
+        # A trailing backslash means the author used a soft line break after the marker
+        has_open = re.search(r'\\?\[CHART-DATA:\s*[^\]\\\n]+?\\?\]`?\\?\s*$', head)
         if not has_open:
             chart_id = (close.group('cid') or 'latency-tolerance').strip()
             _c_warn(f"  [CHART-DATA] Pasted table found without an opening marker – assuming [CHART-DATA: {chart_id}]")
             head = head + f"\n\n[CHART-DATA: {chart_id}]"
+        else:
+            # Drop the soft-line-break backslash so the marker regex can match
+            head = re.sub(r'\\\s*$', '', head.rstrip())
         out.append(head + '\n\n' + '\n'.join(rows) + '\n\n' + close.group(0))
         pos = close.end()
     out.append(markdown[pos:])
