@@ -22,7 +22,7 @@ const config: Config = {
   customFields: {
     analyticsReportName: 'Multisensory Hub_Aug',
     // Injected by docx_to_mdx.py on each pipeline run — do not edit manually.
-    analyticsManifestVersion: '827b6cf2ccc6',
+    analyticsManifestVersion: '23a8718eedc3',
   },
 
   onBrokenLinks: 'warn',
