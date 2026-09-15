@@ -5,7 +5,7 @@
     "toleranceColour": "#440154FF",
     "imperceptibleColour": "#5DC863FF",
     "referenceColour": "#8A8A8AFF",
-    "legend": "Key latency tolerances for multisensory experiences. \"Acceptable\" bars show delays that studies or standards report as acceptable for a given activity; \"Not noticeable\" bars show delays reported as below detection; \"For comparison\" bars show how long sound takes to travel everyday distances through air – these are physics, not perceptual limits. Error bars show the range reported across studies, instruments or participants. The 20 ms motion-to-photon figure is an industry design target rather than a measured threshold. XR stands for eXtended Reality."
+    "legend": "Key latency tolerances for multisensory experiences. \"Acceptable\" bars show delays that studies or standards report as acceptable for a given activity; \"Not noticeable\" bars show delays reported as below detection; \"For comparison\" bars show how long sound takes to travel everyday distances through air -- these are physics, not perceptual limits. Error bars show the range reported across studies, instruments or participants. The 20 ms motion-to-photon figure is an industry design target rather than a measured threshold. XR stands for eXtended Reality."
   },
   "toleranceBars": [
     {
@@ -37,7 +37,7 @@
       "group": "Live sound monitoring"
     },
     {
-      "label": "Stage wedge monitors (varies by\ninstrument)",
+      "label": "Instruments via stage wedge monitors\n(range across instruments)",
       "value": 22.0,
       "errorBar": 20.0,
       "citations": [
@@ -112,7 +112,7 @@
       ]
     },
     {
-      "label": "Head-tracking lag in XR (detection\nthreshold varies 3–17 ms)",
+      "label": "Head-tracking lag in XR (detection\nthreshold varies 3--17 ms)",
       "value": 10.0,
       "errorBar": 7.0,
       "citations": [

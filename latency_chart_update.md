@@ -1,15 +1,28 @@
 # Latency chart – updated CHART-DATA table and related text
 
-Prepared 2026-09-14 from the sources cited in the table. Paste the table into
-the Word doc in place of the current one, between `[CHART-DATA: latency-tolerance]`
-and `[/CHART-DATA]`. Keep the header row exactly as shown; column order does not
-matter. The `Threshold` column now takes three values: `Acceptable`,
-`Not noticeable`, and the new `Reference` (physical delays drawn in a separate
-grey "for comparison" panel – the pipeline and chart have been updated to
-support it). Superscripts are the existing Mendeley citation numbers (49 Shay
-2024; 50 Stauffert 2020; 51 Carmack 2013; 52 Attig 2017; 53 ITU-R BT.1359-1;
-54 CCITT G.114; 55 Lester & Boley 2007) – re-insert them as Mendeley citations
-when pasting.
+Prepared 2026-09-14, updated 2026-09-15 from the sources cited in the table.
+
+**How to put it in Word.** Two ways work:
+
+1. *Paste as text (what was done on 2026-09-15).* Paste the table block below
+   straight into the doc. The pipeline now accepts this form even though Word
+   turns it into escaped text – but keep the line `[CHART-DATA: latency-tolerance]`
+   on its own paragraph immediately above the table and `[/CHART-DATA]` below it.
+   (The 15 Sept paste dropped the opening line; the parser now assumes
+   `latency-tolerance` and warns, but put it back.)
+2. *Real Word table.* Select the pasted lines, Insert → Table → Convert Text to
+   Table, separator "Other: |", then delete the `|---|` row. Cleaner, optional.
+
+**Citations must be real Mendeley citations.** The `^49^` markers in the table
+are plain text placeholders. Replace each with a Mendeley Cite insertion of the
+same reference (49 Shay 2024; 50 Stauffert 2020; 51 Carmack 2013; 52 Attig
+2017; 53 ITU-R BT.1359-1; 54 CCITT G.114; 55 Lester & Boley 2007), then Update
+bibliography. Until that is done the numbering in the rest of the report shifts
+down by seven (the site currently shows e.g. 49,50 where the docx had 56,57) and
+the chart's citation popups point at the wrong references.
+
+The `Threshold` column takes three values: `Acceptable`, `Not noticeable`, and
+`Reference` (physical delays drawn in a separate grey "for comparison" panel).
 
 ## CHART-DATA table
 

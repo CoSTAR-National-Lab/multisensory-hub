@@ -1923,6 +1923,71 @@ def remove_word_toc(markdown: str) -> str:
     return "\n".join(result)
 
 
+
+def _normalise_pasted_chart_tables(markdown: str) -> str:
+    r"""Accept a CHART-DATA table that was pasted into Word as plain markdown
+    text rather than inserted as a Word table.
+
+    Pandoc then emits one paragraph of hard-broken lines with every pipe,
+    caret and bracket backslash-escaped, e.g.
+
+        \## CHART-DATA table\
+        \| Group \| Label \| Value (ms) \| Error (ms) \| Threshold \|\
+        \|\-\--\|\-\--\|\-\--\|\-\--\|\-\--\|\
+        \| XR \| Tactile to visual\^52\^ \| 55 \| 0 \| Acceptable \|\
+        ...
+        \[/CHART-DATA\]
+
+    This rewrites such a block into the clean pipe-table form that
+    extract_chart_data_tables already understands: escapes removed, hard
+    line breaks turned into real rows, heading / divider / blank lines
+    dropped, and a [CHART-DATA: <id>] opening marker synthesised if the
+    author left it out (defaults to "latency-tolerance", the only chart of
+    this kind, and warns).
+    """
+    close_re = re.compile(r'`?\\?\[/CHART-DATA(?:\s+(?P<cid>[^\]\\\n]+?))?\\?\]`?')
+    out = []
+    pos = 0
+    for close in close_re.finditer(markdown):
+        before = markdown[pos:close.start()]
+        # Walk back over the pasted block: lines that are escaped-pipe rows,
+        # hard-break continuations, blank lines or a "## CHART-DATA" heading.
+        lines = before.split('\n')
+        i = len(lines)
+        row_re = re.compile(r'^\s*\\?\|.*$')
+        junk_re = re.compile(r'^\s*(\\?#+\s*CHART-DATA[^\n]*|\\)?\s*$')
+        while i > 0 and (row_re.match(lines[i - 1]) or junk_re.match(lines[i - 1])):
+            i -= 1
+        block = lines[i:]
+        rows = []
+        for ln in block:
+            ln = ln.rstrip()
+            if ln.endswith('\\'):
+                ln = ln[:-1]
+            ln = re.sub(r'\\([|^\[\]\-"#*_~])', r'\1', ln).strip()
+            if not ln or ln.startswith('#'):
+                continue
+            # Divider row: cells made only of dashes / en dashes / colons
+            if re.fullmatch(r'\|(?:\s*[-–—:]+\s*\|)+', ln):
+                continue
+            if ln.startswith('|'):
+                rows.append(ln)
+        if len(rows) < 2:
+            out.append(markdown[pos:close.end()])
+            pos = close.end()
+            continue
+        head = '\n'.join(lines[:i]).rstrip('\n')
+        has_open = re.search(r'\\?\[CHART-DATA:\s*[^\]\\\n]+?\\?\]`?\s*$', head)
+        if not has_open:
+            chart_id = (close.group('cid') or 'latency-tolerance').strip()
+            _c_warn(f"  [CHART-DATA] Pasted table found without an opening marker – assuming [CHART-DATA: {chart_id}]")
+            head = head + f"\n\n[CHART-DATA: {chart_id}]"
+        out.append(head + '\n\n' + '\n'.join(rows) + '\n\n' + close.group(0))
+        pos = close.end()
+    out.append(markdown[pos:])
+    return ''.join(out)
+
+
 def extract_chart_data_tables(markdown: str) -> str:
     """Detect [CHART-DATA: <id>] markers followed by a markdown table, extract
     the data as JSON into report/, and replace the marker+table with
@@ -2099,6 +2164,9 @@ def extract_chart_data_tables(markdown: str) -> str:
     # Only the latency id is stripped: other [CHART: id] markers (e.g.
     # workshop-participants) are deliberate manual embeds handled later.
     markdown = re.sub(r'\\?\[CHART:\s*latency-tolerance\\?\]', '', markdown)
+
+    # Repair tables that were pasted into Word as plain markdown text
+    markdown = _normalise_pasted_chart_tables(markdown)
 
     return marker_pattern.sub(_replace_table, markdown)
 
