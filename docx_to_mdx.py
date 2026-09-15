@@ -620,16 +620,30 @@ def collect_anchor_registry(markdown: str, pages: list[dict]) -> dict:
     """
     registry = {}
 
+    # Sub-heading positions, used to resolve _Ref bookmarks that do not sit on
+    # a heading (figures, paragraphs) to the nearest preceding heading id.
+    heading_positions = [
+        (m.start(), slugify(m.group(2).strip()))
+        for m in re.compile(r'^(#{3,6})\s+(.+)$', re.MULTILINE).finditer(markdown)
+    ]
+
     # Collect _Ref anchors
     ref_pattern = re.compile(r'\[\]\{#(_Ref\d+)\s+\.anchor\}')
     for match in ref_pattern.finditer(markdown):
         anchor_id = match.group(1)
         page_idx = _find_page_for_position(markdown, pages, match.start())
         if page_idx < len(pages):
+            # Nearest preceding sub-heading on the same page, if any
+            fragment = ''
+            for pos, slug in heading_positions:
+                if pos > match.start():
+                    break
+                if _find_page_for_position(markdown, pages, pos) == page_idx:
+                    fragment = slug
             registry[anchor_id] = {
                 'page_index': page_idx,
                 'page_slug': pages[page_idx]['slug'],
-                'fragment': anchor_id,
+                'fragment': fragment,
                 'page_level': pages[page_idx]['level'],
             }
 
@@ -815,14 +829,24 @@ def rewrite_internal_links(content: str, page_index: int, anchor_registry: dict,
 
         # Look up the fragment in the anchor registry
         if fragment not in anchor_registry:
+            if fragment.startswith('_Ref'):
+                # Word cross-reference whose bookmark no longer exists in the
+                # document (e.g. a re-inserted figure): keep the text, drop the
+                # link, so the site is not left with a dangling anchor.
+                WARNINGS.append(f"[Links] Dangling cross-reference '{link_text}' -> #{fragment} (bookmark not found) - link removed")
+                return link_text
             return full_match
 
         target_info = anchor_registry[fragment]
         target_page_idx = target_info['page_index']
 
-        # Same page - leave as-is
+        # Same page - leave as-is, unless the target is a Word bookmark whose
+        # fragment was resolved to a heading id (or to nothing)
         if target_page_idx == page_index:
-            return full_match
+            if not fragment.startswith('_Ref'):
+                return full_match
+            resolved = target_info['fragment']
+            return f'[{link_text}](#{resolved})' if resolved else link_text
 
         # Different page - rewrite with cross-page URL
         target_url = url_map.get(target_page_idx, '/')
@@ -1069,12 +1093,12 @@ def fix_mdx_syntax(content: str) -> str:
 
         # Fix leading whitespace inside italic markers.
         # After a word char: "word* text*" -> "word *text*" (move space outside)
-        text = re.sub(r'(\w)(?<!\*)\*\s+([^*\n]+?\*(?!\*))', r'\1 *\2', text)
+        text = re.sub(r'(\w)(?<!\*)\*[ \t]+([^*\n]+?\*(?!\*))', r'\1 *\2', text)
         # After punctuation (e.g. comma): ",* text*" -> ", *text*" (move space outside so
         # the * is preceded by a space and MDX recognises it as an italic opener)
         text = re.sub(r'([^\w\s*])(\*{1,3})\s+([^*\n]+?\*)', r'\1 \2\3', text)
         # After whitespace or start of line: "* text*" -> "*text*"
-        text = re.sub(r'(?<!\*)\*\s+([^*\n]+?\*(?!\*))', r'*\1', text)
+        text = re.sub(r'(?<!\*)\*[ \t]+([^*\n]+?\*(?!\*))', r'*\1', text)
 
         # Fix trailing whitespace inside bold markers: "**text: **" -> "**text:**"
         # This handles cases like "**Gen Z want goosebumps: **" where trailing space breaks bold
@@ -1115,11 +1139,11 @@ def fix_mdx_syntax(content: str) -> str:
             text = re.sub(r'(\w)\*(\w)\*(\w)', r'\1\2\3', text)
 
         # Merge adjacent bold markers: **word** **word** -> **word word**
-        text = re.sub(r'\*\*([^*]+)\*\*\s+\*\*([^*]+)\*\*', r'**\1 \2**', text)
+        text = re.sub(r'\*\*([^*\n]+)\*\*[ \t]+\*\*([^*\n]+)\*\*', r'**\1 \2**', text)
 
         # Merge adjacent italic markers: *word* *word* -> *word word*
         # Be careful not to match ** (bold)
-        text = re.sub(r'(?<!\*)\*([^*]+)\*\s+\*([^*]+)\*(?!\*)', r'*\1 \2*', text)
+        text = re.sub(r'(?<!\*)\*([^*\n]+)\*[ \t]+\*([^*\n]+)\*(?!\*)', r'*\1 \2*', text)
 
         # Fix lines that are ONLY "**" (empty bold)
         lines = text.split('\n')
@@ -1354,12 +1378,16 @@ def inject_subheading_reading_times(content: str) -> str:
         heading_text = match.group(2)
         heading_id = slugify(heading_text)
         aria_label = f"{minutes} minute read"
-        # Use a preceding <span id> anchor rather than {#id} syntax: in MDX files
-        # {#...} is treated as a JSX expression and renders as literal text.
+        # Give the heading an explicit Docusaurus id ({#id}) so sidebar and
+        # cross-reference links to #id are recognised by the broken-anchor
+        # checker (it only collects heading ids; <span id> / <a id> are ignored).
+        # {#id} only parses when the heading line contains no JSX, so the
+        # reading-time badge is emitted as the next flow element instead of
+        # inside the heading; CSS (.reading-time--section) pulls it back onto
+        # the heading line.
         replacement = (
-            f'<span id="{heading_id}"></span>\n\n'
-            f'{prefix} {heading_text} '
-            f'<span className="reading-time" role="note" aria-label="{aria_label}">'
+            f'{prefix} {heading_text} {{#{heading_id}}}\n\n'
+            f'<span className="reading-time reading-time--section" role="note" aria-label="{aria_label}">'
             f'<span aria-hidden="true">{minutes} min</span></span>'
         )
         content = content[:match.start()] + replacement + content[match.end():]
@@ -2275,6 +2303,7 @@ def sync_tracked_blocks_candidates(output_folder: Path) -> None:
     def norm(text: str) -> str:
         text = re.sub(r'<[^>]+>[^<]*</[^>]+>', '', text)
         text = re.sub(r'<[^>]+>', '', text)
+        text = re.sub(r'\{#[^}]*\}', '', text)  # explicit heading id
         text = re.sub(r'[*_`\[\]()\\]', '', text)
         return text.strip().lower()
 

@@ -43,13 +43,13 @@ const sidebars: SidebarsConfig = {
         {
           type: 'link',
           label: 'In Pursuit of Repetitive Beats',
-          href: '/in-focus-touch/practical-insights-3#case-study-in-pursuit-of-repetitive-beats',
+          href: '/in-focus-touch#case-study-in-pursuit-of-repetitive-beats',
           className: 'sidebar-case-study-item',
         },
         {
           type: 'link',
           label: "Jeff Wayne's War of the Worlds",
-          href: '/in-focus-touch/practical-insights-3#case-study-jeff-waynes-the-war-of-the-worlds-the-immersive-experience-layered-reality-london',
+          href: '/in-focus-touch#case-study-jeff-waynes-the-war-of-the-worlds-the-i',
           className: 'sidebar-case-study-item',
         },
         {
@@ -74,12 +74,6 @@ const sidebars: SidebarsConfig = {
           type: 'link',
           label: 'Body of Mine',
           href: '/in-focus-proprioception-and-body-map#case-study-body-of-mine',
-          className: 'sidebar-case-study-item',
-        },
-        {
-          type: 'link',
-          label: 'LED Wrist-bands',
-          href: '/in-focus-interactivity#case-study-led-wrist-bands',
           className: 'sidebar-case-study-item',
         },
       ],

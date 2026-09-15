@@ -497,3 +497,9 @@ blocks:
     the world outward with, for example, office interiors continuing beyond the screen,
     bullets fly out of the frame, and during a helicopter rescue the skyline ripples
     and tilts in sync with the action.'
+- block_id: case-study-the-matrix-in-shared-reality-case-study-the-matrix-in-shared-reality
+  heading: 'Case study: The Matrix in *Shared Reality* {#case-study-the-matrix-in-shared-reality}'
+  topic: space
+  concept: space
+  content_type: section
+  label: 'Case study: The Matrix in *Shared Reality* {#case-study-the-matrix-in-shared-reality}'

@@ -871,6 +871,38 @@ span[id^="ref-"]:target {
   -webkit-text-fill-color: var(--ifm-color-emphasis-600);
 }
 
+/* Section reading-time badge – emitted as the flow element after an H3/H4
+   (the heading carries an explicit {#id}, which cannot share a line with JSX).
+   :has() pulls the heading inline so the badge sits beside it as before;
+   browsers without :has() show the badge on the line below. */
+.markdown h3:has(+ .reading-time--section),
+.markdown h4:has(+ .reading-time--section) {
+  display: inline-block;
+  margin-right: 0.5em;
+}
+
+.markdown .reading-time--section {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-700);
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.markdown .reading-time--section::before {
+  content: '\00B7\00A0';
+}
+
+[data-theme='dark'] .markdown .reading-time--section {
+  color: var(--ifm-color-emphasis-600);
+}
+
+html[data-accessibility-contrast='high'] .markdown .reading-time--section {
+  color: var(--ifm-color-emphasis-900);
+  font-weight: 500;
+}
+
 /* Hide reading time in table of contents sidebar */
 .table-of-contents .reading-time {
   display: none;

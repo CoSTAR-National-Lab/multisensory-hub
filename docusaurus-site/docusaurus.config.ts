@@ -22,12 +22,19 @@ const config: Config = {
   customFields: {
     analyticsReportName: 'Multisensory Hub_Aug',
     // Injected by docx_to_mdx.py on each pipeline run — do not edit manually.
-    analyticsManifestVersion: '9b3457fb6e4e',
+    analyticsManifestVersion: '827b6cf2ccc6',
   },
 
   onBrokenLinks: 'warn',
   markdown: {
     format: 'mdx',
+    // future.v4 disables the MDX1 compatibility layer by default, which also
+    // drops support for explicit heading ids (`### Title {#id}`). The pipeline
+    // emits those so that sidebar and cross-reference anchors are real heading
+    // ids (the broken-anchor checker ignores <span id>), so keep them on.
+    mdx1Compat: {
+      headingIds: true,
+    },
   },
 
   i18n: {
