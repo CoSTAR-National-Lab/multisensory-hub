@@ -1,7 +1,7 @@
 {
-  "version": "23a8718eedc3",
-  "report_name": "Multisensory Hub_Aug",
-  "generated_at": "2026-09-15T06:56:59.561115+00:00",
+  "version": "84131e52531b",
+  "report_name": "Multisensory Hub_Sept",
+  "generated_at": "2026-09-15T07:27:21.793107+00:00",
   "blocks": [
     {
       "block_id": "page-h1-01-about-page-overview-02ff07ff",
@@ -70,7 +70,7 @@
       "position_hash": "ed1d074077327fb1"
     },
     {
-      "block_id": "page-multisensory-experience-creative-opportunities-playing-with-expectation-4104c474",
+      "block_id": "page-multisensory-experience-creative-opportunities-playing-with-expectation-5a2acc63",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
@@ -81,7 +81,7 @@
       "position_hash": "0852384261103612"
     },
     {
-      "block_id": "page-multisensory-experience-creative-opportunities-boosting-presence-268dcf5f",
+      "block_id": "page-multisensory-experience-creative-opportunities-boosting-presence-d9eca802",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
@@ -92,7 +92,7 @@
       "position_hash": "d453cab2e141208f"
     },
     {
-      "block_id": "page-multisensory-experience-practical-insights-d0075574",
+      "block_id": "page-multisensory-experience-practical-insights-b6d7bd2b",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
@@ -114,7 +114,7 @@
       "position_hash": "030a9f052003cd7a"
     },
     {
-      "block_id": "page-in-focus-vision-practical-insights-1-bebbc56c",
+      "block_id": "page-in-focus-vision-practical-insights-1-4f9206ef",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -125,7 +125,7 @@
       "position_hash": "6e60c450121f29e6"
     },
     {
-      "block_id": "page-in-focus-vision-inclusion-considerations-98d71da8",
+      "block_id": "page-in-focus-vision-inclusion-considerations-144b4926",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -136,14 +136,14 @@
       "position_hash": "36669b845a3e2411"
     },
     {
-      "block_id": "page-h1-05-in-focus-vision-overview-7edde6b1",
+      "block_id": "page-h1-05-in-focus-vision-overview-f6cdbc6d",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Vision",
       "page_path": "/05-in-focus-vision",
       "display_order": 0,
-      "content_hash": "4da752ec1266f80d",
+      "content_hash": "af3473817b293014",
       "position_hash": "b61f419ccc6b0f22"
     },
     {
@@ -169,18 +169,18 @@
       "position_hash": "209d432d7f9be719"
     },
     {
-      "block_id": "page-h1-06-in-focus-hearing-overview-94e95303",
+      "block_id": "page-h1-06-in-focus-hearing-overview-d49ab25e",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Hearing",
       "page_path": "/06-in-focus-hearing",
       "display_order": 0,
-      "content_hash": "948f12604117bc27",
+      "content_hash": "cf4e6adca65b4943",
       "position_hash": "92cc3182f4c7d57f"
     },
     {
-      "block_id": "page-in-focus-touch-practical-insights-3-1256ff8c",
+      "block_id": "page-in-focus-touch-practical-insights-3-ecc1a5d2",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -191,7 +191,7 @@
       "position_hash": "d5bb20a87ed52c56"
     },
     {
-      "block_id": "page-in-focus-touch-inclusion-considerations-2-d0913977",
+      "block_id": "page-in-focus-touch-inclusion-considerations-2-ded43919",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -202,7 +202,7 @@
       "position_hash": "416d50cb8ec32a5b"
     },
     {
-      "block_id": "page-h1-07-in-focus-touch-overview-06c035ab",
+      "block_id": "page-h1-07-in-focus-touch-overview-d09c28d5",
       "topic": "h1",
       "concept": "",
       "content_type": "",
@@ -213,7 +213,7 @@
       "position_hash": "7dda9622cef4180d"
     },
     {
-      "block_id": "page-in-focus-smell-practical-insights-4-7eb38b27",
+      "block_id": "page-in-focus-smell-practical-insights-4-7ec994be",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -224,7 +224,7 @@
       "position_hash": "d1d71b54a93ca994"
     },
     {
-      "block_id": "page-in-focus-smell-inclusion-considerations-3-c5045609",
+      "block_id": "page-in-focus-smell-inclusion-considerations-3-a0f123a3",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -235,18 +235,18 @@
       "position_hash": "2756f03b606bb684"
     },
     {
-      "block_id": "page-h1-08-in-focus-smell-overview-b651e8db",
+      "block_id": "page-h1-08-in-focus-smell-overview-18f1e2e5",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Smell",
       "page_path": "/08-in-focus-smell",
       "display_order": 0,
-      "content_hash": "337749007a4ce410",
+      "content_hash": "a43f22593a1ca181",
       "position_hash": "d8c4e174f47f8f57"
     },
     {
-      "block_id": "page-in-focus-sense-of-space-practical-insights-5-65624699",
+      "block_id": "page-in-focus-sense-of-space-practical-insights-5-73d34b74",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -257,7 +257,7 @@
       "position_hash": "e96ee56b77038df4"
     },
     {
-      "block_id": "page-in-focus-sense-of-space-inclusion-considerations-4-663b02c8",
+      "block_id": "page-in-focus-sense-of-space-inclusion-considerations-4-a54eb9c2",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -268,14 +268,14 @@
       "position_hash": "dcae7a36a6748150"
     },
     {
-      "block_id": "page-h1-09-in-focus-sense-of-space-overview-61ce17c2",
+      "block_id": "page-h1-09-in-focus-sense-of-space-overview-4d1548dd",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Sense of space",
       "page_path": "/09-in-focus-sense-of-space",
       "display_order": 0,
-      "content_hash": "8d7cd3e8b74171de",
+      "content_hash": "518c07d015871ff6",
       "position_hash": "f07e99146f270a12"
     },
     {
@@ -290,7 +290,7 @@
       "position_hash": "8d072ee481c5594f"
     },
     {
-      "block_id": "page-in-focus-personal-and-peripersonal-space-practical-insights-6-d11056c1",
+      "block_id": "page-in-focus-personal-and-peripersonal-space-practical-insights-6-cd8aee51",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -301,7 +301,7 @@
       "position_hash": "6841996b1e431648"
     },
     {
-      "block_id": "page-in-focus-personal-and-peripersonal-space-inclusion-considerations-5-49a25f2d",
+      "block_id": "page-in-focus-personal-and-peripersonal-space-inclusion-considerations-5-33b71a20",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -312,7 +312,7 @@
       "position_hash": "8199c50e273771ac"
     },
     {
-      "block_id": "page-h1-10-in-focus-personal-and-peripersonal-space-overview-52deebe7",
+      "block_id": "page-h1-10-in-focus-personal-and-peripersonal-space-overview-2d126b14",
       "topic": "h1",
       "concept": "",
       "content_type": "",
@@ -323,7 +323,7 @@
       "position_hash": "b4d9280228abc523"
     },
     {
-      "block_id": "page-in-focus-interoception-practical-insights-7-13a9ffc9",
+      "block_id": "page-in-focus-interoception-practical-insights-7-dc33bbb9",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -345,18 +345,18 @@
       "position_hash": "9aa84f1a9fe00c5d"
     },
     {
-      "block_id": "page-h1-11-in-focus-interoception-overview-403974ee",
+      "block_id": "page-h1-11-in-focus-interoception-overview-dec4f8cb",
       "topic": "h1",
       "concept": "",
       "content_type": "",
       "label": "In focus: Interoception",
       "page_path": "/11-in-focus-interoception",
       "display_order": 0,
-      "content_hash": "403974ee02c3aaf2",
+      "content_hash": "dec4f8cb9dc29b22",
       "position_hash": "87b4ea6f551a7427"
     },
     {
-      "block_id": "page-in-focus-proprioception-and-body-map-practical-insights-8-317a3022",
+      "block_id": "page-in-focus-proprioception-and-body-map-practical-insights-8-07e6c913",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -367,18 +367,18 @@
       "position_hash": "350bc4a3ae6c95d0"
     },
     {
-      "block_id": "page-in-focus-proprioception-and-body-map-technical-challenges-4379dfec",
+      "block_id": "page-in-focus-proprioception-and-body-map-technical-challenges-e4e20c73",
       "topic": "in",
       "concept": "",
       "content_type": "",
       "label": "Technical challenges",
       "page_path": "/12-in-focus-proprioception-and-body-map/02-technical-challenges",
       "display_order": 0,
-      "content_hash": "4379dfecf12091f8",
+      "content_hash": "e4e20c73ad212060",
       "position_hash": "7bc2fcfa1bfe1d0e"
     },
     {
-      "block_id": "page-in-focus-proprioception-and-body-map-inclusion-considerations-7-384865c1",
+      "block_id": "page-in-focus-proprioception-and-body-map-inclusion-considerations-7-5a80408a",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -389,7 +389,7 @@
       "position_hash": "b70cb79bfc23f847"
     },
     {
-      "block_id": "page-h1-12-in-focus-proprioception-and-body-map-overview-cd815694",
+      "block_id": "page-h1-12-in-focus-proprioception-and-body-map-overview-b9a23332",
       "topic": "h1",
       "concept": "",
       "content_type": "",
@@ -422,7 +422,7 @@
       "position_hash": "9bb3d585d11cc95f"
     },
     {
-      "block_id": "page-h1-13-in-focus-interactivity-overview-cd3bc178",
+      "block_id": "page-h1-13-in-focus-interactivity-overview-73fae177",
       "topic": "h1",
       "concept": "",
       "content_type": "",
@@ -433,7 +433,7 @@
       "position_hash": "92fef7364b494d7b"
     },
     {
-      "block_id": "page-h1-14-references-overview-b412fb99",
+      "block_id": "page-h1-14-references-overview-de24f07a",
       "topic": "references",
       "concept": "",
       "content_type": "",
