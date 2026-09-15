@@ -345,6 +345,13 @@ body {
   text-decoration-color: currentColor;
 }
 
+/* Citation superscripts (RefPopup) are not underlined – the generic
+   .markdown a rule above would otherwise outrank the component's own style. */
+.markdown sup a,
+.markdown sup a:hover {
+  text-decoration: none;
+}
+
 /* Lists */
 .markdown ul,
 .markdown ol {
