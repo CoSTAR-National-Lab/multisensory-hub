@@ -351,8 +351,15 @@ body {
    which in dark mode gave light text on the light secondary background. */
 .markdown a.button,
 .markdown a.button:hover {
-  color: var(--ifm-button-color);
   text-decoration: none;
+}
+
+/* Infima's --ifm-button-color for secondary buttons is the *inverse* text
+   colour, which is white on the light-grey secondary background; use the
+   base text colour instead (dark on light, light on dark). */
+.markdown a.button--secondary,
+.markdown a.button--secondary:hover {
+  color: var(--ifm-font-color-base);
 }
 
 [data-theme='dark'] .markdown a.button--secondary {
