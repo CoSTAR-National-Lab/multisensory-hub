@@ -345,6 +345,27 @@ body {
   text-decoration-color: currentColor;
 }
 
+/* Inline navigation buttons in body text – the pipeline emits
+   <a class="button button--secondary button--sm">. The generic .markdown a
+   rule above (color: inherit, underline) outranked Infima's button colour,
+   which in dark mode gave light text on the light secondary background. */
+.markdown a.button,
+.markdown a.button:hover {
+  color: var(--ifm-button-color);
+  text-decoration: none;
+}
+
+[data-theme='dark'] .markdown a.button--secondary {
+  --ifm-button-background-color: var(--ifm-color-emphasis-200);
+  --ifm-button-border-color: var(--ifm-color-emphasis-300);
+  color: var(--ifm-font-color-base);
+}
+
+[data-theme='dark'] .markdown a.button--secondary:hover {
+  --ifm-button-background-color: var(--ifm-color-emphasis-300);
+  color: var(--ifm-font-color-base);
+}
+
 /* Citation superscripts (RefPopup) are not underlined – the generic
    .markdown a rule above would otherwise outrank the component's own style. */
 .markdown sup a,
