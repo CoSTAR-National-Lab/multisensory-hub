@@ -1,7 +1,7 @@
 {
-  "version": "45669b3b4f92",
+  "version": "9b3457fb6e4e",
   "report_name": "Multisensory Hub_Aug",
-  "generated_at": "2026-09-14T13:01:39.909219+00:00",
+  "generated_at": "2026-09-15T06:35:09.621212+00:00",
   "blocks": [
     {
       "block_id": "who-is-this-report-for",
@@ -70,14 +70,14 @@
       "position_hash": "62eeb2975115300b"
     },
     {
-      "block_id": "page-audience-trends-towards-multisensory-trends-by-age-d33bf5b4",
+      "block_id": "page-audience-trends-towards-multisensory-trends-by-age-3c5d868b",
       "topic": "audience",
       "concept": "",
       "content_type": "",
       "label": "Trends by age",
       "page_path": "/02-audience-trends-towards-multisensory/01-trends-by-age",
       "display_order": 0,
-      "content_hash": "d33bf5b4a98d4eab",
+      "content_hash": "3c5d868b7d157036",
       "position_hash": "1c326e5f56c15a45"
     },
     {
@@ -224,7 +224,7 @@
       "position_hash": "fb0ae001b90cc563"
     },
     {
-      "block_id": "page-multisensory-experience-practical-insights-960c331a",
+      "block_id": "page-multisensory-experience-practical-insights-d0075574",
       "topic": "multisensory",
       "concept": "",
       "content_type": "",
@@ -242,7 +242,7 @@
       "label": "Latency tolerances",
       "page_path": "/04-multisensory-experience/03-practical-insights",
       "display_order": 1,
-      "content_hash": "edd10a20f88ef7af",
+      "content_hash": "38fc3aaa557dbc6d",
       "position_hash": "57af834dd36171b1"
     },
     {
@@ -312,7 +312,7 @@
       "position_hash": "030a9f052003cd7a"
     },
     {
-      "block_id": "page-in-focus-vision-practical-insights-1-a0b3f6c3",
+      "block_id": "page-in-focus-vision-practical-insights-1-ce70679c",
       "topic": "in",
       "concept": "",
       "content_type": "",
@@ -352,7 +352,7 @@
       "label": "Visual illusions",
       "page_path": "/05-in-focus-vision/01-practical-insights-1",
       "display_order": 3,
-      "content_hash": "cb4f5b422fd2a5d1",
+      "content_hash": "9c8ed21515279302",
       "position_hash": "148a743c3628625f"
     },
     {
@@ -620,7 +620,7 @@
       "position_hash": "1fb0a797f4050a18"
     },
     {
-      "block_id": "page-h1-07-in-focus-touch-overview-07abc8be",
+      "block_id": "page-h1-07-in-focus-touch-overview-06c035ab",
       "topic": "h1",
       "concept": "",
       "content_type": "",
@@ -660,7 +660,7 @@
       "label": "Case study: Jeff Wayne",
       "page_path": "/07-in-focus-touch",
       "display_order": 3,
-      "content_hash": "14bccba575db48c6",
+      "content_hash": "f412de99db0d50fd",
       "position_hash": "9a894ad6283e7ddb"
     },
     {
@@ -1203,7 +1203,7 @@
       "position_hash": "32c683814d73b7a4"
     },
     {
-      "block_id": "page-h1-14-references-overview-7a915268",
+      "block_id": "page-h1-14-references-overview-b412fb99",
       "topic": "references",
       "concept": "",
       "content_type": "",
