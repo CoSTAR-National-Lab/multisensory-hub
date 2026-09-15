@@ -13,13 +13,18 @@ Prepared 2026-09-14, updated 2026-09-15 from the sources cited in the table.
 2. *Real Word table.* Select the pasted lines, Insert → Table → Convert Text to
    Table, separator "Other: |", then delete the `|---|` row. Cleaner, optional.
 
-**Citations must be real Mendeley citations.** The `^49^` markers in the table
-are plain text placeholders. Replace each with a Mendeley Cite insertion of the
-same reference (49 Shay 2024; 50 Stauffert 2020; 51 Carmack 2013; 52 Attig
-2017; 53 ITU-R BT.1359-1; 54 CCITT G.114; 55 Lester & Boley 2007), then Update
-bibliography. Until that is done the numbering in the rest of the report shifts
-down by seven (the site currently shows e.g. 49,50 where the docx had 56,57) and
-the chart's citation popups point at the wrong references.
+**Citations in the table are keys, not numbers.** Each Label cell ends with a
+key in braces, e.g. `{Shay 2024}` or `{Shay 2024; Lester Boley 2007}`. At build
+time the pipeline resolves each key against the Mendeley bibliography (every
+word in the key must appear in the entry, plus the year) and writes the current
+reference number into the chart, so Mendeley renumbering never breaks it.
+The keys themselves are invisible on the site.
+
+For a source to be in the bibliography it still needs one real Mendeley
+citation somewhere in the document. Put a single citation group on the
+sentence that introduces the chart, covering all seven sources: Shay 2024;
+Stauffert 2020; Carmack 2013; Attig 2017; ITU-R BT.1359-1 (1998); CCITT G.114
+(1988); Lester & Boley 2007.
 
 The `Threshold` column takes three values: `Acceptable`, `Not noticeable`, and
 `Reference` (physical delays drawn in a separate grey "for comparison" panel).
@@ -28,23 +33,23 @@ The `Threshold` column takes three values: `Acceptable`, `Not noticeable`, and
 
 | Group | Label | Value (ms) | Error (ms) | Threshold |
 |---|---|---|---|---|
-| Collaborative music | Rhythm-section groups playing by ear (jazz, rock)^49^ | 7.5 | 2.5 | Acceptable |
-| Collaborative music | Orchestra following a conductor^49^ | 40 | 0 | Acceptable |
-| Live sound monitoring | Own voice via in-ear monitors^49,55^ | 8 | 2 | Acceptable |
-| Live sound monitoring | Stage wedge monitors (varies by instrument)^55^ | 22 | 20 | Acceptable |
-| XR | Motion to photon (industry design target)^50,51^ | 20 | 0 | Acceptable |
-| XR | Tactile to visual^52^ | 55 | 0 | Acceptable |
-| XR | Tactile to audio^52^ | 25 | 0 | Acceptable |
-| TV | Audio ahead of video^53^ | 90 | 0 | Acceptable |
-| TV | Video ahead of audio^53^ | 185 | 0 | Acceptable |
-| Speech | Speech over mobile phone^54^ | 150 | 50 | Acceptable |
-| Live sound monitoring | Own voice via in-ear monitors^49,55^ | 1.5 | 0.5 | Not noticeable |
-| XR | Head-tracking lag in XR (detection threshold varies 3–17 ms)^50^ | 10 | 7 | Not noticeable |
-| TV | Broadcast sync, audio ahead of video^53^ | 45 | 0 | Not noticeable |
-| TV | Broadcast sync, video ahead of audio^53^ | 125 | 0 | Not noticeable |
+| Collaborative music | Rhythm-section groups playing by ear (jazz, rock) {Shay 2024} | 7.5 | 2.5 | Acceptable |
+| Collaborative music | Orchestra following a conductor {Shay 2024} | 40 | 0 | Acceptable |
+| Live sound monitoring | Own voice via in-ear monitors {Shay 2024; Lester Boley 2007} | 8 | 2 | Acceptable |
+| Live sound monitoring | Stage wedge monitors (varies by instrument) {Lester Boley 2007} | 22 | 20 | Acceptable |
+| XR | Motion to photon (industry design target) {Stauffert 2020; Carmack 2013} | 20 | 0 | Acceptable |
+| XR | Tactile to visual {Attig 2017} | 55 | 0 | Acceptable |
+| XR | Tactile to audio {Attig 2017} | 25 | 0 | Acceptable |
+| TV | Audio ahead of video {Telecommunication Union 1998} | 90 | 0 | Acceptable |
+| TV | Video ahead of audio {Telecommunication Union 1998} | 185 | 0 | Acceptable |
+| Speech | Speech over mobile phone {CCITT 1988} | 150 | 50 | Acceptable |
+| Live sound monitoring | Own voice via in-ear monitors {Shay 2024; Lester Boley 2007} | 1.5 | 0.5 | Not noticeable |
+| XR | Head-tracking lag in XR (detection threshold varies 3–17 ms) {Stauffert 2020} | 10 | 7 | Not noticeable |
+| TV | Broadcast sync, audio ahead of video {Telecommunication Union 1998} | 45 | 0 | Not noticeable |
+| TV | Broadcast sync, video ahead of audio {Telecommunication Union 1998} | 125 | 0 | Not noticeable |
 | Sound travel | Sound travelling 2 m through air | 6 | 0 | Reference |
 | Sound travel | Sound travelling 10 m through air | 29 | 0 | Reference |
-| Sound travel | Front to back of a 12 m orchestra stage^49^ | 35 | 0 | Reference |
+| Sound travel | Front to back of a 12 m orchestra stage {Shay 2024} | 35 | 0 | Reference |
 | [LEGEND] | Key latency tolerances for multisensory experiences. "Acceptable" bars show delays that studies or standards report as acceptable for a given activity; "Not noticeable" bars show delays reported as below detection; "For comparison" bars show how long sound takes to travel everyday distances through air – these are physics, not perceptual limits. Error bars show the range reported across studies, instruments or participants. The 20 ms motion-to-photon figure is an industry design target rather than a measured threshold. XR stands for eXtended Reality. | | | |
 
 ## What changed and why
@@ -76,7 +81,7 @@ New: The graph below illustrates the lags reported as acceptable, or as not noti
 
 Old: For broadcast-style audiovisual sync, viewers begin to detect mismatch at roughly 45 ms when audio leads video, and 125 ms when video leads audio.
 
-New: For broadcast-style audiovisual sync, viewers begin to detect mismatch at roughly 45 ms when audio leads video and 125 ms when video leads audio, and judge it unacceptable beyond roughly 90 ms and 185 ms respectively^53^.
+New: For broadcast-style audiovisual sync, viewers begin to detect mismatch at roughly 45 ms when audio leads video and 125 ms when video leads audio, and judge it unacceptable beyond roughly 90 ms and 185 ms respectively {Telecommunication Union 1998}.
 
 **Motion sickness and comfort paragraph**
 

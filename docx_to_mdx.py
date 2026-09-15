@@ -2033,8 +2033,12 @@ def extract_chart_data_tables(markdown: str) -> str:
     "For comparison" → reference bars (e.g. physical sound-travel times that
     are not perceptual limits, drawn in a separate grey panel).
 
-    Mendeley/Pandoc superscripts in the Citations cell (e.g. ^46^ or ^46,47^)
-    are parsed into a list of integer reference numbers.
+    Citations may be Mendeley superscripts (^46^ or ^46,47^) or, preferably,
+    citation keys in braces that are resolved against the bibliography at
+    build time: {Shay 2024}, {Lester Boley 2007}, {Shay 2024; Attig 2017}.
+    Keys survive Mendeley renumbering; plain numbers do not. Each source
+    still needs one real Mendeley citation somewhere in the document so
+    that it appears in the bibliography.
     """
     # Pandoc escapes [ and ] in plain paragraphs → \[CHART-DATA: ...\]
     # Also handle unescaped form and backtick-wrapped inline-code form.
@@ -2051,14 +2055,53 @@ def extract_chart_data_tables(markdown: str) -> str:
         re.MULTILINE
     )
 
+    # Bibliography index for {Author Year} citation keys: built once from the
+    # numbered Mendeley reference list at the end of the document.
+    bib_entries: list[tuple[int, str]] = []
+    ref_section = re.search(r'^#{1,2}\s+References\s*$', markdown, re.MULTILINE)
+    if ref_section:
+        for bm in re.finditer(r'^(\d+)\\?\.\s+(.+)$', markdown[ref_section.end():], re.MULTILINE):
+            bib_entries.append((int(bm.group(1)), bm.group(2)))
+
+    def _resolve_citation_key(key: str) -> int | None:
+        """Resolve a key like "Shay 2024" or "Lester Boley 2007" to the current
+        Mendeley reference number. Every word in the key must appear in the
+        bibliography entry (case-insensitive) and the year must appear too.
+        Warns on no match or an ambiguous match."""
+        words = [w for w in re.split(r'[\s,&]+', key.strip()) if w]
+        if not words:
+            return None
+        year = words[-1] if re.fullmatch(r'\d{4}', words[-1]) else None
+        terms = [w.lower() for w in (words[:-1] if year else words)]
+        hits = []
+        for num, text in bib_entries:
+            low = text.lower()
+            if all(re.search(r'\b' + re.escape(t) + r'\b', low) for t in terms) and (year is None or year in text):
+                hits.append(num)
+        if len(hits) == 1:
+            return hits[0]
+        if not hits:
+            WARNINGS.append(f"[CHART-DATA] Citation key '{{{key.strip()}}}' matches no bibliography entry - row left uncited")
+        else:
+            WARNINGS.append(f"[CHART-DATA] Citation key '{{{key.strip()}}}' is ambiguous (refs {hits}) - add more words to the key")
+        return None
+
     def _parse_cell_citations(cell: str) -> list[int]:
-        """Extract reference numbers from superscripts like ^46^ or ^46,47^."""
+        """Extract reference numbers from superscripts like ^46^ or ^46,47^,
+        or from citation keys like {Shay 2024} / {Shay 2024; Lester 2007}.
+        Keys are resolved against the Mendeley bibliography at build time, so
+        they survive renumbering (plain ^N^ numbers do not)."""
         nums = []
         for m in re.finditer(r'\^([\d,\s]+)\^', cell):
             for part in m.group(1).split(','):
                 part = part.strip()
                 if part.isdigit():
                     nums.append(int(part))
+        for m in re.finditer(r'\{([^{}]+)\}', cell):
+            for key in m.group(1).split(';'):
+                n = _resolve_citation_key(key)
+                if n is not None and n not in nums:
+                    nums.append(n)
         return nums
 
     def _col_index(headers: list[str], *candidates: str) -> int:
@@ -2138,7 +2181,7 @@ def extract_chart_data_tables(markdown: str) -> str:
                 citations = _parse_cell_citations(row[i_citations])
             else:
                 citations = _parse_cell_citations(raw_label)
-                raw_label = re.sub(r'\s*\^[\d,\s]+\^', '', raw_label).strip()
+                raw_label = re.sub(r'\s*(\^[\d,\s]+\^|\{[^{}]+\})', '', raw_label).strip()
             label     = _wrap_label(raw_label)
             raw_val   = re.sub(r'[^\d.]', '', row[i_value])
             raw_err   = re.sub(r'[^\d.]', '', row[i_error]) if i_error != -1 and i_error < len(row) else '0'
