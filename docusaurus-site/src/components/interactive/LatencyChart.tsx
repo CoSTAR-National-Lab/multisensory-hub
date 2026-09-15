@@ -83,21 +83,22 @@ function formatRef(ref: Reference): string {
 }
 
 interface CitationPopupProps {
-  refNum: number;
+  refNums: number[];
   onClose: () => void;
 }
 
-function CitationPopup({ refNum, onClose }: CitationPopupProps) {
-  const ref = references.find(r => r.num === refNum);
+function CitationPopup({ refNums, onClose }: CitationPopupProps) {
+  const entries = refNums.map(num => ({ num, ref: references.find(r => r.num === num) }));
+  const refNum = refNums[0];
   const [copied, setCopied] = useState(false);
 
-  const displayText = ref ? formatRef(ref) : `Reference ${refNum}`;
-  const doi  = ref?.doi;
-  const url  = ref?.url;
+  const displayText = entries
+    .map(({ num, ref }) => `[${num}] ${ref ? formatRef(ref) : `Reference ${num}`}`)
+    .join('\n');
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(`[${refNum}] ${displayText}`);
+      await navigator.clipboard.writeText(displayText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {}
@@ -139,41 +140,45 @@ function CitationPopup({ refNum, onClose }: CitationPopupProps) {
           fontSize: '0.875rem',
         }}
       >
-        <div style={{ fontWeight: 'bold', color: 'var(--ifm-color-primary)', marginBottom: 6 }}>
-          [{refNum}]
-        </div>
-        {ref ? (
-          <div style={{ marginBottom: 12 }}>
-            {ref.authors && <div style={{ fontWeight: 500, marginBottom: 4, lineHeight: 1.4 }}>{ref.authors}</div>}
-            {ref.title   && <div style={{ marginBottom: 4, lineHeight: 1.4 }}>{ref.title}</div>}
-            <div style={{ fontSize: '0.813rem', color: 'var(--ifm-font-color-secondary)', lineHeight: 1.4 }}>
-              {ref.journal && <span style={{ fontStyle: 'italic' }}>{ref.journal}</span>}
-              {ref.volume  && <span>, {ref.volume}</span>}
-              {ref.pages   && <span>: {ref.pages}</span>}
-              {ref.year    && <span> ({ref.year})</span>}
+        {entries.map(({ num, ref }, i) => (
+          <div key={num} style={i > 0 ? { borderTop: '1px dashed var(--ifm-color-emphasis-300)', marginTop: 10, paddingTop: 10 } : undefined}>
+            <div style={{ fontWeight: 'bold', color: 'var(--ifm-color-primary)', marginBottom: 6 }}>
+              [{num}]
             </div>
-            {(doi || url) && (
-              <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px dashed var(--ifm-color-emphasis-200)' }}>
-                {doi && (
-                  <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer"
-                    style={{ fontSize: '0.75rem', color: 'var(--ifm-color-primary)', wordBreak: 'break-all' }}
-                    onClick={e => e.stopPropagation()}>
-                    DOI: {doi}
-                  </a>
-                )}
-                {!doi && url && (
-                  <a href={url} target="_blank" rel="noopener noreferrer"
-                    style={{ fontSize: '0.75rem', color: 'var(--ifm-color-primary)', wordBreak: 'break-all' }}
-                    onClick={e => e.stopPropagation()}>
-                    {url.length > 50 ? url.slice(0, 50) + '…' : url}
-                  </a>
+            {ref ? (
+              <div style={{ marginBottom: 12 }}>
+                {ref.authors && <div style={{ fontWeight: 500, marginBottom: 4, lineHeight: 1.4 }}>{ref.authors}</div>}
+                {ref.title   && <div style={{ marginBottom: 4, lineHeight: 1.4 }}>{ref.title}</div>}
+                <div style={{ fontSize: '0.813rem', color: 'var(--ifm-font-color-secondary)', lineHeight: 1.4 }}>
+                  {ref.journal && <span style={{ fontStyle: 'italic' }}>{ref.journal}</span>}
+                  {ref.volume  && <span>, {ref.volume}</span>}
+                  {ref.pages   && <span>: {ref.pages}</span>}
+                  {ref.year    && <span> ({ref.year})</span>}
+                </div>
+                {(ref.doi || ref.url) && (
+                  <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px dashed var(--ifm-color-emphasis-200)' }}>
+                    {ref.doi && (
+                      <a href={`https://doi.org/${ref.doi}`} target="_blank" rel="noopener noreferrer"
+                        style={{ fontSize: '0.75rem', color: 'var(--ifm-color-primary)', wordBreak: 'break-all' }}
+                        onClick={e => e.stopPropagation()}>
+                        DOI: {ref.doi}
+                      </a>
+                    )}
+                    {!ref.doi && ref.url && (
+                      <a href={ref.url} target="_blank" rel="noopener noreferrer"
+                        style={{ fontSize: '0.75rem', color: 'var(--ifm-color-primary)', wordBreak: 'break-all' }}
+                        onClick={e => e.stopPropagation()}>
+                        {ref.url.length > 50 ? ref.url.slice(0, 50) + '…' : ref.url}
+                      </a>
+                    )}
+                  </div>
                 )}
               </div>
+            ) : (
+              <div style={{ marginBottom: 12, lineHeight: 1.5 }}>Reference {num}</div>
             )}
           </div>
-        ) : (
-          <div style={{ marginBottom: 12, lineHeight: 1.5 }}>Reference {refNum}</div>
-        )}
+        ))}
         <div style={{ display: 'flex', gap: 8, borderTop: '1px solid var(--ifm-color-emphasis-200)', paddingTop: 10 }}>
           {[
             { label: copied ? 'Copied!' : 'Copy', action: handleCopy },
@@ -206,7 +211,7 @@ interface YLabelProps {
   x: number;
   yCenter: number;
   citations?: number[];
-  onCitationClick: (refNum: number) => void;
+  onCitationClick: (refNums: number[]) => void;
 }
 
 function YLabel({ label, x, yCenter, citations, onCitationClick }: YLabelProps) {
@@ -232,8 +237,7 @@ function YLabel({ label, x, yCenter, citations, onCitationClick }: YLabelProps) 
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
             e.stopPropagation();
-            // Open popup for first citation number; multi-citations open first
-            onCitationClick(citations![0]);
+            onCitationClick(citations!);
           }}
           role="button"
           aria-label={`Reference${citations!.length > 1 ? 's' : ''} ${citStr}`}
@@ -252,7 +256,7 @@ interface PanelProps {
   colour: string;
   showXAxis?: boolean;
   baseDelay?: number;
-  onCitationClick: (refNum: number) => void;
+  onCitationClick: (refNums: number[]) => void;
 }
 
 function Panel({ bars, colour, showXAxis = false, baseDelay = 0, onCitationClick }: PanelProps) {
@@ -368,7 +372,7 @@ function Panel({ bars, colour, showXAxis = false, baseDelay = 0, onCitationClick
 function LatencyChartInner() {
   const wrapperRef = useRef<HTMLElement>(null);
   const [animKey, setAnimKey] = useState(0);
-  const [openRef, setOpenRef] = useState<number | null>(null);
+  const [openRef, setOpenRef] = useState<number[] | null>(null);
 
   useEffect(() => {
     const el = wrapperRef.current;
@@ -385,8 +389,8 @@ function LatencyChartInner() {
     return () => observer.disconnect();
   }, []);
 
-  const handleCitationClick = useCallback((refNum: number) => {
-    setOpenRef(refNum);
+  const handleCitationClick = useCallback((refNums: number[]) => {
+    setOpenRef(refNums);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -490,7 +494,7 @@ function LatencyChartInner() {
 
       {/* Citation popup — rendered at document.body via portal, never clipped */}
       {openRef !== null && (
-        <CitationPopup refNum={openRef} onClose={handleClose} />
+        <CitationPopup refNums={openRef} onClose={handleClose} />
       )}
     </figure>
   );

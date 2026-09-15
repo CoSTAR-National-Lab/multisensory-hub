@@ -7,16 +7,33 @@ interface RefPopupProps {
   refText?: string;
 }
 
+/** "25,26" -> [25, 26]; "20-22" (any dash) -> [20, 21, 22]; ranges capped at 25 items. */
+export function expandRefNums(refNum: string): number[] {
+  const out: number[] = [];
+  for (const part of refNum.split(',')) {
+    const range = part.trim().match(/^(\d+)\s*[-\u2013\u2014]\s*(\d+)$/);
+    if (range) {
+      const a = parseInt(range[1], 10);
+      const b = Math.min(parseInt(range[2], 10), a + 24);
+      for (let n = a; n <= b; n++) out.push(n);
+    } else {
+      const n = parseInt(part, 10);
+      if (!Number.isNaN(n)) out.push(n);
+    }
+  }
+  return out.length ? out : [NaN];
+}
+
 export default function RefPopup({ refNum, refText }: RefPopupProps) {
   const [showPopup, setShowPopup] = useState(false);
   const [copied, setCopied] = useState(false);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Parse refNum to get the first number (for ranges like "20-22" or "25,26")
-  const primaryNum = parseInt(refNum.split(/[-–—,]/)[0], 10);
-
-  // Look up the reference from structured data
-  const reference: Reference | undefined = references.find(r => r.num === primaryNum);
+  // A citation may cover several references: "25,26" or a range "20-22".
+  // Expand to the full list so the popup shows every one of them.
+  const nums = expandRefNums(refNum);
+  const primaryNum = nums[0];
+  const entries = nums.map(n => ({ num: n, ref: references.find(r => r.num === n) }));
 
   // Format the reference for display
   const formatReference = (ref: Reference): string => {
@@ -30,13 +47,13 @@ export default function RefPopup({ refNum, refText }: RefPopupProps) {
     return parts.join('. ').replace(/\.\./g, '.');
   };
 
-  const displayText = reference ? formatReference(reference) : refText || `Reference ${refNum}`;
-  const doi = reference?.doi;
-  const url = reference?.url;
+  const displayText = entries
+    .map(({ num, ref }) => `[${num}] ${ref ? formatReference(ref) : refText || `Reference ${num}`}`)
+    .join('\n');
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(`[${refNum}] ${displayText}`);
+      await navigator.clipboard.writeText(displayText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -126,56 +143,60 @@ export default function RefPopup({ refNum, refText }: RefPopupProps) {
           onMouseLeave={handleMouseLeave}
         >
           <div className={styles.popupContent}>
-            <div className={styles.refNumber}>[{refNum}]</div>
-            {reference ? (
-              <div className={styles.refDetails}>
-                {reference.authors && (
-                  <div className={styles.refAuthors}>{reference.authors}</div>
-                )}
-                {reference.title && (
-                  <div className={styles.refTitle}>{reference.title}</div>
-                )}
-                <div className={styles.refMeta}>
-                  {reference.journal && <span className={styles.refJournal}>{reference.journal}</span>}
-                  {reference.volume && <span>, {reference.volume}</span>}
-                  {reference.pages && <span>: {reference.pages}</span>}
-                  {reference.year && <span> ({reference.year})</span>}
-                </div>
-                {(doi || url) && (
-                  <div className={styles.refLinks}>
-                    {doi && (
-                      <a
-                        href={`https://doi.org/${doi}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.doiLink}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        DOI: {doi}
-                      </a>
+            {entries.map(({ num, ref }) => (
+              <div key={num} className={styles.refItem}>
+                <div className={styles.refNumber}>[{num}]</div>
+                {ref ? (
+                  <div className={styles.refDetails}>
+                    {ref.authors && (
+                      <div className={styles.refAuthors}>{ref.authors}</div>
                     )}
-                    {!doi && url && (
-                      <a
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.urlLink}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {url.length > 50 ? url.substring(0, 50) + '...' : url}
-                      </a>
+                    {ref.title && (
+                      <div className={styles.refTitle}>{ref.title}</div>
+                    )}
+                    <div className={styles.refMeta}>
+                      {ref.journal && <span className={styles.refJournal}>{ref.journal}</span>}
+                      {ref.volume && <span>, {ref.volume}</span>}
+                      {ref.pages && <span>: {ref.pages}</span>}
+                      {ref.year && <span> ({ref.year})</span>}
+                    </div>
+                    {(ref.doi || ref.url) && (
+                      <div className={styles.refLinks}>
+                        {ref.doi && (
+                          <a
+                            href={`https://doi.org/${ref.doi}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.doiLink}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            DOI: {ref.doi}
+                          </a>
+                        )}
+                        {!ref.doi && ref.url && (
+                          <a
+                            href={ref.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.urlLink}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {ref.url.length > 50 ? ref.url.substring(0, 50) + '...' : ref.url}
+                          </a>
+                        )}
+                      </div>
                     )}
                   </div>
+                ) : (
+                  <div className={styles.refText}>{refText || `Reference ${num}`}</div>
                 )}
               </div>
-            ) : (
-              <div className={styles.refText}>{refText || `Reference ${refNum}`}</div>
-            )}
+            ))}
             <div className={styles.actions}>
               <button
                 className={styles.actionButton}
                 onClick={handleCopy}
-                aria-label="Copy reference"
+                aria-label={entries.length > 1 ? "Copy references" : "Copy reference"}
               >
                 {copied ? (
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className={styles.copied} aria-hidden="true">

@@ -225,7 +225,7 @@ export const references: Reference[] = [
   },
   {
     "num": 20,
-    "authors": "Woods, A. T. *et al.*",
+    "authors": "Woods, A. T. et al.",
     "title": "Going Beyond the Ordinary — User Perceptions of the Impact of Multisensory Elements on Presence in Virtual Reality at the Royal Opera House",
     "journal": "Multisens. Res.",
     "year": "2025",
@@ -236,7 +236,7 @@ export const references: Reference[] = [
   },
   {
     "num": 21,
-    "authors": "Song, C. *et al.*",
+    "authors": "Song, C. et al.",
     "title": "Effects of simulated multi-sensory stimulation integration on physiological and psychological restoration in virtual urban green space environment",
     "journal": "Front. Psychol.",
     "year": "2024",
@@ -434,7 +434,7 @@ export const references: Reference[] = [
   },
   {
     "num": 39,
-    "authors": "Ćwiek, A. *et al.*",
+    "authors": "Ćwiek, A. et al.",
     "title": "The bouba/kiki effect is robust across cultures and writing systems",
     "journal": "Philosophical Transactions of the Royal Society B: Biological Sciences",
     "year": "2022",
@@ -489,7 +489,7 @@ export const references: Reference[] = [
   },
   {
     "num": 44,
-    "authors": "Kolarik, A. J. *et al.*",
+    "authors": "Kolarik, A. J. et al.",
     "title": "Factors Affecting Auditory Estimates of Virtual Room Size: Effects of Stimulus, Level, and Reverberation",
     "journal": "Perception",
     "year": "2021",
@@ -621,7 +621,7 @@ export const references: Reference[] = [
   },
   {
     "num": 56,
-    "authors": "Spjut, J. *et al.*",
+    "authors": "Spjut, J. et al.",
     "title": "Latency of 30 ms benefits first person targeting tasks more than refresh rate above 60 Hz. in",
     "journal": "SIGGRAPH Asia 2019 Technical Briefs, SA 2019",
     "year": "2019",
@@ -720,7 +720,7 @@ export const references: Reference[] = [
   },
   {
     "num": 65,
-    "authors": "Hare, C. *et al.*",
+    "authors": "Hare, C. et al.",
     "title": "The relationship between multisensory temporal processing and ADHD traits",
     "journal": "Acta Psychol. (Amst).",
     "year": "2026",
@@ -742,7 +742,7 @@ export const references: Reference[] = [
   },
   {
     "num": 67,
-    "authors": "Zhou, H. *et al.*",
+    "authors": "Zhou, H. et al.",
     "title": "Audiovisual temporal processing in adult patients with first-episode schizophrenia and high-functioning autism",
     "journal": "Schizophrenia",
     "year": "2022",
@@ -940,7 +940,7 @@ export const references: Reference[] = [
   },
   {
     "num": 85,
-    "authors": "Mankowska, N. D. *et al.*",
+    "authors": "Mankowska, N. D. et al.",
     "title": "Critical flicker fusion frequency: A narrative review",
     "journal": "Medicina (Lithuania)",
     "year": "2021",
@@ -1028,7 +1028,7 @@ export const references: Reference[] = [
   },
   {
     "num": 93,
-    "authors": "Pradhan, B. K. *et al.*",
+    "authors": "Pradhan, B. K. et al.",
     "title": "Investigating the effect of sound in horror clip on the cardiac electrophysiology of young adults using wavelet packet decomposition and machine learning classifiers",
     "journal": "Biomedical Engineering Advances",
     "year": "2022",
@@ -1083,7 +1083,7 @@ export const references: Reference[] = [
   },
   {
     "num": 98,
-    "authors": "Marquardt, A. *et al.*",
+    "authors": "Marquardt, A. et al.",
     "title": "Temperature Matters: Thermal Feedback for Awe Experiences in VR. in",
     "journal": "2025 IEEE Conference on Virtual Reality and 3D User Interfaces Abstracts and Workshops (VRW)",
     "year": null,
@@ -1138,7 +1138,7 @@ export const references: Reference[] = [
   },
   {
     "num": 103,
-    "authors": "Lipp, C. *et al.*",
+    "authors": "Lipp, C. et al.",
     "title": "Devices for the electrical stimulation of the olfactory system: A review",
     "journal": "Biosens. Bioelectron.",
     "year": "2025",
@@ -1171,7 +1171,7 @@ export const references: Reference[] = [
   },
   {
     "num": 106,
-    "authors": "Thiele, V. *et al.*",
+    "authors": "Thiele, V. et al.",
     "title": "Influence of uncomfortable environmental conditions on odor detection thresholds for n-butanol determined with a dynamic dilution olfactometer and in room air",
     "journal": "Indoor Environments",
     "year": "2024",
@@ -1248,7 +1248,7 @@ export const references: Reference[] = [
   },
   {
     "num": 113,
-    "authors": "Han, E. *et al.*",
+    "authors": "Han, E. et al.",
     "title": "The influence of spatial dimensions of virtual environments on attitudes and nonverbal behaviors during social interactions",
     "journal": "J. Environ. Psychol.",
     "year": "2024",
@@ -1303,7 +1303,7 @@ export const references: Reference[] = [
   },
   {
     "num": 118,
-    "authors": "Suma, E. A. *et al.*",
+    "authors": "Suma, E. A. et al.",
     "title": "Leveraging change blindness for redirection in virtual environments. in",
     "journal": "2011 IEEE Virtual Reality Conference",
     "year": null,
@@ -1347,7 +1347,7 @@ export const references: Reference[] = [
   },
   {
     "num": 122,
-    "authors": "Sorokowska, A. *et al.*",
+    "authors": "Sorokowska, A. et al.",
     "title": "Preferred Interpersonal Distances: A Global Comparison",
     "journal": "J. Cross. Cult. Psychol.",
     "year": "2017",
@@ -1479,7 +1479,7 @@ export const references: Reference[] = [
   },
   {
     "num": 134,
-    "authors": "Pouke, M. *et al.*",
+    "authors": "Pouke, M. et al.",
     "title": "The Body Scaling Effect and Its Impact on Physics Plausibility",
     "journal": "Front. Virtual Real.",
     "year": "2022",
@@ -1490,7 +1490,7 @@ export const references: Reference[] = [
   },
   {
     "num": 135,
-    "authors": "Kaufmann, M. *et al.*",
+    "authors": "Kaufmann, M. et al.",
     "title": "EM-POSE: 3D Human Pose Estimation from Sparse Electromagnetic Trackers. in",
     "journal": "Proceedings of the IEEE International Conference on Computer Vision",
     "year": "2021",

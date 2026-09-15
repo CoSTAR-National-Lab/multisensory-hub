@@ -50,6 +50,13 @@
   color: var(--ifm-font-color-base);
 }
 
+/* One block per reference when a citation covers several (e.g. 25,26 or 20-22) */
+.refItem + .refItem {
+  border-top: 1px dashed var(--ifm-color-emphasis-300);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
 .refDetails {
   margin-bottom: 12px;
 }

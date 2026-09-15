@@ -439,6 +439,7 @@ def parse_reference_line(line: str) -> dict | None:
         title = authors
         authors = ""
 
+    authors = authors.replace('*', '').strip()  # drop markdown emphasis around 'et al.'
     return {
         "num": num,
         "authors": authors,
