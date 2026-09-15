@@ -31,6 +31,10 @@ The `Threshold` column takes three values: `Acceptable`, `Not noticeable`, and
 
 ## CHART-DATA table
 
+Paste everything from the `[CHART-DATA: ...]` line to the `[/CHART-DATA]` line, markers included:
+
+[CHART-DATA: latency-tolerance]
+
 | Group | Label | Value (ms) | Error (ms) | Threshold |
 |---|---|---|---|---|
 | Collaborative music | Rhythm-section groups playing by ear (jazz, rock) {Shay 2024} | 7.5 | 2.5 | Acceptable |
@@ -51,6 +55,8 @@ The `Threshold` column takes three values: `Acceptable`, `Not noticeable`, and
 | Sound travel | Sound travelling 10 m through air | 29 | 0 | Reference |
 | Sound travel | Front to back of a 12 m orchestra stage {Shay 2024} | 35 | 0 | Reference |
 | [LEGEND] | Key latency tolerances for multisensory experiences. "Acceptable" bars show delays that studies or standards report as acceptable for a given activity; "Not noticeable" bars show delays reported as below detection; "For comparison" bars show how long sound takes to travel everyday distances through air – these are physics, not perceptual limits. Error bars show the range reported across studies, instruments or participants. The 20 ms motion-to-photon figure is an industry design target rather than a measured threshold. XR stands for eXtended Reality. | | | |
+
+[/CHART-DATA]
 
 ## What changed and why
 

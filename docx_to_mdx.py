@@ -1962,62 +1962,93 @@ def _normalise_pasted_chart_tables(markdown: str) -> str:
         \## CHART-DATA table\
         \| Group \| Label \| Value (ms) \| Error (ms) \| Threshold \|\
         \|\-\--\|\-\--\|\-\--\|\-\--\|\-\--\|\
-        \| XR \| Tactile to visual\^52\^ \| 55 \| 0 \| Acceptable \|\
+        \| XR \| Tactile to visual {Attig 2017} \| 55 \| 0 \| Acceptable \|\
         ...
         \[/CHART-DATA\]
 
     This rewrites such a block into the clean pipe-table form that
     extract_chart_data_tables already understands: escapes removed, hard
     line breaks turned into real rows, heading / divider / blank lines
-    dropped, and a [CHART-DATA: <id>] opening marker synthesised if the
-    author left it out (defaults to "latency-tolerance", the only chart of
-    this kind, and warns).
+    dropped. The block is located by its header row (Group | Label | ...),
+    so it is found whether or not the author kept the [CHART-DATA: id] and
+    [/CHART-DATA] markers; missing markers are synthesised (id defaults to
+    "latency-tolerance", the only chart of this kind) with a warning.
     """
-    close_re = re.compile(r'`?\\?\[/CHART-DATA(?:\s+(?P<cid>[^\]\\\n]+?))?\\?\]`?')
-    out = []
-    pos = 0
-    for close in close_re.finditer(markdown):
-        before = markdown[pos:close.start()]
-        # Walk back over the pasted block: lines that are escaped-pipe rows,
-        # hard-break continuations, blank lines or a "## CHART-DATA" heading.
-        lines = before.split('\n')
-        i = len(lines)
-        row_re = re.compile(r'^\s*\\?\|.*$')
-        junk_re = re.compile(r'^\s*(\\?#+\s*CHART-DATA[^\n]*|\\)?\s*$')
-        while i > 0 and (row_re.match(lines[i - 1]) or junk_re.match(lines[i - 1])):
-            i -= 1
-        block = lines[i:]
-        rows = []
-        for ln in block:
-            ln = ln.rstrip()
-            if ln.endswith('\\'):
-                ln = ln[:-1]
-            ln = re.sub(r'\\([|^\[\]\-"#*_~])', r'\1', ln).strip()
-            if not ln or ln.startswith('#'):
-                continue
-            # Divider row: cells made only of dashes / en dashes / colons
-            if re.fullmatch(r'\|(?:\s*[-–—:]+\s*\|)+', ln):
-                continue
-            if ln.startswith('|'):
-                rows.append(ln)
-        if len(rows) < 2:
-            out.append(markdown[pos:close.end()])
-            pos = close.end()
+    header_re = re.compile(r'^[ \t]*\\?\|\s*Group\s*\\?\|\s*Label\b.*$', re.MULTILINE | re.IGNORECASE)
+    open_re = re.compile(r'`?\\?\[CHART-DATA:\s*(?P<cid>[^\]\\\n]+?)\\?\]`?\\?[ \t]*$')
+    close_re = re.compile(r'^[ \t]*`?\\?\[/CHART-DATA(?:\s+(?P<cid>[^\]\\\n]+?))?\\?\]`?[ \t]*$')
+    row_re = re.compile(r'^[ \t]*\\?\|.*$')
+    junk_re = re.compile(r'^[ \t]*(\\?#+\s*CHART-DATA[^\n]*|\\)?[ \t]*$')
+
+    def _clean_row(ln: str) -> str | None:
+        ln = ln.rstrip()
+        if ln.endswith('\\'):
+            ln = ln[:-1]
+        ln = re.sub(r'\\([|^\[\]\-"#*_~{}])', r'\1', ln).strip()
+        if not ln or ln.startswith('#'):
+            return None
+        if re.fullmatch(r'\|(?:\s*[-–—:]+\s*\|)+', ln):   # divider row
+            return None
+        return ln if ln.startswith('|') else None
+
+    lines = markdown.split('\n')
+    i = 0
+    out_lines = []
+    while i < len(lines):
+        if not header_re.match(lines[i]):
+            out_lines.append(lines[i])
+            i += 1
             continue
-        head = '\n'.join(lines[:i]).rstrip('\n')
-        # A trailing backslash means the author used a soft line break after the marker
-        has_open = re.search(r'\\?\[CHART-DATA:\s*[^\]\\\n]+?\\?\]`?\\?\s*$', head)
-        if not has_open:
-            chart_id = (close.group('cid') or 'latency-tolerance').strip()
-            _c_warn(f"  [CHART-DATA] Pasted table found without an opening marker – assuming [CHART-DATA: {chart_id}]")
-            head = head + f"\n\n[CHART-DATA: {chart_id}]"
-        else:
-            # Drop the soft-line-break backslash so the marker regex can match
-            head = re.sub(r'\\\s*$', '', head.rstrip())
-        out.append(head + '\n\n' + '\n'.join(rows) + '\n\n' + close.group(0))
-        pos = close.end()
-    out.append(markdown[pos:])
-    return ''.join(out)
+        # Already a clean pipe table directly under a marker? Leave it to the
+        # main regex (no backslash-escaped pipes means Word emitted a real table).
+        if '\\|' not in lines[i]:
+            out_lines.append(lines[i])
+            i += 1
+            continue
+
+        # Walk back over junk (heading / blank / bare backslash) to find where
+        # the pasted block starts, and whether an opening marker precedes it.
+        j = len(out_lines)
+        while j > 0 and junk_re.match(out_lines[j - 1]):
+            j -= 1
+        has_open = j > 0 and open_re.search(out_lines[j - 1]) is not None
+        chart_id = None
+        if has_open:
+            chart_id = open_re.search(out_lines[j - 1]).group('cid').strip()
+            j -= 1  # the original marker line is replaced by a clean one below
+        del out_lines[j:]
+
+        # Collect rows forward
+        rows = []
+        k = i
+        while k < len(lines) and (row_re.match(lines[k]) or junk_re.match(lines[k])):
+            r = _clean_row(lines[k])
+            if r:
+                rows.append(r)
+            k += 1
+        # Optional closing marker (possibly after blank lines)
+        m = k
+        while m < len(lines) and lines[m].strip() == '':
+            m += 1
+        has_close = m < len(lines) and close_re.match(lines[m]) is not None
+        if has_close:
+            chart_id = chart_id or (close_re.match(lines[m]).group('cid') or '').strip() or None
+            k = m + 1
+        if not chart_id:
+            chart_id = 'latency-tolerance'
+        if not has_open or not has_close:
+            missing = ' and '.join(n for n, ok in (('opening', has_open), ('closing', has_close)) if not ok)
+            _c_warn(f"  [CHART-DATA] Pasted table found without its {missing} marker - assuming [CHART-DATA: {chart_id}]")
+
+        out_lines.append('')
+        out_lines.append(f'[CHART-DATA: {chart_id}]')
+        out_lines.append('')
+        out_lines.extend(rows)
+        out_lines.append('')
+        out_lines.append('[/CHART-DATA]')
+        out_lines.append('')
+        i = k
+    return '\n'.join(out_lines)
 
 
 def extract_chart_data_tables(markdown: str) -> str:

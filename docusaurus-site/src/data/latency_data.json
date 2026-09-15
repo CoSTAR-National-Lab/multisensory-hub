@@ -37,7 +37,7 @@
       "group": "Live sound monitoring"
     },
     {
-      "label": "Instruments via stage wedge monitors\n(range across instruments)",
+      "label": "Stage wedge monitors (varies by\ninstrument)",
       "value": 22.0,
       "errorBar": 20.0,
       "citations": [
