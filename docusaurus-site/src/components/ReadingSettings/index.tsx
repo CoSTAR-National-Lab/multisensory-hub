@@ -193,7 +193,7 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
   ];
 
   const fontOptions: { value: FontOption; label: string }[] = [
-    { value: 'default', label: 'Default' },
+    { value: 'default', label: 'Gotham' },
     { value: 'lexend', label: 'Lexend' },
     { value: 'system', label: 'System' },
   ];

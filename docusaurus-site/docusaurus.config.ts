@@ -37,6 +37,17 @@ const config: Config = {
     },
   },
 
+  // Gotham (Adobe Fonts / Typekit kit) – the costarnetwork.co.uk brand face.
+  // The kit serves gotham, gotham-narrow, gotham-xnarrow and gotham-condensed
+  // at weights 400 and 700 (xnarrow book is 300).
+  headTags: [
+    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://use.typekit.net', crossorigin: 'anonymous'}},
+    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://p.typekit.net', crossorigin: 'anonymous'}},
+  ],
+  stylesheets: [
+    {href: 'https://use.typekit.net/tjg5qol.css', type: 'text/css'},
+  ],
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
