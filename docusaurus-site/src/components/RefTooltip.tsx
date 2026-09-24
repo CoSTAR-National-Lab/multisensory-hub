@@ -19,6 +19,8 @@ export default function RefTooltip({ refNum, children }: RefTooltipProps) {
 
   // Get the reference text (you'll need to populate this)
   const refText = references[refNum] || 'Reference not found';
+  // Multi-citations ("25,26", "20–22") anchor to their first reference
+  const primaryNum = refNum.split(/[,\-–—]/)[0].trim();
 
   const clearHideTimeout = useCallback(() => {
     if (hideTimeoutRef.current) {
@@ -65,7 +67,7 @@ export default function RefTooltip({ refNum, children }: RefTooltipProps) {
     >
       <sup>
         <a
-          href={`/references#ref-${refNum}`}
+          href={`/references#ref-${primaryNum}`}
           className={styles.refLink}
           onClick={(e) => {
             e.preventDefault();

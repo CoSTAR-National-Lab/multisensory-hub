@@ -112,7 +112,7 @@ export default function RefPopup({ refNum, refText }: RefPopupProps) {
     >
       <sup>
         <a
-          href={`/references#ref-${refNum}`}
+          href={`/references#ref-${primaryNum}`}
           className={styles.refLink}
           onClick={(e) => {
             e.preventDefault();
