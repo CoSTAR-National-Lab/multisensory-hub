@@ -116,7 +116,10 @@ const config: Config = {
     docs: {
       sidebar: {
         hideable: true,
-        autoCollapseCategories: true,
+        // Off: the Case Studies category holds links into pages that live in
+        // other categories, so with auto-collapse it snapped shut on every
+        // click and readers had to reopen it for each case study.
+        autoCollapseCategories: false,
       },
     },
     prism: {
