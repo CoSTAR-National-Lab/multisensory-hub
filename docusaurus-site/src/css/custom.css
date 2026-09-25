@@ -484,13 +484,7 @@ body {
   font-weight: 600;
 }
 
-/* ================================
-   Footer
-   ================================ */
-
-.footer {
-  background: linear-gradient(135deg, #1e1e23 0%, #2d2d35 100%);
-}
+/* Footer: styled in src/theme/Footer/index.module.css (swizzled). */
 
 /* ================================
    Animations

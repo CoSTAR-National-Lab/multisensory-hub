@@ -1,7 +1,7 @@
-/* Dark mode (default) */
+/* Dark mode (default): neutral ink, no blue (costarnetwork.co.uk is monochrome) */
 .footer {
-  background: linear-gradient(135deg, #001a4a 0%, #003898 100%);
-  color: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, #1e1e23 0%, #2d2d35 100%);
+  color: rgba(255, 255, 255, 0.55);
   padding: 0.55rem 1.5rem;
   font-size: 0.78rem;
   line-height: 1.4;
@@ -17,20 +17,22 @@
   --footer-confirmed:          #6ee7b7;
 }
 
-/* Light mode overrides */
+/* Light mode: the CoSTAR National Lab brand gradient (supplied by CoSTAR
+   comms; same image as the social card). It is orange/yellow, so everything
+   on it is dark ink at higher opacity than the old grey footer needed. */
 [data-theme='light'] .footer {
-  background: linear-gradient(135deg, #f0f0f4 0%, #e4e4ec 100%);
-  color: rgba(0, 0, 0, 0.5);
+  background: url('/img/costar-gradient-national.jpg') center / cover no-repeat, #ff9701;
+  color: rgba(0, 0, 0, 0.78);
 
-  --footer-link:               rgba(0, 0, 0, 0.45);
-  --footer-link-hover:         rgba(0, 0, 0, 0.8);
-  --footer-sep:                rgba(0, 0, 0, 0.18);
-  --footer-btn-border:         rgba(0, 0, 0, 0.25);
-  --footer-btn-color:          rgba(0, 0, 0, 0.55);
-  --footer-btn-hover-border:   rgba(0, 0, 0, 0.6);
-  --footer-btn-hover-color:    rgba(0, 0, 0, 0.85);
-  --footer-status:             rgba(0, 0, 0, 0.35);
-  --footer-confirmed:          #059669;
+  --footer-link:               rgba(0, 0, 0, 0.78);
+  --footer-link-hover:         #000;
+  --footer-sep:                rgba(0, 0, 0, 0.35);
+  --footer-btn-border:         rgba(0, 0, 0, 0.45);
+  --footer-btn-color:          rgba(0, 0, 0, 0.8);
+  --footer-btn-hover-border:   #000;
+  --footer-btn-hover-color:    #000;
+  --footer-status:             rgba(0, 0, 0, 0.65);
+  --footer-confirmed:          #000;
 }
 
 .logoWrap {
@@ -98,7 +100,7 @@
   border: 1px solid var(--footer-btn-border);
   color: var(--footer-btn-color);
   padding: 0.15rem 0.6rem;
-  border-radius: 3px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 0.75rem;
   font-family: inherit;
