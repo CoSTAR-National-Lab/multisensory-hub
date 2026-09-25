@@ -10,7 +10,6 @@
 
 .progressBar {
   height: 100%;
-  background: linear-gradient(90deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-light) 100%);
+  background: var(--ifm-color-primary);
   transition: width 0.1s ease-out;
-  box-shadow: 0 0 10px var(--ifm-color-primary);
 }
