@@ -503,3 +503,9 @@ blocks:
   concept: space
   content_type: section
   label: 'Case study: The Matrix in *Shared Reality* {#case-study-the-matrix-in-shared-reality}'
+- block_id: who-is-this-resource-for-who-is-this-resource-for
+  heading: Who is this resource for? {#who-is-this-resource-for}
+  topic: multisensory-experience
+  concept: multisensory-experience
+  content_type: section
+  label: Who is this resource for? {#who-is-this-resource-for}
