@@ -17,22 +17,22 @@
   --footer-confirmed:          #6ee7b7;
 }
 
-/* Light mode: the CoSTAR National Lab brand gradient (supplied by CoSTAR
-   comms; same image as the social card). It is orange/yellow, so everything
-   on it is dark ink at higher opacity than the old grey footer needed. */
+/* Light mode: CoSTAR "Light A" brand gradient (a pale blush-grey from the
+   set CoSTAR comms supplied; same image as the social card). Near-white, so
+   the type is the same dark greys the old grey footer used. */
 [data-theme='light'] .footer {
-  background: url('/img/costar-gradient-national.jpg') center / cover no-repeat, #ff9701;
-  color: rgba(0, 0, 0, 0.78);
+  background: url('/img/costar-gradient-light-a.jpg') center / cover no-repeat, #f3eef0;
+  color: rgba(0, 0, 0, 0.55);
 
-  --footer-link:               rgba(0, 0, 0, 0.78);
-  --footer-link-hover:         #000;
-  --footer-sep:                rgba(0, 0, 0, 0.35);
-  --footer-btn-border:         rgba(0, 0, 0, 0.45);
-  --footer-btn-color:          rgba(0, 0, 0, 0.8);
-  --footer-btn-hover-border:   #000;
-  --footer-btn-hover-color:    #000;
-  --footer-status:             rgba(0, 0, 0, 0.65);
-  --footer-confirmed:          #000;
+  --footer-link:               rgba(0, 0, 0, 0.5);
+  --footer-link-hover:         rgba(0, 0, 0, 0.85);
+  --footer-sep:                rgba(0, 0, 0, 0.2);
+  --footer-btn-border:         rgba(0, 0, 0, 0.3);
+  --footer-btn-color:          rgba(0, 0, 0, 0.6);
+  --footer-btn-hover-border:   rgba(0, 0, 0, 0.7);
+  --footer-btn-hover-color:    rgba(0, 0, 0, 0.9);
+  --footer-status:             rgba(0, 0, 0, 0.4);
+  --footer-confirmed:          #059669;
 }
 
 .logoWrap {
