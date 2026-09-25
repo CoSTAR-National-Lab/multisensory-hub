@@ -154,3 +154,17 @@ logged as a standing step in Claude's project memory).
    can legitimately disagree between refresh and save; and in
    number-by-appearance styles every insertion renumbers the list, so
    identify references by title, never by number.
+
+## Word formatting glitches that break bold/italic on the site (2026-09-25)
+
+Found by the new post-build check (`python docx_to_mdx.py --check-build`), which
+fails the deploy if any literal `*` is left in the rendered pages. Each is a
+bold/italic run in Word that starts or ends in the wrong place. The pipeline
+now papers over the first three and the fourth renders without asterisks but
+with odd emphasis; fixing them in the working doc removes the dependency on
+that. Search strings locate each one in Word via Ctrl+F.
+
+- [ ] `Innovation Programme, Audience Labs` (Multisensory experience → Boosting presence, Current, Rising case study) – the italic run covers ", Audience Labs" including the comma and space. Re-apply italic to "Audience Labs" only. Renders as `Programme*, Audience Labs*`.
+- [ ] `inhabiting a virtual` (Multisensory experience → Playing with expectation, Rubber Hand illusion) – the citation field is italic and sits between "virtual" and "avatar" with no space, and there is a space before the final full stop. Move the citation after "avatar", remove the italic, delete the space before the full stop.
+- [ ] `ltisensory can be cost-intensive` (Multisensory Value) – in "However, multisensory can be cost-intensive" the letter "u" is not bold while the rest of the phrase is. Re-apply bold across the whole phrase.
+- [ ] `earch of Lost Time` (Smell → Proustian effect) – in "In Search of Lost Time" the italic run breaks around the "S" (`***In* S*earch of Lost Time***`). Re-apply bold italic across the whole title.

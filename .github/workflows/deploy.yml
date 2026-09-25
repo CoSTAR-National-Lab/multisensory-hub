@@ -42,6 +42,9 @@ jobs:
         run: npm run build
         working-directory: docusaurus-site
 
+      - name: Check rendered pages for stray bold/italic markers
+        run: python docx_to_mdx.py --check-build
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

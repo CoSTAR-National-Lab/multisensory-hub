@@ -950,6 +950,12 @@ def fix_mdx_syntax(content: str) -> str:
         else:
             return f'<sup>{citation}</sup>'
 
+    # Emphasis wrapped around a citation superscript ("*^36^*") comes from an
+    # italic/bold Mendeley field in Word. It means nothing on a superscript and
+    # the markers end up as literal asterisks once the citation becomes a
+    # component, so drop them.
+    content = re.sub(r'\*{1,3}(\^[\d\-\–\—,]+\^)\*{1,3}', r'\1', content)
+
     content = re.sub(r'\^([\d\-\–\—,]+)\^', convert_citation, content)
     content = re.sub(r'\^([a-z]+)\^', r'<sup>\1</sup>', content)
     content = re.sub(r'\^([ivxlcdm]+)\^', r'<sup>\1</sup>', content)
@@ -1086,51 +1092,64 @@ def fix_mdx_syntax(content: str) -> str:
         # Note: Removed the ":**" fix as it was incorrectly removing valid closing bold markers
         # The pattern `:**` followed by space is often a legitimate bold closer like "**Title:**"
 
-        # Fix leading whitespace inside bold-italic markers: "*** text***" -> "***text***"
-        # Must run before ** and * fixes to avoid partial matches.
-        # After word char: move space outside
-        text = re.sub(r'(\w)\*\*\*\s+([^*\n]+?\*\*\*)', r'\1 ***\2', text)
-        # After punctuation: ",*** text***" -> ", ***text***" (move space outside)
-        text = re.sub(r'([^\w\s*])(\*\*\*)\s+([^*\n]+?\*\*\*)', r'\1 \2\3', text)
-        # After whitespace or start: remove the leading space
-        text = re.sub(r'\*\*\*\s+([^*\n]+?\*\*\*)', r'***\1', text)
+        # Whitespace inside emphasis markers ("** text**", "**text **") breaks
+        # CommonMark emphasis. Pandoc itself keeps whitespace outside markers, but
+        # earlier substitutions can leave some. Two rules keep these fixes safe:
+        #   - never match across a line break (paragraphs must stay separate);
+        #   - only treat a marker as an OPENER when it sits at line start or after
+        #     whitespace / an opening bracket or quote. A marker glued to a word
+        #     character ("motivated**") is a CLOSER. Re-reading closers as openers
+        #     used to pull the next paragraph ("In ***Current, Rising***") into a
+        #     bold title and turn "experience*, not just *quality" into
+        #     "experience*, not just* quality".
+        # Longest marker first so ** never matches inside ***.
+        _after_open = r'(?<=[\s(\["\'“‘])'
+        for mk in ('***', '**', '*'):
+            marker = re.escape(mk)
+            # A single * at line start followed by a space is a list bullet, not emphasis.
+            open_at = r'(?:^|' + _after_open + ')' if mk != '*' else _after_open
+            close_at = marker + (r'(?!\*)' if mk != '***' else '')
+            # "** text**" -> "**text**"
+            text = re.sub(open_at + marker + r'(?!\*)[^\S\n]+([^*\n]+?)' + close_at,
+                          lambda m, mk=mk: f'{mk}{m.group(1)}{mk}',
+                          text, flags=re.MULTILINE)
+            # "**text **word" -> "**text** word"
+            text = re.sub(open_at + marker + r'(?!\*)([^*\n]+?)[^\S\n]+' + close_at + r'(?=\w)',
+                          lambda m, mk=mk: f'{mk}{m.group(1)}{mk} ',
+                          text, flags=re.MULTILINE)
+            # "**text **." -> "**text**."
+            text = re.sub(open_at + marker + r'(?!\*)([^*\n]+?)[^\S\n]+' + close_at + r'(?=[^a-zA-Z0-9]|$)',
+                          lambda m, mk=mk: f'{mk}{m.group(1)}{mk}',
+                          text, flags=re.MULTILINE)
 
-        # Fix trailing whitespace inside bold-italic markers: "***text ***" -> "***text***"
-        text = re.sub(r'\*\*\*([^*\n]+?)\s+\*\*\*(\w)', r'***\1*** \2', text)
-        text = re.sub(r'\*\*\*([^*\n]+?)\s+\*\*\*(?=[^a-zA-Z0-9]|$)', r'***\1***', text)
-
-        # Fix leading whitespace inside bold markers: "** Adaptation**" -> "**Adaptation**"
-        # Use [^*\n] to avoid matching across lines
-        # When preceded by a word character, preserve the space before **
-        text = re.sub(r'(\w)\*\*\s+([^*\n]+?\*\*)', r'\1 **\2', text)
-        # When preceded by punctuation or start, just remove the leading space
-        text = re.sub(r'\*\*\s+([^*\n]+?\*\*)', r'**\1', text)
-
-        # Fix leading whitespace inside italic markers.
-        # After a word char: "word* text*" -> "word *text*" (move space outside)
-        text = re.sub(r'(\w)(?<!\*)\*[ \t]+([^*\n]+?\*(?!\*))', r'\1 *\2', text)
-        # After punctuation (e.g. comma): ",* text*" -> ", *text*" (move space outside so
-        # the * is preceded by a space and MDX recognises it as an italic opener)
-        text = re.sub(r'([^\w\s*])(\*{1,3})\s+([^*\n]+?\*)', r'\1 \2\3', text)
-        # After whitespace or start of line: "* text*" -> "*text*"
-        text = re.sub(r'(?<!\*)\*[ \t]+([^*\n]+?\*(?!\*))', r'*\1', text)
-
-        # Fix trailing whitespace inside bold markers: "**text: **" -> "**text:**"
-        # This handles cases like "**Gen Z want goosebumps: **" where trailing space breaks bold
-        # Use [^*\n] to avoid matching across lines
-        # When followed by a word character, preserve the space after the closing **
-        text = re.sub(r'\*\*([^*\n]+?)\s+\*\*(\w)', r'**\1** \2', text)
-        # When followed by punctuation or end of line, just remove the trailing space
-        text = re.sub(r'\*\*([^*\n]+?)\s+\*\*(?=[^a-zA-Z0-9]|$)', r'**\1**', text)
-
-        # Fix trailing whitespace inside italic markers: "*text *" -> "*text*"
-        # Same logic: preserve space after if followed by word character
-        text = re.sub(r'(?<!\*)\*([^*\n]+?)\s+\*(?!\*)(\w)', r'*\1* \2', text)
-        text = re.sub(r'(?<!\*)\*([^*\n]+?)\s+\*(?!\*)(?=[^a-zA-Z0-9]|$)', r'*\1*', text)
+        # Emphasis that starts with punctuation ("Programme*, Audience Labs*"): the
+        # Word italic run begins at the comma, so the opener sits between a word
+        # and a comma and CommonMark cannot open there. Move the punctuation out:
+        # "Programme, *Audience Labs*". A marker after a word char is only an
+        # opener when an even number of same-length runs precede it on the line
+        # ("*italic*, and *more*" must be left alone).
+        def _move_leading_punct(m):
+            line_before = text[text.rfind('\n', 0, m.start()) + 1:m.start()]
+            runs_before = sum(1 for r in re.finditer(r'\*+', line_before) if len(r.group()) == len(m.group(1)))
+            if runs_before % 2:
+                return m.group(0)
+            return f'{m.group(2)} {m.group(1)}'
+        text = re.sub(r'(?<=\w)(\*{1,3})([,;:.])[^\S\n]+(?=[^*\n]+?\1)', _move_leading_punct, text)
 
         # Fix bold split at hyphen: word**-**word -> word-word (Pandoc artefact when
         # bold formatting spans a hyphenated compound and splits at the hyphen)
         text = re.sub(r'\*\*-\*\*', '-', text)
+
+        # Fix m**u**ltisensory (single character bolding inside word - clearly an artifact,
+        # e.g. one letter of a bold phrase left un-bold in Word). Must run BEFORE the
+        # missing-space rule below, which would otherwise turn it into "u** ltisensory".
+        # Apply multiple times to catch adjacent occurrences
+        for _ in range(3):
+            text = re.sub(r'(\w)\*\*(\w)\*\*(\w)', r'\1\2\3', text)
+
+        # Fix single character italic inside word: m*u*ltisensory -> multisensory
+        for _ in range(3):
+            text = re.sub(r'(\w)\*(\w)\*(\w)', r'\1\2\3', text)
 
         # Fix missing space after closing bold/bold+italic when followed directly by a word:
         # ***Arcade***is -> ***Arcade*** is
@@ -1143,15 +1162,6 @@ def fix_mdx_syntax(content: str) -> str:
         # Ensure numbered section headers start on a new paragraph wherever they appear
         # mid-line (e.g. "...matter.** 2) Chase..." -> "...matter.\n\n**2) Chase...")
         text = re.sub(r'(?<!\n)\*\*\s+(\d+\)\s)', r'\n\n**\1', text)
-
-        # Fix m**u**ltisensory (single character bolding inside word - clearly an artifact)
-        # Apply multiple times to catch adjacent occurrences
-        for _ in range(3):
-            text = re.sub(r'(\w)\*\*(\w)\*\*(\w)', r'\1\2\3', text)
-
-        # Fix single character italic inside word: m*u*ltisensory -> multisensory
-        for _ in range(3):
-            text = re.sub(r'(\w)\*(\w)\*(\w)', r'\1\2\3', text)
 
         # Merge adjacent bold markers: **word** **word** -> **word word**
         text = re.sub(r'\*\*([^*\n]+)\*\*[ \t]+\*\*([^*\n]+)\*\*', r'**\1 \2**', text)
@@ -2728,6 +2738,65 @@ def process_document(docx_path: Path, output_folder: Path) -> list[dict]:
     return pages
 
 
+def check_rendered_asterisks(build_dir: Path) -> list[str]:
+    """Scan the built HTML for literal emphasis markers that survived rendering.
+
+    Word bold/italic becomes ** / * in the pandoc markdown; after MDX rendering
+    no asterisk should be left in visible text. Any that remain mean the markup
+    was malformed (usually whitespace inside the markers, or a formatting run in
+    Word that starts/ends mid-word). Returns "page: …context…" strings.
+    """
+    from html.parser import HTMLParser
+
+    stray = re.compile(r'\*\*|(?<!\S)\*(?=\S)|(?<=\S)\*(?!\S)')
+
+    class _Text(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.skip = 0
+            self.hits: list[str] = []
+
+        def handle_starttag(self, tag, attrs):
+            if tag in ('script', 'style'):
+                self.skip += 1
+
+        def handle_endtag(self, tag):
+            if tag in ('script', 'style'):
+                self.skip -= 1
+
+        def handle_data(self, data):
+            if self.skip:
+                return
+            for m in stray.finditer(data):
+                start = max(0, m.start() - 40)
+                self.hits.append(data[start:m.end() + 40].replace('\n', ' ').strip())
+
+    findings: list[str] = []
+    for html_file in sorted(build_dir.rglob('*.html')):
+        parser = _Text()
+        parser.feed(html_file.read_text(encoding='utf-8'))
+        rel = html_file.relative_to(build_dir).as_posix()
+        # Docusaurus writes both page.html and page/index.html; report once.
+        if rel.endswith('/index.html') and (build_dir / (rel[:-len('/index.html')] + '.html')).exists():
+            continue
+        for hit in dict.fromkeys(parser.hits):
+            findings.append(f"{rel}: …{hit}…")
+    return findings
+
+
+def report_rendered_asterisks(build_dir: Path) -> bool:
+    """Print stray-asterisk findings for a build; True when the build is clean."""
+    findings = check_rendered_asterisks(build_dir)
+    if findings:
+        _c_error(f"\n[FAIL] {len(findings)} stray emphasis marker(s) in the rendered HTML – "
+                 f"bold/italic markup did not render:")
+        for f in findings:
+            _c_error(f"  {f}")
+        return False
+    _c_ok("[OK] No stray emphasis markers in the rendered HTML.")
+    return True
+
+
 def main():
     """Main entry point for the pipeline."""
     print("=" * 60)
@@ -2820,6 +2889,7 @@ def main():
                 sys.exit(1)
         else:
             _c_ok("[OK] Build successful!")
+            report_rendered_asterisks(DOCUSAURUS_DIR / "build")
     except subprocess.TimeoutExpired:
         _c_warn("Build timed out, but continuing...")
 
@@ -2859,4 +2929,8 @@ def main():
 
 
 if __name__ == "__main__":
+    if "--check-build" in sys.argv:
+        # CI: after `npm run build`, fail the deploy if any bold/italic markup
+        # leaked into the rendered pages as literal asterisks.
+        sys.exit(0 if report_rendered_asterisks(DOCUSAURUS_DIR / "build") else 1)
     main()
