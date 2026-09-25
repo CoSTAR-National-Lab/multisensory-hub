@@ -37,15 +37,12 @@ const config: Config = {
     },
   },
 
-  // Gotham (Adobe Fonts / Typekit kit) – the costarnetwork.co.uk brand face.
-  // The kit serves gotham, gotham-narrow, gotham-xnarrow and gotham-condensed
-  // at weights 400 and 700 (xnarrow book is 300).
+  // Body/heading face is Season Sans, self-hosted in static/fonts (the face
+  // costarnetwork.co.uk actually serves). Preload the regular weight so the
+  // first paint does not flash the fallback. The Gotham Typekit kit that
+  // CoSTAR comms supplied is not what their site uses, so it is not linked.
   headTags: [
-    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://use.typekit.net', crossorigin: 'anonymous'}},
-    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://p.typekit.net', crossorigin: 'anonymous'}},
-  ],
-  stylesheets: [
-    {href: 'https://use.typekit.net/tjg5qol.css', type: 'text/css'},
+    {tagName: 'link', attributes: {rel: 'preload', href: '/fonts/season-sans-400.woff2', as: 'font', type: 'font/woff2', crossorigin: 'anonymous'}},
   ],
 
   i18n: {

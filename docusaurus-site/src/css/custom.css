@@ -40,11 +40,11 @@
   --ifm-font-color-base: #1f1f1f;
   --ifm-heading-color: #101314;
 
-  /* Typography */
-  /* Gotham is served by the Typekit kit linked in docusaurus.config.ts
-     (weights 400 and 700 only – 500/600 resolve to the nearest available) */
-  --ifm-font-family-base: 'gotham', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --ifm-heading-font-family: 'gotham', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Typography: Season Sans and DM Mono, the faces costarnetwork.co.uk
+     serves, self-hosted from static/fonts (see @font-face below). Season Sans
+     is 400 and 700 only – 500/600 resolve to the nearest available. */
+  --ifm-font-family-base: 'Season Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ifm-heading-font-family: 'Season Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ifm-font-family-monospace: 'DM Mono', SFMono-Regular, Menlo, Consolas, monospace;
   --ifm-heading-font-weight: 700;
   --ifm-font-weight-semibold: 600;
@@ -73,9 +73,47 @@
   --custom-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Google Fonts: DM Mono for code, Lexend as the reading-settings alternative.
-   Gotham (body/headings) comes from Typekit – see docusaurus.config.ts. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Lexend:wght@400;500;600;700&display=swap');
+/* Google Fonts: Lexend only, as the reading-settings alternative face. */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap');
+
+/* Brand faces, copied from costarnetwork.co.uk (its font files send no CORS
+   header, so they cannot be loaded cross-origin from this subdomain). Same
+   @font-face set as the network site: Season Sans 400/700 + italics, DM Mono 400. */
+@font-face {
+  font-family: 'Season Sans';
+  src: local('Season Sans Regular'), local('Season Sans'), url('/fonts/season-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Season Sans';
+  src: local('Season Sans Regular Italic'), local('Season Sans Italic'), url('/fonts/season-sans-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Season Sans';
+  src: local('Season Sans Bold'), url('/fonts/season-sans-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Season Sans';
+  src: local('Season Sans Bold Italic'), url('/fonts/season-sans-700-italic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: local('DM Mono Regular'), local('DM Mono'), url('/fonts/dm-mono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* ================================
    Accessibility
