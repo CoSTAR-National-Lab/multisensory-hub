@@ -459,10 +459,15 @@ body {
   line-height: 0;
 }
 
-.home-lab-logo img {
+.markdown .home-lab-logo img,
+.markdown .home-lab-logo img:hover {
   width: 100%;
   height: auto;
   display: block;
+  /* not a content figure: no card shadow, rounding or hover zoom */
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
 }
 
 .home-lab-logo__dark {
