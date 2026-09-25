@@ -961,8 +961,10 @@ def fix_mdx_syntax(content: str) -> str:
     content = re.sub(r'\^([ivxlcdm]+)\^', r'<sup>\1</sup>', content)
 
     # Fix 2: Fix unescaped curly braces in text (common acorn error)
-    # Remove Word document anchors like []{#_Ref123456 .anchor}
-    content = re.sub(r'\[\]\{#[^}]+\}', '', content)
+    # Remove Word document anchors like []{#_Ref123456 .anchor}, and any other
+    # empty pandoc span such as []{.mark} (a highlight run with no text). Left
+    # in, the "[]" glues onto a following link and breaks it: "[][text](url)".
+    content = re.sub(r'\[\]\{[^}]*\}', '', content)
 
     # Remove Pandoc attributes entirely (instead of escaping them)
     # These are Word formatting artifacts that leave visible remnants
