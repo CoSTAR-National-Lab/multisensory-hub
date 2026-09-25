@@ -192,6 +192,12 @@ body {
   color: var(--ifm-heading-color);
 }
 
+/* The logo and the title are separate links (src/theme/Navbar/Logo): the logo
+   goes to costarnetwork.co.uk, the title to the report home. Close the gap. */
+.navbar__brand--logo {
+  margin-right: 0.5rem;
+}
+
 .navbar__link {
   font-weight: 500;
   transition: color 0.2s ease;

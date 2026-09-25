@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Generate the Open Graph / social-share card for the Multisensory Hub site.
 
-Outputs static/img/social-card.jpg at 1200x630 (the standard OG ratio), using
-the site's indigo brand palette. Re-run after changing the title/tagline.
+Outputs static/img/social-card.jpg at 1200x630 (the standard OG ratio) on the
+CoSTAR National Lab brand gradient (assets/costar-gradient-national.jpg, a
+web-sized copy of CoSTAR_Gradient_Lab_National.png supplied by CoSTAR comms).
+Re-run after changing the title/tagline.
 """
 from __future__ import annotations
 
@@ -21,16 +23,17 @@ W, H = 1200, 630
 MARGIN = 90
 
 # --- brand palette (CoSTAR, from src/css/custom.css) --------------------------
-TOP = (0, 56, 152)        # #003898  primary-darkest
-BOTTOM = (0, 81, 217)     # #0051d9  primary
-ACCENT = (0, 171, 214)    # #00abd6  costar-cyan
+# The National Lab gradient is orange/yellow, so all type is set dark for contrast.
+INK = (16, 19, 20)        # #101314  heading colour
+INK_SOFT = (60, 40, 20)   # warm dark for the tagline
 WHITE = (255, 255, 255)
-MUTED = (168, 212, 240)   # light blue
 
 # CoSTAR logo-ray colours, used for the accent strip under the title
 RAYS = [(0, 171, 214), (0, 81, 217), (239, 0, 89), (255, 87, 0), (255, 151, 1)]
 
-OUT = Path(__file__).resolve().parents[1] / "static" / "img" / "social-card.jpg"
+HERE = Path(__file__).resolve().parent
+GRADIENT = HERE / "assets" / "costar-gradient-national.jpg"
+OUT = HERE.parent / "static" / "img" / "social-card.jpg"
 
 
 def _first_existing(*paths: str) -> str:
@@ -52,31 +55,14 @@ REG = _first_existing(
 )
 
 
-def diagonal_gradient() -> Image.Image:
-    """Indigo gradient running top-left (dark) to bottom-right (lighter)."""
-    img = Image.new("RGB", (W, H))
-    px = img.load()
-    for y in range(H):
-        ry = y / (H - 1)
-        for x in range(W):
-            t = ry * 0.65 + (x / (W - 1)) * 0.35
-            px[x, y] = (
-                int(TOP[0] + (BOTTOM[0] - TOP[0]) * t),
-                int(TOP[1] + (BOTTOM[1] - TOP[1]) * t),
-                int(TOP[2] + (BOTTOM[2] - TOP[2]) * t),
-            )
-    return img
-
-
-def add_dot_grid(img: Image.Image) -> None:
-    """Faintly lighten a dot grid for a precise, scholarly texture."""
-    px = img.load()
-    for y in range(70, H, 36):
-        for x in range(70, W, 36):
-            for dy in range(2):
-                for dx in range(2):
-                    r, g, b = px[x + dx, y + dy]
-                    px[x + dx, y + dy] = (min(r + 16, 255), min(g + 16, 255), min(b + 26, 255))
+def brand_gradient() -> Image.Image:
+    """The CoSTAR National Lab gradient, scaled to cover and centre-cropped to W x H."""
+    src = Image.open(GRADIENT).convert("RGB")
+    scale = max(W / src.width, H / src.height)
+    src = src.resize((round(src.width * scale), round(src.height * scale)), Image.LANCZOS)
+    left = (src.width - W) // 2
+    top = (src.height - H) // 2
+    return src.crop((left, top, left + W, top + H))
 
 
 def centered(draw: ImageDraw.ImageDraw, y: int, text: str,
@@ -87,8 +73,7 @@ def centered(draw: ImageDraw.ImageDraw, y: int, text: str,
 
 
 def main() -> None:
-    img = diagonal_gradient()
-    add_dot_grid(img)
+    img = brand_gradient()
     draw = ImageDraw.Draw(img)
 
     # Everything is centered and kept within a safe zone so platforms that
@@ -98,8 +83,8 @@ def main() -> None:
     f_tag = ImageFont.truetype(REG, 36)
     f_url = ImageFont.truetype(BOLD, 26)
 
-    centered(draw, 218, EYEBROW, f_eyebrow, ACCENT)
-    centered(draw, 256, TITLE, f_title, WHITE)
+    centered(draw, 218, EYEBROW, f_eyebrow, INK)
+    centered(draw, 256, TITLE, f_title, INK)
 
     # Five-segment ray strip (CoSTAR logo colours), centered beneath the title.
     # Set on a white bar so the blue ray doesn't vanish into the blue gradient.
@@ -111,8 +96,8 @@ def main() -> None:
         x = x0 + i * (seg + gap)
         draw.rectangle([x, 372, x + seg, 378], fill=colour)
 
-    centered(draw, 398, TAGLINE, f_tag, MUTED)
-    centered(draw, H - MARGIN - 6, URL, f_url, ACCENT)
+    centered(draw, 398, TAGLINE, f_tag, INK_SOFT)
+    centered(draw, H - MARGIN - 6, URL, f_url, INK)
 
     img.save(OUT, "JPEG", quality=92, progressive=True)
     print(f"wrote {OUT} ({img.size[0]}x{img.size[1]})")
