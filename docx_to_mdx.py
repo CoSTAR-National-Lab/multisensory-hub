@@ -1359,7 +1359,20 @@ readingTimeMinutes: {reading_time}
     else:
         header_line = f"# {title}\n\n"
 
-    return frontmatter + imports + header_line + fixed_content
+    # CoSTAR National Lab lockup above the title (requested by CoSTAR comms).
+    # Two copies of the SVG – grey text for light mode, light text for dark –
+    # toggled by CSS (.home-lab-logo in custom.css), same pattern as the footer.
+    lab_logo = (
+        '<a className="home-lab-logo" href="https://www.costarnetwork.co.uk/labs/national-lab" '
+        'target="_blank" rel="noopener noreferrer" aria-label="CoSTAR National Lab (opens in a new tab)">'
+        '<img src="/img/costar-national-lab.svg" alt="CoSTAR Labs – National" '
+        'className="home-lab-logo__light" width="1920" height="671" />'
+        '<img src="/img/costar-national-lab-white.svg" alt="" aria-hidden="true" '
+        'className="home-lab-logo__dark" width="1920" height="671" />'
+        '</a>\n\n'
+    )
+
+    return frontmatter + imports + lab_logo + header_line + fixed_content
 
 
 def inject_subheading_reading_times(content: str) -> str:

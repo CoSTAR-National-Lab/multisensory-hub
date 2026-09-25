@@ -43,8 +43,8 @@
   /* Typography: Season Sans and DM Mono, the faces costarnetwork.co.uk
      serves, self-hosted from static/fonts (see @font-face below). Season Sans
      is 400 and 700 only – 500/600 resolve to the nearest available. */
-  --ifm-font-family-base: 'Season Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --ifm-heading-font-family: 'Season Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ifm-font-family-base: 'Season Sans', 'Season Sans Fallback', Arial, sans-serif;
+  --ifm-heading-font-family: 'Season Sans', 'Season Sans Fallback', Arial, sans-serif;
   --ifm-font-family-monospace: 'DM Mono', SFMono-Regular, Menlo, Consolas, monospace;
   --ifm-heading-font-weight: 700;
   --ifm-font-weight-semibold: 600;
@@ -73,8 +73,9 @@
   --custom-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Google Fonts: Lexend only, as the reading-settings alternative face. */
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap');
+/* Lexend (the reading-settings alternative face) is loaded on demand by
+   ReadingSettings, not imported here: a CSS @import blocks first paint on
+   every page while the Google Fonts stylesheet is fetched. */
 
 /* Brand faces, copied from costarnetwork.co.uk (its font files send no CORS
    header, so they cannot be loaded cross-origin from this subdomain). Same
@@ -106,6 +107,29 @@
   font-weight: 700;
   font-style: italic;
   font-display: swap;
+}
+/* Metric-matched fallback: Arial resized so its average glyph width and
+   vertical metrics equal Season Sans's. Text set in the fallback occupies the
+   same lines, so when Season Sans arrives the page does not reflow (the
+   "jutter" on first load). Values computed from the font files:
+   Season Sans 400/700 vs Arial regular/bold, size-adjust = avg width ratio. */
+@font-face {
+  font-family: 'Season Sans Fallback';
+  src: local('Arial'), local('ArialMT');
+  font-weight: 400;
+  size-adjust: 118.94%;
+  ascent-override: 81.98%;
+  descent-override: 21.36%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Season Sans Fallback';
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  font-weight: 700;
+  size-adjust: 112.43%;
+  ascent-override: 86.72%;
+  descent-override: 22.59%;
+  line-gap-override: 0%;
 }
 @font-face {
   font-family: 'DM Mono';
@@ -425,6 +449,34 @@ body {
   text-decoration: none;
 }
 
+/* CoSTAR National Lab lockup at the top of the homepage (emitted by
+   create_homepage_content in docx_to_mdx.py). Width/height attributes keep
+   the aspect ratio reserved before the SVG loads; CSS sets the display size. */
+.home-lab-logo {
+  display: block;
+  width: min(320px, 60%);
+  margin: 0.25rem 0 1.5rem;
+  line-height: 0;
+}
+
+.home-lab-logo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.home-lab-logo__dark {
+  display: none !important;
+}
+
+[data-theme='dark'] .home-lab-logo__light {
+  display: none !important;
+}
+
+[data-theme='dark'] .home-lab-logo__dark {
+  display: block !important;
+}
+
 /* Lists */
 .markdown ul,
 .markdown ol {
@@ -732,6 +784,14 @@ html[data-theme='dark'] .aa-Autocomplete,
 html[data-theme='dark'] .aa-Panel {
   --aa-primary-color-rgb: 227, 229, 229;
   --aa-muted-color-rgb: 198, 200, 203;
+}
+
+/* The search button is rendered client-side after hydration. Reserve its
+   footprint in the server HTML so the navbar's right-hand items do not jump
+   when it appears. */
+.dsla-search-field {
+  min-width: 75px;
+  min-height: 36px;
 }
 
 /* Style the search button */

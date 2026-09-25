@@ -3,6 +3,18 @@ import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
 
 const STORAGE_KEY_FONT = 'reading-settings-font';
+
+// Lexend is only needed when a reader picks it, so it is fetched on demand
+// rather than via a CSS @import that blocks first paint on every page load.
+const LEXEND_CSS = 'https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap';
+function ensureLexendLoaded() {
+  if (typeof document === 'undefined' || document.getElementById('lexend-font')) return;
+  const link = document.createElement('link');
+  link.id = 'lexend-font';
+  link.rel = 'stylesheet';
+  link.href = LEXEND_CSS;
+  document.head.appendChild(link);
+}
 const STORAGE_KEY_WORD_SPACING = 'reading-settings-word-spacing';
 const STORAGE_KEY_LINE_SPACING = 'reading-settings-line-spacing';
 const STORAGE_KEY_CONTRAST = 'reading-settings-contrast';
@@ -55,6 +67,7 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
     if (storedFont) {
       setFont(storedFont);
       document.documentElement.setAttribute('data-reading-font', storedFont);
+      if (storedFont === 'lexend') ensureLexendLoaded();
     }
     if (storedWordSpacing) {
       setWordSpacing(storedWordSpacing);
@@ -118,6 +131,7 @@ export default function ReadingSettings({ variant = 'dropdown' }: ReadingSetting
     setFont(newFont);
     document.documentElement.setAttribute('data-reading-font', newFont);
     localStorage.setItem(STORAGE_KEY_FONT, newFont);
+    if (newFont === 'lexend') ensureLexendLoaded();
   };
 
   const updateWordSpacing = (newWordSpacing: WordSpacingOption) => {

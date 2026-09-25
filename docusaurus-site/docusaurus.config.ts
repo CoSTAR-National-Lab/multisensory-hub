@@ -43,6 +43,7 @@ const config: Config = {
   // CoSTAR comms supplied is not what their site uses, so it is not linked.
   headTags: [
     {tagName: 'link', attributes: {rel: 'preload', href: '/fonts/season-sans-400.woff2', as: 'font', type: 'font/woff2', crossorigin: 'anonymous'}},
+    {tagName: 'link', attributes: {rel: 'preload', href: '/fonts/season-sans-700.woff2', as: 'font', type: 'font/woff2', crossorigin: 'anonymous'}},
   ],
 
   i18n: {
