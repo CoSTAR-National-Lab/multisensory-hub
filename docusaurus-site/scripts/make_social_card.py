@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Generate the Open Graph / social-share card for the Multisensory Hub site.
 
-Outputs static/img/social-card.jpg at 1200x630 (the standard OG ratio) on the
-CoSTAR National Lab brand gradient (assets/costar-gradient-national.jpg, a
-web-sized copy of CoSTAR_Gradient_Lab_National.png supplied by CoSTAR comms).
-Re-run after changing the title/tagline.
+Outputs static/img/social-card.jpg at 1200x630 (the standard OG ratio) on one
+of the CoSTAR brand gradients supplied by CoSTAR comms (web-sized copies in
+assets/). Default is Light A, a pale blush-grey; the National Lab orange is
+also there. Re-run after changing the title/tagline, or pass another gradient:
+    make_social_card.py assets/costar-gradient-national.jpg
 """
 from __future__ import annotations
 
@@ -23,17 +24,24 @@ W, H = 1200, 630
 MARGIN = 90
 
 # --- brand palette (CoSTAR, from src/css/custom.css) --------------------------
-# The National Lab gradient is orange/yellow, so all type is set dark for contrast.
+# All type is dark ink so it holds up on any of the light gradients.
 INK = (16, 19, 20)        # #101314  heading colour
-INK_SOFT = (60, 40, 20)   # warm dark for the tagline
+INK_SOFT = (60, 60, 64)   # softer dark for the tagline
 WHITE = (255, 255, 255)
 
 # CoSTAR logo-ray colours, used for the accent strip under the title
 RAYS = [(0, 171, 214), (0, 81, 217), (239, 0, 89), (255, 87, 0), (255, 151, 1)]
 
 HERE = Path(__file__).resolve().parent
-GRADIENT = HERE / "assets" / "costar-gradient-national.jpg"
+GRADIENT = HERE / "assets" / "costar-gradient-light-a.jpg"
 OUT = HERE.parent / "static" / "img" / "social-card.jpg"
+
+# Optional overrides for trying other gradients: make_social_card.py <gradient> [<out>]
+import sys
+if len(sys.argv) > 1:
+    GRADIENT = Path(sys.argv[1])
+if len(sys.argv) > 2:
+    OUT = Path(sys.argv[2])
 
 
 def _first_existing(*paths: str) -> str:
@@ -56,7 +64,7 @@ REG = _first_existing(
 
 
 def brand_gradient() -> Image.Image:
-    """The CoSTAR National Lab gradient, scaled to cover and centre-cropped to W x H."""
+    """The chosen CoSTAR gradient, scaled to cover and centre-cropped to W x H."""
     src = Image.open(GRADIENT).convert("RGB")
     scale = max(W / src.width, H / src.height)
     src = src.resize((round(src.width * scale), round(src.height * scale)), Image.LANCZOS)
