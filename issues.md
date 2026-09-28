@@ -168,3 +168,16 @@ that. Search strings locate each one in Word via Ctrl+F.
 - [ ] `inhabiting a virtual` (Multisensory experience → Playing with expectation, Rubber Hand illusion) – the citation field is italic and sits between "virtual" and "avatar" with no space, and there is a space before the final full stop. Move the citation after "avatar", remove the italic, delete the space before the full stop.
 - [ ] `ltisensory can be cost-intensive` (Multisensory Value) – in "However, multisensory can be cost-intensive" the letter "u" is not bold while the rest of the phrase is. Re-apply bold across the whole phrase.
 - [ ] `earch of Lost Time` (Smell → Proustian effect) – in "In Search of Lost Time" the italic run breaks around the "S" (`***In* S*earch of Lost Time***`). Re-apply bold italic across the whole title.
+
+## Slips introduced in the 28 Sept 2026 edit (citation punctuation pass)
+
+Found by diffing the 25 Sept and 28 Sept docx. Fix in the working doc.
+
+- [ ] `social andemotional` (Social-emotional and cultural lens, Fechner bullet) – missing space; should be "social and emotional". The same sentence has a semicolon after "single senses" where a comma is wanted.
+- [ ] `comfortable for everyone` (Holistic experiential integration) – double full stop around the citation: "everyone.⁷⁸."
+- [ ] `audiovisual delays than adults` (Latency tolerances) – the comma after the "adults" citation was deleted, leaving "adults⁶³ people with ADHD". Restore it.
+- [ ] `emotional weight` (Touch → Social touch) – citation reads (98,100); it was (98,99) before one reference was inserted, so it probably should now be (99,100). Check in Mendeley.
+- [ ] `pinpoint the exact source` (Hearing → Low spatial resolution) – citation changed from 10 to "95 70" as two separate fields; merge into one citation and confirm both are intended.
+- [ ] `desert canyons` (Touch → Temperature) – final full stop lost: "canyons⁹⁹".
+- [ ] `inhabiting a virtual` (Rubber Hand illusion) – still open from 25 Sept; now reads "³⁶avatar.³⁷ ." with a stray space and second full stop.
+- [ ] Citation placement is now mixed: most moved to after the punctuation, but several remain before it (e.g. `this¹⁰⁰,` `body¹⁰¹.` `second¹⁰⁵)` `in-browser¹³¹.`), and a few have a space before the number (`correspondences ³⁸`, `patterns ³⁹`, `tones. ⁴⁰`, `static). ⁴¹`, `enjoyable ⁴⁶`).
