@@ -173,7 +173,7 @@ that. Search strings locate each one in Word via Ctrl+F.
 
 Found by diffing the 25 Sept and 28 Sept docx. Fix in the working doc.
 
-- [ ] `social andemotional` (Social-emotional and cultural lens, Fechner bullet) – missing space; should be "social and emotional". The same sentence has a semicolon after "single senses" where a comma is wanted.
+- [ ] `social andemotional` (Social-emotional and cultural lens, Fechner bullet) – missing space; should be "social and emotional". Still present in the 28 Sept 13:28 version, which dropped the "Although his own experiments..." sentence (so the semicolon issue is gone) and leaves "aesthetics, founded by ... Fechner." repeating "foundation ... founded".
 - [ ] `comfortable for everyone` (Holistic experiential integration) – double full stop around the citation: "everyone.⁷⁸."
 - [ ] `audiovisual delays than adults` (Latency tolerances) – the comma after the "adults" citation was deleted, leaving "adults⁶³ people with ADHD". Restore it.
 - [ ] `emotional weight` (Touch → Social touch) – citation reads (98,100); it was (98,99) before one reference was inserted, so it probably should now be (99,100). Check in Mendeley.
