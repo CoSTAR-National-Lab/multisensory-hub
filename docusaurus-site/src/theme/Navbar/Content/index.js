@@ -9,6 +9,7 @@ import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import styles from './styles.module.css';
 import ReadingSettings from '@site/src/components/ReadingSettings';
+import InstallAppButton from '@site/src/components/InstallAppButton';
 
 function useNavbarItems() {
   return useThemeConfig().navbar.items;
@@ -61,6 +62,7 @@ export default function NavbarContent() {
       right={
         <>
           <NavbarItems items={rightItems} />
+          <InstallAppButton />
           <div className={styles.accessibilityControls}>
             <ReadingSettings />
           </div>

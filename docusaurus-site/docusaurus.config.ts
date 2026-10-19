@@ -68,7 +68,38 @@ const config: Config = {
     ],
   ],
 
+  // Captures beforeinstallprompt for the navbar InstallAppButton.
+  clientModules: [require.resolve('./src/pwa/installPrompt.js')],
+
   plugins: [
+    // Installable app with an offline copy. Offline mode (precaching the
+    // whole site) only switches on once the site is installed or opened as
+    // the installed app, so ordinary visitors download nothing extra. The
+    // "New version" pop-up is swizzled away (src/theme/PwaReloadPopup).
+    // NB: static/manifest.json is the analytics block manifest, not the web
+    // app manifest – that is static/site.webmanifest.
+    [
+      '@docusaurus/plugin-pwa',
+      {
+        offlineModeActivationStrategies: ['appInstalled', 'standalone', 'queryString'],
+        swCustom: require.resolve('./src/pwa/swCustom.js'),
+        injectManifestConfig: {
+          // static/media holds pandoc's extracted images; pages load the
+          // hashed copies Docusaurus emits under assets/images, so the
+          // originals would only double the offline download.
+          globIgnores: ['media/**'],
+          // Largest report image is ~1.3 MB; leave headroom above the 2 MB default.
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        },
+        pwaHead: [
+          {tagName: 'link', rel: 'manifest', href: '/site.webmanifest'},
+          {tagName: 'meta', name: 'theme-color', content: '#ffffff'},
+          {tagName: 'meta', name: 'apple-mobile-web-app-capable', content: 'yes'},
+          {tagName: 'meta', name: 'apple-mobile-web-app-title', content: 'Multisensory Hub'},
+          {tagName: 'link', rel: 'apple-touch-icon', href: '/img/pwa/apple-touch-icon.png'},
+        ],
+      },
+    ],
     [
       require.resolve('@cmfcmf/docusaurus-search-local'),
       {
